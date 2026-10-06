@@ -1298,19 +1298,27 @@ def rat_like(name, fur, fur_dark, skin, extra=(), belly=None, seed=66):
             for x in range(w):
                 put(x, y, fur)
         put(0, 0, 'eye'); put(w - 1, 0, 'eye')
+    def ear(put, w, h):
+        for y in range(h):
+            for x in range(w):
+                put(x, y, skin if (x, y) != (0, 0) else '#e8b0a8')
+        put(w - 1, h - 1, '#8a5a56')
     cubes = [
-        cube('body', [-2.5, 2, -4], [5, 4, 9], fur, noise=10, decor={'up': rat_back}),
-        cube('body', [-3, 2, 0], [6, 5, 5], fur, noise=10),
-        cube('skull', [-2, 2.5, -8], [4, 3, 4], fur, noise=10, decor={'north': face}),
-        cube('skull', [-1, 2.5, -10], [2, 2, 2], skin, decor={'north': snout_face}, rim=False),
-        cube('skull', [-2.5, 5.5, -6], [1, 2, 1], skin, rim=False),
-        cube('skull', [1.5, 5.5, -6], [1, 2, 1], skin, rim=False),
-        cube('tail', [-0.5, 3, 5], [1, 1, 6], skin, rim=False),
+        cube('body', [-2.5, 2, -4], [5, 4, 9], fur, decor={'up': rat_back}),
+        cube('body', [-3, 2, 0], [6, 5, 5], fur, decor={'up': rat_back}),
+        cube('body', [-2, 1.5, -3], [4, 1, 7], fur_dark),
+        cube('skull', [-2, 2, -7], [4, 4, 3], fur, decor={'north': face}),
+        cube('skull', [-1.5, 2, -9], [3, 3, 2], fur),
+        cube('skull', [-1, 2, -10], [2, 2, 1], skin, decor={'north': snout_face}, rim=False),
+        cube('skull', [-3, 5.5, -6], [2, 2, 1], skin, decor={'north': ear}, rim=False),
+        cube('skull', [1, 5.5, -6], [2, 2, 1], skin, decor={'north': ear}, rim=False),
+        cube('tail', [-1, 2.5, 5], [2, 2, 3], skin),
+        cube('tail', [-0.5, 3, 8], [1, 1, 3], skin, rim=False),
         cube('tail_tip', [-0.5, 3, 11], [1, 1, 6], skin, rim=False),
         cube('leg_front_left', [1, 0, -3.5], [1, 2, 1], skin, rim=False),
         cube('leg_front_right', [-2, 0, -3.5], [1, 2, 1], skin, rim=False),
-        cube('leg_back_left', [1, 0, 3], [1, 2, 1], skin, rim=False),
-        cube('leg_back_right', [-2, 0, 3], [1, 2, 1], skin, rim=False),
+        cube('leg_back_left', [1, 0, 3], [2, 2, 2], skin, rim=False),
+        cube('leg_back_right', [-3, 0, 3], [2, 2, 2], skin, rim=False),
     ] + list(extra)
     if belly:
         def stretched(put, w, h):
@@ -1321,7 +1329,8 @@ def rat_like(name, fur, fur_dark, skin, extra=(), belly=None, seed=66):
                     put(x % w, y % h, '#7a3a44'); x += 1; y += rng.choice((-1, 0, 1))
         cubes.append(cube('belly', [-3.5, 0.5, -3], [7, 6, 8], belly, noise=8, decor={'all': stretched}))
     build(name, bones, cubes, seed, os.path.join(ASSETS, 'geo', 'entity', f'{name}.geo.json'),
-          os.path.join(ASSETS, 'textures', 'entity', f'{name}.png'), f'geometry.{name}', bounds=(2, 1, 0.25))
+          os.path.join(ASSETS, 'textures', 'entity', f'{name}.png'), f'geometry.{name}', bounds=(2, 1, 0.25),
+          mats={fur: 'fur', fur_dark: 'fur', skin: 'flesh', belly: 'flesh', 'bone': 'bone', '#7a5a54': 'flesh'})
 
 
 def vermin():
@@ -1341,7 +1350,8 @@ def vermin():
                   cube(f'r{i}', [x - 0.5, 0.5, z - 3], [1, 1, 1], 'skin', rim=False),
                   cube(f'r{i}', [x - 0.5, 0.5, z + 2], [1, 1, 3], 'skin', rim=False)]
     build('rat_swarm', bones, cubes, 70, os.path.join(ASSETS, 'geo', 'entity', 'rat_swarm.geo.json'),
-          os.path.join(ASSETS, 'textures', 'entity', 'rat_swarm.png'), 'geometry.rat_swarm', bounds=(2, 1, 0.25))
+          os.path.join(ASSETS, 'textures', 'entity', 'rat_swarm.png'), 'geometry.rat_swarm', bounds=(2, 1, 0.25),
+          mats={'fur': 'fur', 'skin': 'flesh'})
     # carrion crow
     def crow_face(put, w, h):
         for y in range(h):
@@ -1479,7 +1489,7 @@ def rat_king():
     def face(put, w, h):
         for y in range(h):
             for x in range(w):
-                put(x, y, '#2f2b26')
+                put(x, y, '#4a3e36')
         put(0, 0, 'eye'); put(w - 1, 0, 'eye')
     cubes = [cube('knot', [-3, 0, -3], [6, 5, 6], '#b07a75', noise=12),           # the tangle of tails
              cube('knot', [-4, 1, -2], [8, 2, 4], '#c48b86', noise=12),
@@ -1493,16 +1503,17 @@ def rat_king():
         bones.append({'name': b, 'parent': 'root', 'pivot': [x, 2, z]})
         if d[0] == 'z':
             sgn = -1 if d == 'z-' else 1
-            cubes += [cube(b, [x - 2, 0, z - 3 if sgn < 0 else z - 3], [4, 4, 7], '#3a302a', noise=12, decor={'up': rat_back}),
-                      cube(b, [x - 1.5, 1, z - 6 if sgn < 0 else z + 4], [3, 3, 3], '#3a302a', decor={'north' if sgn < 0 else 'south': face}),
+            cubes += [cube(b, [x - 2, 0, z - 3 if sgn < 0 else z - 3], [4, 4, 7], '#4a3e36', noise=12, decor={'up': rat_back}),
+                      cube(b, [x - 1.5, 1, z - 6 if sgn < 0 else z + 4], [3, 3, 3], '#4a3e36', decor={'north' if sgn < 0 else 'south': face}),
                       cube(b, [x - 0.5, 1, z - 7 if sgn < 0 else z + 7], [1, 1, 1], 'skin', rim=False)]
         else:
             sgn = -1 if d == 'x-' else 1
-            cubes += [cube(b, [x - 3, 0, z - 2], [7, 4, 4], '#3a302a', noise=12, decor={'up': rat_back}),
-                      cube(b, [x - 6 if sgn < 0 else x + 4, 1, z - 1.5], [3, 3, 3], '#3a302a', decor={'east' if sgn < 0 else 'west': face}),
+            cubes += [cube(b, [x - 3, 0, z - 2], [7, 4, 4], '#4a3e36', noise=12, decor={'up': rat_back}),
+                      cube(b, [x - 6 if sgn < 0 else x + 4, 1, z - 1.5], [3, 3, 3], '#4a3e36', decor={'east' if sgn < 0 else 'west': face}),
                       cube(b, [x - 7 if sgn < 0 else x + 7, 1, z - 0.5], [1, 1, 1], 'skin', rim=False)]
     build('rat_king', bones, cubes, 801, os.path.join(ASSETS, 'geo', 'entity', 'rat_king.geo.json'),
-          os.path.join(ASSETS, 'textures', 'entity', 'rat_king.png'), 'geometry.rat_king', bounds=(3, 1.5, 0.5))
+          os.path.join(ASSETS, 'textures', 'entity', 'rat_king.png'), 'geometry.rat_king', bounds=(3, 1.5, 0.5),
+          mats={'#4a3e36': 'fur', '#b07a75': 'flesh', '#c48b86': 'flesh', '#9c6763': 'flesh', 'bone': 'bone', 'skin': 'flesh'})
 
 
 def gravewarden():
