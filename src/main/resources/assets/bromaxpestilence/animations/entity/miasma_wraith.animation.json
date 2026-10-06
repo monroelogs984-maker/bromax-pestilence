@@ -1,0 +1,123 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "misc.idle": {
+      "loop": true,
+      "animation_length": 3.0,
+      "bones": {
+        "body": {
+          "position": [
+            0,
+            "math.sin(query.anim_time * 120 + 0) * 0.8 + 2",
+            0
+          ]
+        },
+        "wisp_left": {
+          "rotation": [
+            "math.sin(query.anim_time * 160 + 0) * 10",
+            0,
+            "math.sin(query.anim_time * 120 + 0) * 8"
+          ]
+        },
+        "wisp_right": {
+          "rotation": [
+            "math.sin(query.anim_time * 160 + 180) * 10",
+            0,
+            "math.sin(query.anim_time * 120 + 0) * -8"
+          ]
+        },
+        "tail": {
+          "rotation": [
+            "math.sin(query.anim_time * 90 + 0) * 6",
+            0,
+            "math.sin(query.anim_time * 140 + 0) * 10"
+          ]
+        }
+      }
+    },
+    "move.walk": {
+      "loop": true,
+      "animation_length": 3.0,
+      "bones": {
+        "body": {
+          "position": [
+            0,
+            "math.sin(query.anim_time * 240 + 0) * 0.8 + 2",
+            0
+          ],
+          "rotation": [
+            12,
+            0,
+            0
+          ]
+        },
+        "wisp_left": {
+          "rotation": [
+            "math.sin(query.anim_time * 160 + 0) * 10",
+            0,
+            "math.sin(query.anim_time * 120 + 0) * 8"
+          ]
+        },
+        "wisp_right": {
+          "rotation": [
+            "math.sin(query.anim_time * 160 + 180) * 10",
+            0,
+            "math.sin(query.anim_time * 120 + 0) * -8"
+          ]
+        },
+        "tail": {
+          "rotation": [
+            "math.sin(query.anim_time * 90 + 0) * 6",
+            0,
+            "math.sin(query.anim_time * 140 + 0) * 10"
+          ]
+        }
+      }
+    },
+    "attack.bite": {
+      "loop": false,
+      "animation_length": 0.5,
+      "bones": {
+        "wisp_left": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.2": [
+              -90,
+              0,
+              0
+            ],
+            "0.5": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "wisp_right": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.2": [
+              -90,
+              0,
+              0
+            ],
+            "0.5": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  },
+  "geckolib_format_version": 2
+}

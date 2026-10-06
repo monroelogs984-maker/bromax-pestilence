@@ -151,6 +151,14 @@ public final class PlagueEvents {
         if (entity instanceof AfflictedMob && event.getSource().getEntity() instanceof Player) {
             Plague.addPoints(entity, PestConfig.POINTS_AFFLICTED_KILL.get());
         }
+        // From the Heralds on, a dead rat sometimes leaves its fleas behind.
+        if (entity instanceof PlagueRat && PestilenceData.phase(level) >= Phase.HERALDS && entity.getRandom().nextFloat() < 0.2f) {
+            var fleas = ModRegistry.FLEA_CLOUD.get().create(level);
+            if (fleas != null) {
+                fleas.moveTo(entity.getX(), entity.getY() + 0.3, entity.getZ());
+                level.addFreshEntity(fleas);
+            }
+        }
         if (!entity.hasEffect(ModRegistry.PLAGUE)) return;
         if (entity instanceof Villager villager) {
             Plague.addPoints(entity, PestConfig.POINTS_VILLAGER_DEATH.get());
@@ -180,14 +188,14 @@ public final class PlagueEvents {
         if (chance > 0 && entity.getRandom().nextDouble() < chance) Plague.infect(entity, Disease.DYSENTERY);
     }
 
-    /** Phase gates for natural spawns: few rats while dormant, no Afflicted before Rat Season. */
+    /** Phase gates for natural spawns: each plague mob has a phase it appears from; few rats while dormant. */
     @SubscribeEvent
     public static void onFinalizeSpawn(FinalizeSpawnEvent event) {
         if (event.getSpawnType() != MobSpawnType.NATURAL && event.getSpawnType() != MobSpawnType.CHUNK_GENERATION) return;
         int phase = PestilenceData.phase(event.getEntity().level());
-        if (event.getEntity() instanceof AfflictedMob && phase < Phase.RAT_SEASON) {
+        if (event.getEntity() instanceof com.bromax.pestilence.entity.PhaseGated gated && phase < gated.minPhase()) {
             event.setSpawnCancelled(true);
-        } else if (event.getEntity() instanceof PlagueRat && phase < Phase.FULL_RATS && event.getEntity().getRandom().nextBoolean()) {
+        } else if (event.getEntity().getType() == ModRegistry.PLAGUE_RAT.get() && phase < Phase.FULL_RATS && event.getEntity().getRandom().nextBoolean()) {
             event.setSpawnCancelled(true);
         }
     }

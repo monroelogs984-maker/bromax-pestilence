@@ -34,6 +34,8 @@ PALETTE = {
 
 
 def rgba(name_or_hex, a=255):
+    if '@' in name_or_hex:
+        name_or_hex, a = name_or_hex.split('@')[0], int(name_or_hex.split('@')[1])
     s = PALETTE.get(name_or_hex, name_or_hex).lstrip('#')
     return (int(s[0:2], 16), int(s[2:4], 16), int(s[4:6], 16), a)
 
@@ -946,6 +948,376 @@ def apothecary_models():
             'post_top': 'minecraft:block/stripped_oak_log_top', 'bar': 'minecraft:block/oak_planks'}, 'elements': rack})
 
 
+# ---------------------------------------------------------------------------------------------
+# System 5: Heralds and vermin
+# ---------------------------------------------------------------------------------------------
+
+def hooded_face(hood, eye='glow', shadow='#14110f'):
+    """A hood seen from the front: dark hollow with two eyes in it."""
+    def d(put, w, h):
+        for y in range(h):
+            for x in range(w):
+                put(x, y, hood)
+        for y in range(2, h - 1):
+            for x in range(1, w - 1):
+                put(x, y, shadow)
+        if eye:
+            put(2, 4, eye); put(w - 3, 4, eye)
+    return d
+
+
+def welts(put, w, h):
+    rng = random.Random(77)
+    for _ in range(6):
+        y = rng.randrange(1, h - 1)
+        for x in range(rng.randrange(0, 2), w - rng.randrange(0, 2)):
+            if (x + y) % 3:
+                put(x, y, '#8a2a20')
+
+
+def stitched(put, w, h):
+    for y in range(1, h - 1, 3):
+        put(w // 2, y, '#4a3c2c')
+    for x in range(1, w - 1, 3):
+        put(x, h // 2, '#4a3c2c')
+
+
+def sockets(put, w, h):
+    """A bone-white skull face: hollow eyes (2x2 on big faces), a nose hole, a row of teeth."""
+    for y in range(h):
+        for x in range(w):
+            put(x, y, 'bone')
+    big = w >= 6 and h >= 6
+    ey = 2 if big else 1
+    for dx in (range(2) if big else range(1)):
+        for dy in (range(2) if big else range(1)):
+            put(1 + dx, ey + dy, '#1a1612'); put(w - 2 - dx, ey + dy, '#1a1612')
+    if h > 3:
+        put(w // 2, ey + (2 if big else 1), '#1a1612')
+    if big:
+        for x in range(2, w - 2):
+            put(x, h - 2, '#1a1612' if x % 2 else '#b8ae98')
+
+
+def bars(put, w, h):
+    for y in range(h):
+        for x in range(w):
+            put(x, y, '#6e6e6e' if x % 2 == 0 or y in (0, h - 1) else '#1a1612')
+
+
+def censer_holes(put, w, h):
+    for y in range(h):
+        for x in range(w):
+            put(x, y, '#7a5f22')
+    put(1, 1, '#b8c84a')
+
+
+def herald(name, robe, hood, extras, skirt=True, torso=None, sleeves=None, legs='#2a2522', face=None, belt='#5a3d22', seed=0):
+    bones = [
+        {'name': 'root', 'pivot': [0, 0, 0]},
+        {'name': 'torso', 'parent': 'root', 'pivot': [0, 12, 0]},
+        {'name': 'head', 'parent': 'torso', 'pivot': [0, 24, 0]},
+        {'name': 'skull', 'parent': 'head', 'pivot': [0, 24, 0]},
+        {'name': 'right_arm', 'parent': 'torso', 'pivot': [-6, 22, 0]},
+        {'name': 'left_arm', 'parent': 'torso', 'pivot': [6, 22, 0]},
+        {'name': 'right_leg', 'parent': 'root', 'pivot': [-2, 12, 0]},
+        {'name': 'left_leg', 'parent': 'root', 'pivot': [2, 12, 0]},
+    ]
+    cubes = [
+        cube('skull', [-4, 24, -4], [8, 8, 8], hood, decor={'north': face or hooded_face(hood)}),
+        cube('torso', [-4, 12, -2], [8, 12, 4], torso or robe, decor={'north': welts} if torso else {}),
+        cube('torso', [-4, 11, -2], [8, 1, 4], belt, inflate=0.3),
+        cube('right_arm', [-8, 12, -2], [4, 12, 4], sleeves or robe),
+        cube('left_arm', [4, 12, -2], [4, 12, 4], sleeves or robe),
+        cube('right_arm', [-7.5, 10, -1.5], [3, 2, 3], '#8a7a6a'),
+        cube('left_arm', [4.5, 10, -1.5], [3, 2, 3], '#8a7a6a'),
+        cube('right_leg', [-4, 0, -2], [4, 12, 4], legs),
+        cube('left_leg', [0, 0, -2], [4, 12, 4], legs),
+    ]
+    if skirt:
+        cubes.append(cube('torso', [-4.5, 2, -3], [9, 10, 6], robe, decor={'north': skirt_front}))
+    build(name, bones, cubes + extras, seed,
+          os.path.join(ASSETS, 'geo', 'entity', f'{name}.geo.json'),
+          os.path.join(ASSETS, 'textures', 'entity', f'{name}.png'),
+          f'geometry.{name}', bounds=(3, 3.5, 1.5))
+
+
+def heralds():
+    herald('plague_bearer', '#4a3c2c', '#3a2e22', [
+        cube('torso', [-5, 13, 2], [10, 11, 6], '#7a6a4a', noise=9, decor={'all': stitched}),     # the sack of bodies
+        cube('torso', [-3, 24, 4], [1, 3, 1], 'bone', rim=False),
+        cube('torso', [1, 23, 3], [1, 4, 1], 'bone', rim=False),
+        cube('torso', [-1, 23, 5], [3, 3, 3], 'bone', decor={'north': sockets, 'south': sockets}),
+        cube('right_arm', [-7, 7, -1], [2, 3, 2], 'brass'),                                    # handbell
+        cube('right_arm', [-6.5, 10, -0.5], [1, 1, 1], 'cane', rim=False),
+    ], seed=501)
+    herald('gravedigger', '#3a3028', '#4a3a2c', [
+        cube('torso', [-4, 7, -2.6], [8, 15, 1], '#5a3d22'),                                        # leather apron
+        cube('skull', [-5, 32, -5], [10, 1, 10], '#3a3028'),                                         # flat cap brim
+        cube('right_arm', [-6.5, 2, -0.5], [1, 11, 1], 'cane', rim=False),                           # shovel
+        cube('right_arm', [-7.5, 0, -1], [3, 3, 1], '#8f9ba3'),
+    ], seed=502)
+    herald('flagellant', '#6b5a44', '#4a3c2c', [
+        cube('skull', [-3, 32, -3], [6, 3, 6], '#4a3c2c'),                                           # pointed hood
+        cube('skull', [-1.5, 35, -1.5], [3, 3, 3], '#4a3c2c'),
+        cube('left_arm', [5.5, 5, -0.5], [1, 6, 1], '#5a3d22', rim=False),                           # the whip
+        cube('left_arm', [6, 1, -0.5], [1, 4, 1], '#3a2a1a', rim=False),
+    ], torso='#b08870', sleeves='#b08870', belt='#8a7a5a', seed=503)
+    herald('censer_monk', '#4a5040', '#3e4436', [
+        cube('skull', [-4, 24, -4], [8, 8, 8], '#3e4436', inflate=0.45, decor={'north': hooded_face('#3e4436', eye=None)}),
+        cube('left_arm', [5.5, 5, -0.5], [1, 5, 1], '#6e6e6e', rim=False),                           # chain
+        cube('left_arm', [4.5, 2, -1.5], [3, 3, 3], '#7a5f22', decor={'all': censer_holes}),        # the foul censer
+    ], seed=504)
+    herald('ratcatcher', '#5a4632', '#4a3a2c', [
+        cube('skull', [-6, 32, -6], [12, 1, 12], '#3a2e22'),                                         # wide hat
+        cube('skull', [-4, 33, -4], [8, 3, 8], '#3a2e22'),
+        cube('torso', [-0.5, 8, 2.5], [1, 24, 1], 'cane', rim=False),                                # pole
+        cube('torso', [-2.5, 30, 1], [5, 5, 4], '#6e6e6e', decor={'all': bars}),                     # cage
+        cube('torso', [3, 24, -1], [2, 2, 4], 'fur', noise=10),                                     # rat on the shoulder
+        cube('torso', [3.5, 24.5, 3], [1, 1, 3], 'skin', rim=False),
+    ], seed=505)
+    herald('mourner', '#151214', '#151214', [
+        cube('skull', [-4.5, 16, -4.5], [9, 9, 9], '#1d181b@235', noise=4),                         # the veil, to the waist
+        cube('torso', [-2, 14, -3], [4, 2, 1], '#9a948e', rim=False),                                # clasped hands
+    ], face=hooded_face('#151214', eye='#bdb6ae'), legs='#151214', belt='#151214', seed=506)
+    herald('bone_collector', '#5a5248', '#4a4238', [
+        cube('torso', [-4, 14, 2], [8, 2, 2], 'bone', rim=False),                                    # bundle of bones on the back
+        cube('torso', [-1, 10, 2.5], [2, 14, 2], 'bone', rim=False),
+        cube('torso', [-2, 18, 4], [4, 4, 3], 'bone', decor={'south': sockets}),
+    ], face=sockets, seed=507)
+
+
+def miasma_wraith():
+    bones = [{'name': 'root', 'pivot': [0, 0, 0]},
+             {'name': 'body', 'parent': 'root', 'pivot': [0, 10, 0]},
+             {'name': 'head', 'parent': 'body', 'pivot': [0, 20, 0]},
+             {'name': 'skull', 'parent': 'head', 'pivot': [0, 20, 0]},
+             {'name': 'wisp_left', 'parent': 'body', 'pivot': [4.5, 19, 0]},
+             {'name': 'wisp_right', 'parent': 'body', 'pivot': [-4.5, 19, 0]},
+             {'name': 'tail', 'parent': 'body', 'pivot': [0, 10, 0]}]
+    def hollow(put, w, h):
+        for y in range(h):
+            for x in range(w):
+                put(x, y, '#a8b070@170')
+        for x, y in ((1, 2), (w - 2, 2), (2, 2), (w - 3, 2)):
+            put(x, y, '#e8f080')
+        for x in range(2, w - 2):
+            put(x, h - 2, '#2a3010@200')
+    cubes = [
+        cube('skull', [-3, 20, -3], [6, 6, 6], '#a8b070@170', noise=12, decor={'north': hollow}),
+        cube('body', [-3.5, 10, -2.5], [7, 10, 5], '#6b7330@150', noise=14),
+        cube('tail', [-2.5, 5, -2], [5, 5, 4], '#6b7330@120', noise=14),
+        cube('tail', [-1.5, 1, -1], [3, 4, 3], '#6b7330@90', noise=14),
+        cube('wisp_left', [3.5, 10, -1], [2, 9, 2], '#7a8240@140', noise=14),
+        cube('wisp_right', [-5.5, 10, -1], [2, 9, 2], '#7a8240@140', noise=14),
+    ]
+    build('miasma_wraith', bones, cubes, 601, os.path.join(ASSETS, 'geo', 'entity', 'miasma_wraith.geo.json'),
+          os.path.join(ASSETS, 'textures', 'entity', 'miasma_wraith.png'), 'geometry.miasma_wraith', bounds=(2, 2.5, 1))
+
+
+def pustule():
+    def veins(put, w, h):
+        rng = random.Random(91)
+        x, y = rng.randrange(w), rng.randrange(h)
+        for _ in range(w):
+            put(x % w, y % h, '#8a4a44'); x += 1; y += rng.choice((-1, 0, 1))
+        put(rng.randrange(w), rng.randrange(h), '#d4d94a')
+    bones = [{'name': 'root', 'pivot': [0, 0, 0]}, {'name': 'sac', 'parent': 'root', 'pivot': [0, 0, 0]}]
+    cubes = [
+        cube('sac', [-6, 0, -6], [12, 6, 12], '#a89a5a', noise=10, decor={'all': veins}),
+        cube('sac', [-5, 6, -5], [10, 5, 10], '#b8a86a', noise=10, decor={'all': veins}),
+        cube('sac', [-3, 11, -3], [6, 3, 6], '#c8b87a', noise=10, decor={'up': veins}),
+        cube('sac', [-7, 2, -2], [1, 3, 3], '#8a7a4a'), cube('sac', [5, 3, 1], [1, 2, 2], '#8a7a4a'),
+        cube('sac', [-2, 4, -7], [3, 3, 1], '#d4c88a'),
+    ]
+    build('pustule', bones, cubes, 602, os.path.join(ASSETS, 'geo', 'entity', 'pustule.geo.json'),
+          os.path.join(ASSETS, 'textures', 'entity', 'pustule.png'), 'geometry.pustule', bounds=(1.5, 1.2, 0.5))
+
+
+def rat_like(name, fur, fur_dark, skin, extra=(), belly=None, seed=66):
+    bones = [
+        {'name': 'root', 'pivot': [0, 0, 0]},
+        {'name': 'body', 'parent': 'root', 'pivot': [0, 4, 0]},
+        {'name': 'head', 'parent': 'body', 'pivot': [0, 4, -4]},
+        {'name': 'skull', 'parent': 'head', 'pivot': [0, 4, -4]},
+        {'name': 'tail', 'parent': 'body', 'pivot': [0, 3.5, 5]},
+        {'name': 'tail_tip', 'parent': 'tail', 'pivot': [0, 3.5, 11]},
+        {'name': 'leg_front_left', 'parent': 'root', 'pivot': [1.5, 2, -3]},
+        {'name': 'leg_front_right', 'parent': 'root', 'pivot': [-1.5, 2, -3]},
+        {'name': 'leg_back_left', 'parent': 'root', 'pivot': [1.5, 2, 3.5]},
+        {'name': 'leg_back_right', 'parent': 'root', 'pivot': [-1.5, 2, 3.5]},
+    ]
+    if belly:
+        bones.append({'name': 'belly', 'parent': 'body', 'pivot': [0, 3, 1]})
+    def face(put, w, h):
+        for y in range(h):
+            for x in range(w):
+                put(x, y, fur)
+        put(0, 0, 'eye'); put(w - 1, 0, 'eye')
+    cubes = [
+        cube('body', [-2.5, 2, -4], [5, 4, 9], fur, noise=10, decor={'up': rat_back}),
+        cube('body', [-3, 2, 0], [6, 5, 5], fur, noise=10),
+        cube('skull', [-2, 2.5, -8], [4, 3, 4], fur, noise=10, decor={'north': face}),
+        cube('skull', [-1, 2.5, -10], [2, 2, 2], skin, decor={'north': snout_face}, rim=False),
+        cube('skull', [-2.5, 5.5, -6], [1, 2, 1], skin, rim=False),
+        cube('skull', [1.5, 5.5, -6], [1, 2, 1], skin, rim=False),
+        cube('tail', [-0.5, 3, 5], [1, 1, 6], skin, rim=False),
+        cube('tail_tip', [-0.5, 3, 11], [1, 1, 6], skin, rim=False),
+        cube('leg_front_left', [1, 0, -3.5], [1, 2, 1], skin, rim=False),
+        cube('leg_front_right', [-2, 0, -3.5], [1, 2, 1], skin, rim=False),
+        cube('leg_back_left', [1, 0, 3], [1, 2, 1], skin, rim=False),
+        cube('leg_back_right', [-2, 0, 3], [1, 2, 1], skin, rim=False),
+    ] + list(extra)
+    if belly:
+        def stretched(put, w, h):
+            rng = random.Random(5)
+            for _ in range(4):
+                x, y = rng.randrange(w), rng.randrange(h)
+                for _ in range(4):
+                    put(x % w, y % h, '#7a3a44'); x += 1; y += rng.choice((-1, 0, 1))
+        cubes.append(cube('belly', [-3.5, 0.5, -3], [7, 6, 8], belly, noise=8, decor={'all': stretched}))
+    build(name, bones, cubes, seed, os.path.join(ASSETS, 'geo', 'entity', f'{name}.geo.json'),
+          os.path.join(ASSETS, 'textures', 'entity', f'{name}.png'), f'geometry.{name}', bounds=(2, 1, 0.25))
+
+
+def vermin():
+    rat_like('sewer_rat', '#2f2b26', '#1f1c19', '#8a6a64', seed=67)
+    rat_like('bloated_rat', '#6a5e56', '#4a423c', '#b88a84', belly='#9a8a80', seed=68)
+    rat_like('burrower_rat', '#5a4632', '#3a2e22', '#a88070', extra=[
+        cube('leg_front_left', [1, 0, -4.5], [1, 1, 1], 'bone', rim=False),
+        cube('leg_front_right', [-2, 0, -4.5], [1, 1, 1], 'bone', rim=False),
+        cube('skull', [-0.5, 2.5, -11], [1, 1, 1], '#7a5a54', rim=False),
+    ], seed=69)
+    # the swarm: seven small rats in a loose pack, each on its own bone so they scurry out of step
+    spots = [(-5, -4), (0, -5), (5, -3), (-3, 1), (3, 1), (-6, 4), (1, 5)]
+    bones = [{'name': 'root', 'pivot': [0, 0, 0]}] + [{'name': f'r{i}', 'parent': 'root', 'pivot': [x, 0, z]} for i, (x, z) in enumerate(spots)]
+    cubes = []
+    for i, (x, z) in enumerate(spots):
+        cubes += [cube(f'r{i}', [x - 1, 0, z - 2], [2, 2, 4], 'fur', noise=10, rim=False),
+                  cube(f'r{i}', [x - 0.5, 0.5, z - 3], [1, 1, 1], 'skin', rim=False),
+                  cube(f'r{i}', [x - 0.5, 0.5, z + 2], [1, 1, 3], 'skin', rim=False)]
+    build('rat_swarm', bones, cubes, 70, os.path.join(ASSETS, 'geo', 'entity', 'rat_swarm.geo.json'),
+          os.path.join(ASSETS, 'textures', 'entity', 'rat_swarm.png'), 'geometry.rat_swarm', bounds=(2, 1, 0.25))
+    # carrion crow
+    def crow_face(put, w, h):
+        for y in range(h):
+            for x in range(w):
+                put(x, y, '#1a1a20')
+        put(0, 1, '#c8a040'); put(w - 1, 1, '#c8a040')
+    bones = [{'name': 'root', 'pivot': [0, 0, 0]},
+             {'name': 'body', 'parent': 'root', 'pivot': [0, 4, 0]},
+             {'name': 'head', 'parent': 'body', 'pivot': [0, 6, -3]},
+             {'name': 'skull', 'parent': 'head', 'pivot': [0, 6, -3]},
+             {'name': 'wing_left', 'parent': 'body', 'pivot': [2, 7, 0]},
+             {'name': 'wing_right', 'parent': 'body', 'pivot': [-2, 7, 0]},
+             {'name': 'tail', 'parent': 'body', 'pivot': [0, 5, 4]},
+             {'name': 'leg_left', 'parent': 'root', 'pivot': [1, 3, 0]},
+             {'name': 'leg_right', 'parent': 'root', 'pivot': [-1, 3, 0]}]
+    cubes = [cube('body', [-2, 3, -3], [4, 4, 7], '#1a1a20', noise=8),
+             cube('skull', [-1.5, 6, -6], [3, 3, 3], '#1a1a20', decor={'north': crow_face}),
+             cube('skull', [-0.5, 6.5, -8], [1, 1, 2], '#3a3a40', rim=False),
+             cube('wing_left', [2, 4, -2], [1, 3, 6], '#24242c', noise=8),
+             cube('wing_right', [-3, 4, -2], [1, 3, 6], '#24242c', noise=8),
+             cube('tail', [-1.5, 4, 4], [3, 1, 4], '#1a1a20', noise=8),
+             cube('leg_left', [0.5, 0, 0], [1, 3, 1], '#3a3a40', rim=False),
+             cube('leg_right', [-1.5, 0, 0], [1, 3, 1], '#3a3a40', rim=False)]
+    build('carrion_crow', bones, cubes, 71, os.path.join(ASSETS, 'geo', 'entity', 'carrion_crow.geo.json'),
+          os.path.join(ASSETS, 'textures', 'entity', 'carrion_crow.png'), 'geometry.carrion_crow', bounds=(1, 1, 0.25))
+
+
+def system5_animations():
+    def write(name, anims):
+        write_json(os.path.join(ASSETS, 'animations', 'entity', f'{name}.animation.json'),
+                   {'format_version': '1.8.0', 'animations': anims, 'geckolib_format_version': 2})
+    humanoid = {
+        'misc.idle': {'loop': True, 'animation_length': 4.0, 'bones': {
+            'skull': {'rotation': [swing(3, 90, 90), swing(5, 45), 0]},
+            'right_arm': {'rotation': [swing(2, 90), 0, swing(1.5, 90)]},
+            'left_arm': {'rotation': [swing(2, 90, 180), 0, swing(-1.5, 90)]}}},
+        'move.walk': {'loop': True, 'animation_length': 1.2, 'bones': {
+            'right_leg': {'rotation': [swing(22, 300), 0, 0]},
+            'left_leg': {'rotation': [swing(22, 300, 180), 0, 0]},
+            'right_arm': {'rotation': [swing(16, 300, 180), 0, 0]},
+            'left_arm': {'rotation': [swing(16, 300), 0, 0]},
+            'torso': {'position': [0, f'math.abs({swing(0.5, 300)})', 0]},
+            'skull': {'rotation': [swing(2, 600), 0, 0]}}},
+        'attack.bite': {'loop': False, 'animation_length': 0.5, 'bones': {
+            'right_arm': {'rotation': {'0.0': [0, 0, 0], '0.15': [-110, 0, 10], '0.3': [20, 0, 0], '0.5': [0, 0, 0]}},
+            'torso': {'rotation': {'0.0': [0, 0, 0], '0.15': [0, -10, 0], '0.3': [0, 15, 0], '0.5': [0, 0, 0]}}}},
+    }
+    for n in ('plague_bearer', 'gravedigger', 'censer_monk', 'ratcatcher', 'mourner', 'bone_collector'):
+        write(n, humanoid)
+    flag = json.loads(json.dumps(humanoid))
+    flag['attack.bite']['bones']['left_arm'] = {'rotation': {'0.0': [0, 0, 0], '0.2': [-140, 0, -20], '0.35': [30, 0, 0], '0.5': [0, 0, 0]}}
+    write('flagellant', flag)
+    float_bob = {'body': {'position': [0, f'{swing(0.8, 120)} + 2', 0]},
+                 'wisp_left': {'rotation': [swing(10, 160), 0, swing(8, 120)]},
+                 'wisp_right': {'rotation': [swing(10, 160, 180), 0, swing(-8, 120)]},
+                 'tail': {'rotation': [swing(6, 90), 0, swing(10, 140)]}}
+    write('miasma_wraith', {
+        'misc.idle': {'loop': True, 'animation_length': 3.0, 'bones': float_bob},
+        'move.walk': {'loop': True, 'animation_length': 3.0, 'bones': dict(float_bob, body={'position': [0, f'{swing(0.8, 240)} + 2', 0], 'rotation': [12, 0, 0]})},
+        'attack.bite': {'loop': False, 'animation_length': 0.5, 'bones': {
+            'wisp_left': {'rotation': {'0.0': [0, 0, 0], '0.2': [-90, 0, 0], '0.5': [0, 0, 0]}},
+            'wisp_right': {'rotation': {'0.0': [0, 0, 0], '0.2': [-90, 0, 0], '0.5': [0, 0, 0]}}}}})
+    pulse = {'sac': {'scale': [f'1 + {swing(0.05, 180)}', f'1 + {swing(0.09, 180)}', f'1 + {swing(0.05, 180)}']}}
+    write('pustule', {'misc.idle': {'loop': True, 'animation_length': 2.0, 'bones': pulse},
+                      'move.walk': {'loop': True, 'animation_length': 2.0, 'bones': pulse},
+                      'attack.bite': {'loop': False, 'animation_length': 0.3, 'bones': {'sac': {'scale': {'0.0': [1, 1, 1], '0.15': [1.15, 1.25, 1.15], '0.3': [1, 1, 1]}}}}})
+    rat = json.load(open(os.path.join(ASSETS, 'animations', 'entity', 'plague_rat.animation.json')))['animations']
+    for n in ('sewer_rat', 'burrower_rat'):
+        write(n, rat)
+    bloated = json.loads(json.dumps(rat))
+    bloated['misc.swell'] = {'loop': True, 'animation_length': 0.5, 'bones': {
+        'belly': {'scale': [f'1.2 + {swing(0.15, 720)}', f'1.25 + {swing(0.15, 720)}', f'1.15 + {swing(0.1, 720)}']}}}
+    write('bloated_rat', bloated)
+    scurry = {f'r{i}': {'position': [swing(0.6, 900, i * 50), f'math.abs({swing(0.4, 900, i * 70)})', swing(0.8, 600, i * 40)]} for i in range(7)}
+    idle_sw = {f'r{i}': {'position': [swing(0.3, 200, i * 50), 0, swing(0.3, 150, i * 40)]} for i in range(7)}
+    write('rat_swarm', {'misc.idle': {'loop': True, 'animation_length': 2.0, 'bones': idle_sw},
+                        'move.walk': {'loop': True, 'animation_length': 0.4, 'bones': scurry}})
+    write('carrion_crow', {
+        'misc.idle': {'loop': True, 'animation_length': 2.0, 'bones': {'skull': {'rotation': [swing(8, 360), swing(20, 90), 0]}}},
+        'move.fly': {'loop': True, 'animation_length': 0.4, 'bones': {
+            'wing_left': {'rotation': [0, 0, f'-20 + {swing(50, 900)}']},
+            'wing_right': {'rotation': [0, 0, f'20 - {swing(50, 900)}']},
+            'leg_left': {'rotation': [60, 0, 0]}, 'leg_right': {'rotation': [60, 0, 0]},
+            'body': {'position': [0, swing(0.5, 900), 0]}}},
+        'attack.bite': {'loop': False, 'animation_length': 0.3, 'bones': {
+            'skull': {'rotation': {'0.0': [0, 0, 0], '0.1': [35, 0, 0], '0.3': [0, 0, 0]}}}}})
+
+
+def system5_icons():
+    items = os.path.join(ASSETS, 'textures', 'item')
+    sprite(os.path.join(items, 'pestilent_ichor.png'), [
+        '................', '................', '.......g........', '......gGg.......', '......gGg.......', '.....gGGGg......',
+        '....gGGhGGg.....', '....gGhGGGg.....', '...gGGGGGGGg....', '...gGGGGGgGg....', '...gGGGGGGGg....', '....gGGGGGg.....',
+        '.....ggggg......', '................', '................', '................'], {'g': '#4a5020', 'G': '#7a8a30', 'h': '#c8d870'})
+    def effect(name, draw):
+        img = [[(0, 0, 0, 0)] * 18 for _ in range(18)]
+        draw(img)
+        write_png(os.path.join(ASSETS, 'textures', 'mob_effect', f'{name}.png'), img)
+    def eye(img):
+        for y in range(18):
+            for x in range(18):
+                d = ((x - 8.5) / 7.5) ** 2 + ((y - 8.5) / 4.5) ** 2
+                if d <= 1: img[y][x] = rgba('#3a3040' if d > 0.6 else '#d8d0c8')
+                if (x - 8.5) ** 2 + (y - 8.5) ** 2 <= 5: img[y][x] = rgba('#151214')
+    def swirl(img):
+        import math
+        for t in range(120):
+            a = t * 0.18; r = t * 0.065
+            x, y = int(8.5 + math.cos(a) * r), int(8.5 + math.sin(a) * r)
+            if 0 <= x < 18 and 0 <= y < 18: img[y][x] = rgba('#9aa84a' if t % 2 else '#5a6a2a')
+    def meat(img):
+        for y in range(4, 14):
+            for x in range(3, 15):
+                if ((x - 8.5) / 6) ** 2 + ((y - 8.5) / 5) ** 2 <= 1:
+                    img[y][x] = rgba('#7a8a3a' if (x * 7 + y * 3) % 5 == 0 else '#8a5a3a')
+        for x, y in ((6, 6), (10, 8), (8, 11)):
+            img[y][x] = rgba('#1a1612')
+    effect('dread', eye); effect('delirium', swirl); effect('rotting', meat)
+
+
 if __name__ == '__main__':
     plague_doctor()
     plague_mask()
@@ -959,5 +1331,11 @@ if __name__ == '__main__':
     doctors_garb()
     apothecary_models()
     plague_cross()
+    heralds()
+    miasma_wraith()
+    pustule()
+    vermin()
+    system5_icons()
     import vanilla_afflicted
     vanilla_afflicted.build_all()
+    system5_animations()

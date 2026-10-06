@@ -130,6 +130,10 @@ public final class Plague {
     /** Called when the current stage runs out: worsen, or at the last stage recover (people only). */
     static void advance(LivingEntity entity, int stage) {
         Disease disease = disease(entity);
+        if (disease == Disease.ROT && stage >= MAX_STAGE && rotConverts(entity)) {
+            convert(entity);
+            return;
+        }
         if (stage < MAX_STAGE) {
             entity.addEffect(new MobEffectInstance(ModRegistry.PLAGUE, stageTicks(entity, disease, stage + 1), stage + 1));
             notify(entity, "stage" + (stage + 1));
@@ -139,6 +143,26 @@ public final class Plague {
         } else {
             entity.addEffect(new MobEffectInstance(ModRegistry.PLAGUE, stageTicks(entity, disease, MAX_STAGE), MAX_STAGE));
         }
+    }
+
+    /** The Rot takes animals and villagers (not players, not tamed pets) straight to their Afflicted form. */
+    private static boolean rotConverts(LivingEntity entity) {
+        if (entity instanceof Player || isPerson(entity) && !(entity instanceof AbstractVillager)) return false;
+        return AfflictedMob.formOf(entity.getType()) != null;
+    }
+
+    private static void convert(LivingEntity entity) {
+        if (!(entity.level() instanceof net.minecraft.server.level.ServerLevel level)) return;
+        AfflictedMob mob = AfflictedMob.formOf(entity.getType()).create(level);
+        if (mob == null) return;
+        mob.moveTo(entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
+        mob.finalizeSpawn(level, level.getCurrentDifficultyAt(entity.blockPosition()), net.minecraft.world.entity.MobSpawnType.CONVERSION, null);
+        mob.setPersistenceRequired();
+        level.addFreshEntity(mob);
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.SQUID_INK, entity.getX(), entity.getY(0.5), entity.getZ(), 20, 0.3, 0.4, 0.3, 0.02);
+        level.playSound(null, entity.blockPosition(), net.minecraft.sounds.SoundEvents.ZOMBIE_VILLAGER_CONVERTED, net.minecraft.sounds.SoundSource.HOSTILE, 1f, 0.6f);
+        addPoints(entity, PestConfig.POINTS_CORPSE_RISE.get());
+        entity.discard();
     }
 
     /** Set the stage directly (lancet, leeches). Stage below 0 cures. */

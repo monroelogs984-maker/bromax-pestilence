@@ -18,6 +18,7 @@ public final class Phase {
     public static final int OUTBREAK = 4;       // the Blight
     public static final int HERALDS = 5;        // plague pits
     public static final int BLACK_DEATH = 6;    // miasma wells
+    public static final int DANSE_MACABRE = 7;  // the Rot
 
     private Phase() {}
 

@@ -1,0 +1,42 @@
+{
+  "name": "Vermin",
+  "icon": "bromaxpestilence:sewer_rat_spawn_egg",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Mature warrens breed worse than plague rats, and the dead draw their own followers.$(br2)$(l)Flea Clouds$() and $(l)Fly Swarms$() are only specks in the air: no blade touches them. Fire, or the smoke of a brazier or censer, is the only way. Fleas carry bubonic plague; flies spoil your meat."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:sewer_rat",
+      "name": "Sewer Rat",
+      "text": "Big, tough, and found below ground."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:bloated_rat",
+      "name": "Bloated Rat",
+      "text": "Swells when it reaches you, then bursts into miasma. Bursts when killed, too."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:burrower_rat",
+      "name": "Burrower Rat",
+      "text": "Lies in wait underground and leaps out when you pass. Only explosions reach it buried."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:rat_swarm",
+      "name": "Rat Swarm",
+      "text": "Bites everything it runs over. Fire does it double harm."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:carrion_crow",
+      "name": "Carrion Crow",
+      "text": "Circles the dead. Where there are crows, there are bodies."
+    }
+  ]
+}

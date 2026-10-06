@@ -1,0 +1,12 @@
+{
+  "name": "Strange Afflictions",
+  "icon": "minecraft:fermented_spider_eye",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 22,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(l)Dread$(), from the Mourners: you cannot run, and walk heavily.$(br2)$(l)Delirium$(), from the Wraiths: you hear rats, steps, doors and bells that are not there.$(br2)$(l)Rotting$(), from the flies: the raw meat you carry spoils, a piece at a time.$(br2)None of them can hurt you on their own."
+    }
+  ]
+}

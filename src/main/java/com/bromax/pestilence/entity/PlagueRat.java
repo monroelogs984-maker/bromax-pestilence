@@ -35,7 +35,7 @@ import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 /** Small, fast, fragile carrier. Its bite can pass the plague on; it runs from cats. From the Murrain on it hunts chickens and rabbits too. */
-public class PlagueRat extends Monster implements GeoEntity {
+public class PlagueRat extends Monster implements GeoEntity, PhaseGated {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public PlagueRat(EntityType<? extends Monster> type, Level level) {
@@ -68,6 +68,11 @@ public class PlagueRat extends Monster implements GeoEntity {
 
     private boolean murrain(LivingEntity target) {
         return PestilenceData.phase(level()) >= Phase.MURRAIN;
+    }
+
+    @Override
+    public int minPhase() {
+        return 0;
     }
 
     @Override

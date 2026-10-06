@@ -63,6 +63,15 @@ public class NestBlock extends BaseEntityBlock {
         return kind;
     }
 
+    /** Push a nest up one stage (a Bone Collector feeding it). False if it is already stage IV. */
+    public static boolean grow(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (!(state.getBlock() instanceof NestBlock) || state.getValue(STAGE) >= 4) return false;
+        level.setBlock(pos, state.setValue(STAGE, state.getValue(STAGE) + 1), Block.UPDATE_ALL);
+        level.playSound(null, pos, SoundEvents.SCULK_BLOCK_SPREAD, SoundSource.BLOCKS, 1f, 0.6f);
+        return true;
+    }
+
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return codec;

@@ -1,0 +1,68 @@
+{
+  "name": "The Heralds",
+  "icon": "bromaxpestilence:plague_bearer_spawn_egg",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 19,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "From the $(l)Heralds$() phase, the Pestilence has servants: people, or what is left of them, each doing a job for the sickness. They walk at night and come out of mature nests.$(br2)Learn what each one does; it tells you which to kill first."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:plague_bearer",
+      "name": "Plague Bearer",
+      "text": "Rings a handbell you will hear long before you see it, and leaves bodies behind. Burn them.",
+      "scale": 0.8
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:gravedigger",
+      "name": "Gravedigger",
+      "text": "Tends the dead with its shovel: corpses it reaches rise far sooner."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:flagellant",
+      "name": "Flagellant",
+      "text": "Whips itself, and every Herald and Afflicted near it grows stronger and faster. Kill it first."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:censer_monk",
+      "name": "Censer Monk",
+      "text": "Its censer leaves miasma behind it and blights the ground it walks."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:ratcatcher",
+      "name": "Ratcatcher",
+      "text": "Keeps its distance and whistles up rats. Rush it."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:mourner",
+      "name": "Mourner",
+      "text": "Weeps, and fills those near it with $(l)Dread$(): no running."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:bone_collector",
+      "name": "Bone Collector",
+      "text": "Steals the dead and carries them to the nests, which grow on them. Killing it drops what it carried."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:miasma_wraith",
+      "name": "Miasma Wraith",
+      "text": "Arrows pass through it. Its touch brings pneumonic plague and $(l)Delirium$(). Fire hurts it double; brazier or censer smoke tears it apart."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:pustule",
+      "name": "Pustule",
+      "text": "Never moves. Strike it up close, or stand by it once swollen, and it bursts into miasma. Shoot it.",
+      "scale": 0.8
+    }
+  ]
+}

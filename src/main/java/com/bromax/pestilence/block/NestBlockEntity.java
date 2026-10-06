@@ -72,7 +72,7 @@ public class NestBlockEntity extends BlockEntity {
         switch (block.kind()) {
             case WARREN -> {
                 if (nest.timer % 600 == 0 && server.getEntitiesOfClass(PlagueRat.class, area).size() < 2 * stage) {
-                    PlagueRat rat = ModRegistry.PLAGUE_RAT.get().create(server);
+                    PlagueRat rat = ratFor(server, stage).create(server);
                     if (rat != null) {
                         rat.moveTo(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, server.random.nextFloat() * 360f, 0f);
                         rat.finalizeSpawn(server, server.getCurrentDifficultyAt(pos), MobSpawnType.SPAWNER, null);
@@ -94,12 +94,52 @@ public class NestBlockEntity extends BlockEntity {
                 if (nest.timer % 400 == 0) MiasmaCloud.spawn(server, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 2 + stage, 200);
             }
         }
+        heralds(server, pos, block.kind(), stage, nest.timer);
 
         if (PestConfig.BLIGHT_ENABLED.get() && nest.timer % PestConfig.BLIGHT_INTERVAL.get() == 0
                 && PestilenceData.phase(server) >= Phase.OUTBREAK) {
             int attempts = block.kind() == NestKind.WELL ? 2 * stage : stage;
             Blight.spread(server, pos, PestConfig.BLIGHT_RADIUS_PER_STAGE.get() * stage + (block.kind() == NestKind.WELL ? 2 : 0), attempts);
         }
+    }
+
+    /** Mature warrens breed worse rats: sewer, bloated and burrowing (and from stage IV, swarms). */
+    private static EntityType<? extends PlagueRat> ratFor(ServerLevel level, int stage) {
+        if (stage < 2 || level.random.nextFloat() > 0.35f) return ModRegistry.PLAGUE_RAT.get();
+        return switch (level.random.nextInt(3)) {
+            case 0 -> ModRegistry.SEWER_RAT.get();
+            case 1 -> ModRegistry.BLOATED_RAT.get();
+            default -> ModRegistry.BURROWER_RAT.get();
+        };
+    }
+
+    /** From the Heralds phase, mature nests send out their servants and grow pustules. */
+    private static void heralds(ServerLevel level, BlockPos pos, NestKind kind, int stage, int timer) {
+        if (PestilenceData.phase(level) < Phase.HERALDS) return;
+        AABB near = new AABB(pos).inflate(24);
+        if (timer % 2400 == 0 && stage >= 3 && kind != NestKind.WARREN
+                && level.getEntitiesOfClass(com.bromax.pestilence.entity.herald.Pustule.class, new AABB(pos).inflate(8)).size() < stage - 2) {
+            summon(level, pos, ModRegistry.PUSTULE.get());
+        }
+        if (timer % 1800 != 0 || !level.getEntitiesOfClass(com.bromax.pestilence.entity.herald.HeraldMob.class, near,
+                h -> !(h instanceof com.bromax.pestilence.entity.herald.Pustule)).isEmpty()) return;
+        switch (kind) {
+            case PIT -> { if (stage >= 3) summon(level, pos, level.random.nextBoolean() ? ModRegistry.GRAVEDIGGER.get() : ModRegistry.BONE_COLLECTOR.get()); }
+            case WELL -> { if (stage >= 2) summon(level, pos, level.random.nextBoolean() ? ModRegistry.MIASMA_WRAITH.get() : ModRegistry.CENSER_MONK.get()); }
+            case WARREN -> {
+                if (stage >= 3) summon(level, pos, ModRegistry.RATCATCHER.get());
+                if (stage >= 4 && PestilenceData.phase(level) >= Phase.BLACK_DEATH) summon(level, pos, ModRegistry.RAT_SWARM.get());
+            }
+        }
+    }
+
+    private static void summon(ServerLevel level, BlockPos pos, EntityType<? extends net.minecraft.world.entity.Mob> type) {
+        net.minecraft.world.entity.Mob mob = type.create(level);
+        if (mob == null) return;
+        BlockPos at = pos.relative(net.minecraft.core.Direction.Plane.HORIZONTAL.getRandomDirection(level.random));
+        mob.moveTo(at.getX() + 0.5, at.getY() + 0.1, at.getZ() + 0.5, level.random.nextFloat() * 360f, 0f);
+        mob.finalizeSpawn(level, level.getCurrentDifficultyAt(at), MobSpawnType.SPAWNER, null);
+        level.addFreshEntity(mob);
     }
 
     @Override

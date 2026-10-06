@@ -1,0 +1,85 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "misc.idle": {
+      "loop": true,
+      "animation_length": 2.0,
+      "bones": {
+        "skull": {
+          "rotation": [
+            "math.sin(query.anim_time * 360 + 0) * 8",
+            "math.sin(query.anim_time * 90 + 0) * 20",
+            0
+          ]
+        }
+      }
+    },
+    "move.fly": {
+      "loop": true,
+      "animation_length": 0.4,
+      "bones": {
+        "wing_left": {
+          "rotation": [
+            0,
+            0,
+            "-20 + math.sin(query.anim_time * 900 + 0) * 50"
+          ]
+        },
+        "wing_right": {
+          "rotation": [
+            0,
+            0,
+            "20 - math.sin(query.anim_time * 900 + 0) * 50"
+          ]
+        },
+        "leg_left": {
+          "rotation": [
+            60,
+            0,
+            0
+          ]
+        },
+        "leg_right": {
+          "rotation": [
+            60,
+            0,
+            0
+          ]
+        },
+        "body": {
+          "position": [
+            0,
+            "math.sin(query.anim_time * 900 + 0) * 0.5",
+            0
+          ]
+        }
+      }
+    },
+    "attack.bite": {
+      "loop": false,
+      "animation_length": 0.3,
+      "bones": {
+        "skull": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.1": [
+              35,
+              0,
+              0
+            ],
+            "0.3": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  },
+  "geckolib_format_version": 2
+}

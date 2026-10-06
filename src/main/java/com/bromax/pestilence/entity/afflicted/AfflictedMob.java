@@ -38,7 +38,7 @@ import java.util.Map;
  * A plague-risen animal: hostile, immune to the plague, and its blows can pass it on. Flies follow
  * it, so it is readable from a distance. Each form adds its own trick on top.
  */
-public abstract class AfflictedMob extends Monster implements GeoEntity {
+public abstract class AfflictedMob extends Monster implements GeoEntity, com.bromax.pestilence.entity.PhaseGated {
     private static Map<EntityType<?>, EntityType<? extends AfflictedMob>> forms;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -86,6 +86,21 @@ public abstract class AfflictedMob extends Monster implements GeoEntity {
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, false));
     }
 
+    /** What a blow passes on: septicemic plague, or the Rot from the Danse Macabre on. */
+    protected Disease contactDisease() {
+        return com.bromax.pestilence.phase.PestilenceData.phase(level()) >= com.bromax.pestilence.phase.Phase.DANSE_MACABRE ? Disease.ROT : Disease.SEPTICEMIC;
+    }
+
+    @Override
+    public int minPhase() {
+        return com.bromax.pestilence.phase.Phase.RAT_SEASON;
+    }
+
+    /** Whether flies follow it around. */
+    protected boolean hasFlies() {
+        return true;
+    }
+
     protected double chaseSpeed() {
         return 1.1;
     }
@@ -93,7 +108,7 @@ public abstract class AfflictedMob extends Monster implements GeoEntity {
     @Override
     public boolean doHurtTarget(Entity target) {
         boolean hit = super.doHurtTarget(target);
-        if (hit && target instanceof LivingEntity living) Plague.tryContactInfect(living, PestConfig.AFFLICTED_BITE_CHANCE.get(), Disease.SEPTICEMIC);
+        if (hit && target instanceof LivingEntity living) Plague.tryContactInfect(living, PestConfig.AFFLICTED_BITE_CHANCE.get(), contactDisease());
         return hit;
     }
 
@@ -105,7 +120,7 @@ public abstract class AfflictedMob extends Monster implements GeoEntity {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (level().isClientSide && random.nextInt(8) == 0) {
+        if (level().isClientSide && hasFlies() && random.nextInt(8) == 0) {
             level().addParticle(ModRegistry.FLY.get(), getRandomX(0.8), getY() + getBbHeight() * (0.5 + random.nextDouble() * 0.7),
                     getRandomZ(0.8), 0, 0, 0);
         }

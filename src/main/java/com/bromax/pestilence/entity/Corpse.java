@@ -46,6 +46,7 @@ public class Corpse extends Entity {
 
     private int age;
     private int burnTicks;
+    private boolean flies;
 
     public Corpse(EntityType<? extends Corpse> type, Level level) {
         super(type, level);
@@ -53,6 +54,15 @@ public class Corpse extends Entity {
 
     public static void spawnFrom(ServerLevel level, LivingEntity dead) {
         place(level, dead.getType(), 0, dead.getX(), dead.getY(), dead.getZ(), dead.getYRot());
+        // Crows come to the dead.
+        if (level.random.nextFloat() < 0.4f && level.canSeeSky(dead.blockPosition())) {
+            for (int i = 0; i < 1 + level.random.nextInt(2); i++) {
+                var crow = ModRegistry.CARRION_CROW.get().create(level);
+                if (crow == null) continue;
+                crow.moveTo(dead.getX() + level.random.nextGaussian() * 3, dead.getY() + 8, dead.getZ() + level.random.nextGaussian() * 3, 0f, 0f);
+                level.addFreshEntity(crow);
+            }
+        }
     }
 
     public static void place(ServerLevel level, EntityType<?> source, int age, double x, double y, double z, float yaw) {
@@ -79,6 +89,11 @@ public class Corpse extends Entity {
     public EntityType<?> getSource() {
         ResourceLocation id = ResourceLocation.tryParse(entityData.get(SOURCE));
         return id == null ? null : BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
+    }
+
+    /** A Gravedigger's work: bring the rising closer. */
+    public void hasten(int ticks) {
+        age += ticks;
     }
 
     public boolean isBurning() {
@@ -116,6 +131,15 @@ public class Corpse extends Entity {
         }
         int rise = PestConfig.CORPSE_RISE_TICKS.get();
         age++;
+        if (!flies && age > 1200 && level() instanceof ServerLevel level) {
+            // Left lying a minute, a body draws a fly swarm.
+            flies = true;
+            var swarm = ModRegistry.FLY_SWARM.get().create(level);
+            if (swarm != null) {
+                swarm.moveTo(getX(), getY() + 0.5, getZ());
+                level.addFreshEntity(swarm);
+            }
+        }
         if (!isStirring() && age >= rise - STIR_TICKS) {
             entityData.set(STIRRING, true);
             level().playSound(null, blockPosition(), SoundEvents.HUSK_AMBIENT, SoundSource.HOSTILE, 1f, 0.6f);
@@ -225,6 +249,7 @@ public class Corpse extends Entity {
         age = tag.getInt("age");
         entityData.set(BURNING, tag.getBoolean("burning"));
         entityData.set(STIRRING, tag.getBoolean("stirring"));
+        flies = tag.getBoolean("flies");
     }
 
     @Override
@@ -233,5 +258,6 @@ public class Corpse extends Entity {
         tag.putInt("age", age);
         tag.putBoolean("burning", isBurning());
         tag.putBoolean("stirring", isStirring());
+        tag.putBoolean("flies", flies);
     }
 }

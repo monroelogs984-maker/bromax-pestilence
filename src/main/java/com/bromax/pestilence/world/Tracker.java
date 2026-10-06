@@ -47,6 +47,12 @@ public final class Tracker {
         return n;
     }
 
+    public static java.util.Optional<BlockPos> nearestNest(Level level, BlockPos pos, double range) {
+        Set<BlockPos> set = NESTS.get(level.dimension());
+        if (set == null) return java.util.Optional.empty();
+        return set.stream().filter(p -> p.distSqr(pos) <= range * range).min(java.util.Comparator.comparingDouble(p -> p.distSqr(pos)));
+    }
+
     /** Inside the protected circle of any lit Herb Brazier. */
     public static boolean inBrazier(Level level, BlockPos pos) {
         Set<BlockPos> set = BRAZIERS.get(level.dimension());

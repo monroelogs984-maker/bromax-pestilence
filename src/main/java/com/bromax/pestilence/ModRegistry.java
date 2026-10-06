@@ -27,6 +27,22 @@ import com.bromax.pestilence.entity.afflicted.AfflictedPig;
 import com.bromax.pestilence.entity.afflicted.AfflictedSheep;
 import com.bromax.pestilence.entity.afflicted.AfflictedWolf;
 import com.bromax.pestilence.entity.afflicted.AfflictedVillager;
+import com.bromax.pestilence.entity.herald.PlagueBearer;
+import com.bromax.pestilence.entity.herald.Gravedigger;
+import com.bromax.pestilence.entity.herald.Flagellant;
+import com.bromax.pestilence.entity.herald.CenserMonk;
+import com.bromax.pestilence.entity.herald.Ratcatcher;
+import com.bromax.pestilence.entity.herald.Mourner;
+import com.bromax.pestilence.entity.herald.BoneCollector;
+import com.bromax.pestilence.entity.herald.MiasmaWraith;
+import com.bromax.pestilence.entity.herald.Pustule;
+import com.bromax.pestilence.entity.vermin.SewerRat;
+import com.bromax.pestilence.entity.vermin.BloatedRat;
+import com.bromax.pestilence.entity.vermin.BurrowerRat;
+import com.bromax.pestilence.entity.vermin.RatSwarm;
+import com.bromax.pestilence.entity.vermin.VerminCloud;
+import com.bromax.pestilence.entity.vermin.CarrionCrow;
+import com.bromax.pestilence.effect.AfflictionEffect;
 import com.bromax.pestilence.block.PlagueCrossBlock;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
@@ -124,6 +140,9 @@ public final class ModRegistry {
     // Effects
     public static final DeferredHolder<MobEffect, MobEffect> PLAGUE = EFFECTS.register("plague", PlagueEffect::new);
     public static final DeferredHolder<MobEffect, MobEffect> IMMUNITY = EFFECTS.register("plague_immunity", ImmunityEffect::new);
+    public static final DeferredHolder<MobEffect, MobEffect> DREAD = EFFECTS.register("dread", () -> new AfflictionEffect(AfflictionEffect.Kind.DREAD, 0x2a2430));
+    public static final DeferredHolder<MobEffect, MobEffect> DELIRIUM = EFFECTS.register("delirium", () -> new AfflictionEffect(AfflictionEffect.Kind.DELIRIUM, 0x7a8a3a));
+    public static final DeferredHolder<MobEffect, MobEffect> ROTTING = EFFECTS.register("rotting", () -> new AfflictionEffect(AfflictionEffect.Kind.ROTTING, 0x5a4a2a));
 
     // Particles
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FLY = PARTICLES.register("fly", () -> new SimpleParticleType(false));
@@ -137,6 +156,26 @@ public final class ModRegistry {
     public static final DeferredHolder<EntityType<?>, EntityType<AfflictedChicken>> AFFLICTED_CHICKEN = mob("afflicted_chicken", AfflictedChicken::new, MobCategory.MONSTER, 0.4f, 0.7f);
     public static final DeferredHolder<EntityType<?>, EntityType<AfflictedHorse>> AFFLICTED_HORSE = mob("afflicted_horse", AfflictedHorse::new, MobCategory.MONSTER, 1.3f, 1.6f);
     public static final DeferredHolder<EntityType<?>, EntityType<AfflictedVillager>> AFFLICTED_VILLAGER = mob("afflicted_villager", AfflictedVillager::new, MobCategory.MONSTER, 0.6f, 1.95f);
+    // Heralds
+    public static final DeferredHolder<EntityType<?>, EntityType<PlagueBearer>> PLAGUE_BEARER = mob("plague_bearer", PlagueBearer::new, MobCategory.MONSTER, 0.75f, 2.2f);
+    public static final DeferredHolder<EntityType<?>, EntityType<Gravedigger>> GRAVEDIGGER = mob("gravedigger", Gravedigger::new, MobCategory.MONSTER, 0.6f, 1.95f);
+    public static final DeferredHolder<EntityType<?>, EntityType<Flagellant>> FLAGELLANT = mob("flagellant", Flagellant::new, MobCategory.MONSTER, 0.6f, 1.95f);
+    public static final DeferredHolder<EntityType<?>, EntityType<CenserMonk>> CENSER_MONK = mob("censer_monk", CenserMonk::new, MobCategory.MONSTER, 0.6f, 1.95f);
+    public static final DeferredHolder<EntityType<?>, EntityType<Ratcatcher>> RATCATCHER = mob("ratcatcher", Ratcatcher::new, MobCategory.MONSTER, 0.6f, 1.95f);
+    public static final DeferredHolder<EntityType<?>, EntityType<Mourner>> MOURNER = mob("mourner", Mourner::new, MobCategory.MONSTER, 0.6f, 1.95f);
+    public static final DeferredHolder<EntityType<?>, EntityType<BoneCollector>> BONE_COLLECTOR = mob("bone_collector", BoneCollector::new, MobCategory.MONSTER, 0.6f, 1.95f);
+    public static final DeferredHolder<EntityType<?>, EntityType<MiasmaWraith>> MIASMA_WRAITH = mob("miasma_wraith", MiasmaWraith::new, MobCategory.MONSTER, 0.7f, 1.9f);
+    public static final DeferredHolder<EntityType<?>, EntityType<Pustule>> PUSTULE = mob("pustule", Pustule::new, MobCategory.MONSTER, 0.9f, 0.9f);
+    // Vermin
+    public static final DeferredHolder<EntityType<?>, EntityType<SewerRat>> SEWER_RAT = mob("sewer_rat", SewerRat::new, MobCategory.MONSTER, 0.8f, 0.6f);
+    public static final DeferredHolder<EntityType<?>, EntityType<BloatedRat>> BLOATED_RAT = mob("bloated_rat", BloatedRat::new, MobCategory.MONSTER, 0.7f, 0.6f);
+    public static final DeferredHolder<EntityType<?>, EntityType<BurrowerRat>> BURROWER_RAT = mob("burrower_rat", BurrowerRat::new, MobCategory.MONSTER, 0.6f, 0.45f);
+    public static final DeferredHolder<EntityType<?>, EntityType<RatSwarm>> RAT_SWARM = mob("rat_swarm", RatSwarm::new, MobCategory.MONSTER, 1.3f, 0.5f);
+    public static final DeferredHolder<EntityType<?>, EntityType<CarrionCrow>> CARRION_CROW = mob("carrion_crow", CarrionCrow::new, MobCategory.MONSTER, 0.5f, 0.6f);
+    public static final DeferredHolder<EntityType<?>, EntityType<VerminCloud>> FLEA_CLOUD = mob("flea_cloud",
+            (type, level) -> new VerminCloud(type, level, VerminCloud.Kind.FLEAS), MobCategory.MISC, 0.6f, 0.6f);
+    public static final DeferredHolder<EntityType<?>, EntityType<VerminCloud>> FLY_SWARM = mob("fly_swarm",
+            (type, level) -> new VerminCloud(type, level, VerminCloud.Kind.FLIES), MobCategory.MISC, 1f, 1f);
     public static final DeferredHolder<EntityType<?>, EntityType<AfflictedWolf>> AFFLICTED_WOLF = mob("afflicted_wolf", AfflictedWolf::new, MobCategory.MONSTER, 0.6f, 0.85f);
     public static final DeferredHolder<EntityType<?>, EntityType<Corpse>> CORPSE = ENTITIES.register("corpse",
             () -> EntityType.Builder.<Corpse>of(Corpse::new, MobCategory.MISC).sized(0.9f, 0.5f).clientTrackingRange(8).updateInterval(10).build(MODID + ":corpse"));
@@ -257,6 +296,23 @@ public final class ModRegistry {
     public static final DeferredItem<?> APOTHECARY_TABLE_ITEM = ITEMS.registerSimpleBlockItem(APOTHECARY_TABLE);
     public static final DeferredItem<?> DRYING_RACK_ITEM = ITEMS.registerSimpleBlockItem(DRYING_RACK);
     public static final DeferredItem<?> PLAGUE_CROSS_ITEM = ITEMS.registerSimpleBlockItem(PLAGUE_CROSS);
+    public static final DeferredItem<Item> PESTILENT_ICHOR = ITEMS.registerSimpleItem("pestilent_ichor");
+    public static final DeferredItem<Item> PLAGUE_BEARER_SPAWN_EGG = egg("plague_bearer", PLAGUE_BEARER, 0x4a3c2c, 0x7a6a4a);
+    public static final DeferredItem<Item> GRAVEDIGGER_SPAWN_EGG = egg("gravedigger", GRAVEDIGGER, 0x3a3028, 0x6b6b6b);
+    public static final DeferredItem<Item> FLAGELLANT_SPAWN_EGG = egg("flagellant", FLAGELLANT, 0xb08870, 0x7a1c14);
+    public static final DeferredItem<Item> CENSER_MONK_SPAWN_EGG = egg("censer_monk", CENSER_MONK, 0x4a5040, 0x8c8a3a);
+    public static final DeferredItem<Item> RATCATCHER_SPAWN_EGG = egg("ratcatcher", RATCATCHER, 0x5a4632, 0x4a3f38);
+    public static final DeferredItem<Item> MOURNER_SPAWN_EGG = egg("mourner", MOURNER, 0x151214, 0x4a4048);
+    public static final DeferredItem<Item> BONE_COLLECTOR_SPAWN_EGG = egg("bone_collector", BONE_COLLECTOR, 0x5a5248, 0xd8cfb8);
+    public static final DeferredItem<Item> MIASMA_WRAITH_SPAWN_EGG = egg("miasma_wraith", MIASMA_WRAITH, 0x6b7330, 0xc8d0a0);
+    public static final DeferredItem<Item> PUSTULE_SPAWN_EGG = egg("pustule", PUSTULE, 0xa89a5a, 0x7a2a24);
+    public static final DeferredItem<Item> SEWER_RAT_SPAWN_EGG = egg("sewer_rat", SEWER_RAT, 0x2f2b26, 0x8a6a64);
+    public static final DeferredItem<Item> BLOATED_RAT_SPAWN_EGG = egg("bloated_rat", BLOATED_RAT, 0x8a7a70, 0x6b7330);
+    public static final DeferredItem<Item> BURROWER_RAT_SPAWN_EGG = egg("burrower_rat", BURROWER_RAT, 0x5a4632, 0xd8cfb8);
+    public static final DeferredItem<Item> RAT_SWARM_SPAWN_EGG = egg("rat_swarm", RAT_SWARM, 0x4a3f38, 0x2a2420);
+    public static final DeferredItem<Item> CARRION_CROW_SPAWN_EGG = egg("carrion_crow", CARRION_CROW, 0x1a1a20, 0x4a4a58);
+    public static final DeferredItem<Item> FLEA_CLOUD_SPAWN_EGG = egg("flea_cloud", FLEA_CLOUD, 0x2a2018, 0x8c8a3a);
+    public static final DeferredItem<Item> FLY_SWARM_SPAWN_EGG = egg("fly_swarm", FLY_SWARM, 0x1a1612, 0x5a4a2a);
     public static final DeferredItem<Item> AFFLICTED_VILLAGER_SPAWN_EGG = egg("afflicted_villager", AFFLICTED_VILLAGER, 0x7a6a5a, 0x8c8a3a);
     public static final DeferredItem<Item> RAT_TAIL = ITEMS.registerSimpleItem("rat_tail");
     public static final DeferredItem<Item> SHROUDED_CORPSE = ITEMS.register("shrouded_corpse", () -> new ShroudedCorpseItem(new Item.Properties().stacksTo(1)));
@@ -333,14 +389,41 @@ public final class ModRegistry {
         event.put(AFFLICTED_HORSE.get(), AfflictedHorse.createAttributes().build());
         event.put(AFFLICTED_WOLF.get(), AfflictedWolf.createAttributes().build());
         event.put(AFFLICTED_VILLAGER.get(), AfflictedVillager.createAttributes().build());
+        event.put(PLAGUE_BEARER.get(), PlagueBearer.createAttributes().build());
+        event.put(GRAVEDIGGER.get(), Gravedigger.createAttributes().build());
+        event.put(FLAGELLANT.get(), Flagellant.createAttributes().build());
+        event.put(CENSER_MONK.get(), CenserMonk.createAttributes().build());
+        event.put(RATCATCHER.get(), Ratcatcher.createAttributes().build());
+        event.put(MOURNER.get(), Mourner.createAttributes().build());
+        event.put(BONE_COLLECTOR.get(), BoneCollector.createAttributes().build());
+        event.put(MIASMA_WRAITH.get(), MiasmaWraith.createAttributes().build());
+        event.put(PUSTULE.get(), Pustule.createAttributes().build());
+        event.put(SEWER_RAT.get(), SewerRat.createAttributes().build());
+        event.put(BLOATED_RAT.get(), BloatedRat.createAttributes().build());
+        event.put(BURROWER_RAT.get(), PlagueRat.createAttributes().build());
+        event.put(RAT_SWARM.get(), RatSwarm.createAttributes().build());
+        event.put(CARRION_CROW.get(), CarrionCrow.createAttributes().build());
+        event.put(FLEA_CLOUD.get(), VerminCloud.createAttributes().build());
+        event.put(FLY_SWARM.get(), VerminCloud.createAttributes().build());
     }
 
     private static void onSpawnPlacements(RegisterSpawnPlacementsEvent event) {
         event.register(PLAGUE_RAT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        for (var rat : List.of(BLOATED_RAT, BURROWER_RAT)) {
+            event.register(rat.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                    Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        }
+        event.register(RAT_SWARM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        // Sewer rats keep to the deep: caves below y 50.
+        event.register(SEWER_RAT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (type, level, reason, pos, random) -> pos.getY() < 50 && Monster.checkMonsterSpawnRules(type, level, reason, pos, random),
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(PLAGUE_DOCTOR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        for (var type : List.of(AFFLICTED_COW, AFFLICTED_PIG, AFFLICTED_SHEEP, AFFLICTED_CHICKEN, AFFLICTED_HORSE, AFFLICTED_WOLF, AFFLICTED_VILLAGER)) {
+        for (var type : List.of(AFFLICTED_COW, AFFLICTED_PIG, AFFLICTED_SHEEP, AFFLICTED_CHICKEN, AFFLICTED_HORSE, AFFLICTED_WOLF, AFFLICTED_VILLAGER,
+                PLAGUE_BEARER, GRAVEDIGGER, FLAGELLANT, CENSER_MONK, RATCATCHER, MOURNER, BONE_COLLECTOR, MIASMA_WRAITH)) {
             registerAfflicted(event, type.get());
         }
     }

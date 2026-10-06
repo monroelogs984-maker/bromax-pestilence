@@ -1,0 +1,12 @@
+{
+  "name": "The Rot",
+  "icon": "bromaxpestilence:theriac",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 21,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "In the $(l)Danse Macabre$() the Afflicted and the Heralds carry something worse. The $(4)Rot$() weakens, sickens, and leaves a green stain in the air around the sick.$(br2)Beasts and villagers that reach its worst stage do not die: they $(4)turn$(), there and then. People and their tamed animals only suffer.$(br2)Only $(l)Theriac$() cures it."
+    }
+  ]
+}

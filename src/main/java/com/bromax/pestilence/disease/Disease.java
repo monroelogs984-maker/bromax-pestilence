@@ -22,12 +22,15 @@ import net.minecraft.world.entity.LivingEntity;
  *   PNEUMONIC  miasma, coughs (very contagious)                 constant coughing, breathlessness; fastest
  *   SEPTICEMIC Afflicted blows                                  weakness, bleeding (never below 2 hearts)
  *   DYSENTERY  rotten flesh, raw meat, water near nests         hunger and nausea, no cough
+ *   ROT        Afflicted/Herald blows from phase 7              weakness, green rot; turns mobs Afflicted; Theriac only
  */
 public enum Disease implements StringRepresentable {
     BUBONIC(1.0, true, 1.0),
     PNEUMONIC(0.6, true, 2.0),
     SEPTICEMIC(0.8, false, 0.0),
-    DYSENTERY(0.7, false, 0.0);
+    DYSENTERY(0.7, false, 0.0),
+    /** Phase 7+: from Afflicted and Herald blows. Mobs and villagers that reach the worst stage turn Afflicted on the spot. */
+    ROT(0.7, false, 0.0);
 
     public static final Codec<Disease> CODEC = StringRepresentable.fromEnum(Disease::values);
 
@@ -82,6 +85,18 @@ public enum Disease implements StringRepresentable {
                 // Bleeding: every other symptom tick, never below 2 hearts.
                 if (stage >= 2 && e.tickCount % 80 < 40 && e.getHealth() > 4f) {
                     e.hurt(ModDamage.plague(level), 1f);
+                }
+            }
+            case ROT -> {
+                if (stage >= 1) {
+                    hidden(e, MobEffects.WEAKNESS, stage - 1);
+                    if (person) hidden(e, MobEffects.HUNGER, 1);
+                    level.sendParticles(new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(0.35f, 0.42f, 0.12f), 1.2f),
+                            e.getX(), e.getY(0.6), e.getZ(), 4, 0.25, 0.3, 0.25, 0);
+                }
+                if (stage >= 2) {
+                    hidden(e, MobEffects.MOVEMENT_SLOWDOWN, 0);
+                    if (person) hidden(e, MobEffects.DIG_SLOWDOWN, 1);
                 }
             }
             case DYSENTERY -> {
