@@ -1,0 +1,22 @@
+{
+  "name": "Staying the Tide",
+  "icon": "minecraft:white_banner",
+  "category": "bromaxpestilence:progress",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Not every world needs the Black Death. Whenever the Pestilence climbs a phase, whoever keeps the world (an operator, or the host of a single-player world) is offered a choice: $(6)[Halt the Pestilence here]$().$(br2)Take it, and the plague never climbs past that phase. Rats, sickness and the Afflicted stay, but nothing worse comes."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Commands",
+      "text": "$(l)/pestilence halt$() stops it at the current phase, $(l)/pestilence halt <phase>$() at any phase, and $(l)/pestilence resume$() lets it climb again.$(br2)The bell also warns you which phase comes next, so you are never caught unaware."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Presets",
+      "text": "The config offers three presets.$(br)$(2)Vanilla+$(): a lighter plague that stops at Outbreak, grows at half pace and spawns less.$(br)$(l)Standard$(): as written in this book.$(br)$(4)Grim$(): faster and more contagious, and the sick never get better on their own."
+    }
+  ]
+}

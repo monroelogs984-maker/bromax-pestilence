@@ -106,7 +106,7 @@ public class VillageOutbreaks extends SavedData {
         if (villages.containsKey(centre.asLong())) return;
         Village v = village(centre);
         setDirty();
-        if (PestilenceData.phase(level) >= Phase.HERALDS && level.random.nextDouble() < PestConfig.FALLEN_VILLAGE_CHANCE.get()) {
+        if (PestilenceData.phase(level) >= Phase.HERALDS && level.random.nextDouble() < PestConfig.fallenVillageChance()) {
             v.status = Status.FALLEN;
             VillageFall.fall(level, centre, true);
         }

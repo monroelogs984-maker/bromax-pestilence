@@ -31,10 +31,27 @@ public final class Phase {
         Component title = Component.translatable("message." + Pestilence.MODID + (rising ? ".phase_up" : ".phase_down"), to, name(to))
                 .withStyle(rising ? ChatFormatting.DARK_RED : ChatFormatting.DARK_GREEN, ChatFormatting.BOLD);
         Component detail = Component.translatable("phase." + Pestilence.MODID + "." + to + ".desc").withStyle(ChatFormatting.GRAY);
+        PestilenceData data = PestilenceData.get(server);
+        Component next = to < data.cap()
+                ? Component.translatable("message." + Pestilence.MODID + ".phase_next", to + 1, name(to + 1)).withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)
+                : null;
+        // Whoever decides for the world (an op, or the singleplayer host) can stop it right here.
+        Component halt = Component.translatable("message." + Pestilence.MODID + ".halt_prompt").withStyle(style -> style
+                .withColor(ChatFormatting.GOLD).withUnderlined(true)
+                .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, "/pestilence halt"))
+                .withHoverEvent(new net.minecraft.network.chat.HoverEvent(net.minecraft.network.chat.HoverEvent.Action.SHOW_TEXT,
+                        Component.translatable("message." + Pestilence.MODID + ".halt_hover"))));
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             player.sendSystemMessage(title);
             player.sendSystemMessage(detail);
+            if (rising && next != null) player.sendSystemMessage(next);
+            if (rising && canDecide(server, player)) player.sendSystemMessage(halt);
             player.playNotifySound(rising ? SoundEvents.BELL_BLOCK : SoundEvents.BELL_RESONATE, SoundSource.AMBIENT, 1f, rising ? 0.6f : 1.2f);
         }
+    }
+
+    /** Ops, or the owner of a singleplayer world (who may not have cheats on). */
+    public static boolean canDecide(MinecraftServer server, ServerPlayer player) {
+        return server.getPlayerList().isOp(player.getGameProfile()) || server.isSingleplayerOwner(player.getGameProfile());
     }
 }

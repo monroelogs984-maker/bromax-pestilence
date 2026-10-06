@@ -7,6 +7,30 @@ import java.util.List;
 public final class PestConfig {
     public static final ModConfigSpec SPEC;
 
+    /** How hard the Pestilence pushes. Scales the core numbers below without having to tune each one. */
+    public enum Preset {
+        /** A lighter plague: it stops at the Outbreak phase, grows at half pace, and no Blackblight. */
+        VANILLA_PLUS(0.5, 0.6, 0.6, 4, 0.0),
+        STANDARD(1.0, 1.0, 1.0, 8, 1.0),
+        /** Faster, more contagious, and the sick don't get better on their own. */
+        GRIM(1.6, 1.4, 1.0, 8, 1.6);
+
+        final double growth, contagion, spawns, fallen;
+        final int maxPhase;
+
+        Preset(double growth, double contagion, double spawns, int maxPhase, double fallen) {
+            this.growth = growth;
+            this.contagion = contagion;
+            this.spawns = spawns;
+            this.maxPhase = maxPhase;
+            this.fallen = fallen;
+        }
+    }
+
+    public static final ModConfigSpec.EnumValue<Preset> PRESET;
+    public static final ModConfigSpec.IntValue MAX_PHASE;
+    public static final ModConfigSpec.BooleanValue ALLOW_BLACKBLIGHT;
+
     // stages
     public static final ModConfigSpec.IntValue INCUBATION_TICKS;
     public static final ModConfigSpec.IntValue FEVER_TICKS;
@@ -80,6 +104,15 @@ public final class PestConfig {
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
+
+        b.push("difficulty");
+        PRESET = b.comment("VANILLA_PLUS: a light plague that stops at phase 4. STANDARD: as designed. GRIM: faster, more contagious, no natural recovery.")
+                .defineEnum("preset", Preset.STANDARD);
+        MAX_PHASE = b.comment("The Pestilence never climbs past this phase (the preset may cap it lower).")
+                .defineInRange("maxPhase", 8, 0, 8);
+        ALLOW_BLACKBLIGHT = b.comment("Whether the secret Blackblight can be unleashed at all (never on VANILLA_PLUS).")
+                .define("allowBlackblight", true);
+        b.pop();
 
         b.push("stages");
         INCUBATION_TICKS = b.comment("Stage 1 (Incubation) length in ticks for players and villagers. No symptoms, not contagious.")
@@ -215,6 +248,38 @@ public final class PestConfig {
     }
 
     private PestConfig() {}
+
+    public static Preset preset() {
+        return PRESET.get();
+    }
+
+    public static double dailyGrowth() {
+        return DAILY_GROWTH.get() * preset().growth;
+    }
+
+    public static double contagionChance() {
+        return CONTAGION_CHANCE.get() * preset().contagion;
+    }
+
+    public static double naturalSpawnRate() {
+        return NATURAL_SPAWN_RATE.get() * preset().spawns;
+    }
+
+    public static boolean naturalRecovery() {
+        return preset() != Preset.GRIM && NATURAL_RECOVERY.get();
+    }
+
+    public static int maxPhase() {
+        return Math.min(MAX_PHASE.get(), preset().maxPhase);
+    }
+
+    public static double fallenVillageChance() {
+        return Math.min(1, FALLEN_VILLAGE_CHANCE.get() * preset().fallen);
+    }
+
+    public static boolean blackblightAllowed() {
+        return preset() != Preset.VANILLA_PLUS && ALLOW_BLACKBLIGHT.get();
+    }
 
     public static int stageTicks(int stage) {
         return switch (stage) {

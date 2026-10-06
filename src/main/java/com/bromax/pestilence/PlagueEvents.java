@@ -136,7 +136,7 @@ public final class PlagueEvents {
         Disease disease = Plague.disease(source);
         if (!disease.contagious) return;
         double radius = PestConfig.CONTAGION_RADIUS.get();
-        double chance = PestConfig.CONTAGION_CHANCE.get() * disease.contagion;
+        double chance = PestConfig.contagionChance() * disease.contagion;
         for (LivingEntity other : source.level().getEntitiesOfClass(LivingEntity.class,
                 source.getBoundingBox().inflate(radius), o -> o != source && Plague.canCatch(o))) {
             if (source.getRandom().nextDouble() < chance * Plague.airExposure(other)) Plague.infect(other, disease);
@@ -200,7 +200,7 @@ public final class PlagueEvents {
         if (event.getSpawnType() != MobSpawnType.NATURAL && event.getSpawnType() != MobSpawnType.CHUNK_GENERATION) return;
         int phase = PestilenceData.phase(event.getEntity().level());
         if (event.getEntity() instanceof com.bromax.pestilence.entity.PhaseGated
-                && event.getEntity().getRandom().nextDouble() >= PestConfig.NATURAL_SPAWN_RATE.get()) {
+                && event.getEntity().getRandom().nextDouble() >= PestConfig.naturalSpawnRate()) {
             event.setSpawnCancelled(true);
             return;
         }

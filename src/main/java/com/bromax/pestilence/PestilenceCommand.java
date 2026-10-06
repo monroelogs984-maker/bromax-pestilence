@@ -1,6 +1,7 @@
 package com.bromax.pestilence;
 
 import com.bromax.pestilence.phase.Phase;
+import com.bromax.pestilence.PestConfig;
 import com.bromax.pestilence.phase.PestilenceData;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
@@ -30,6 +31,11 @@ public final class PestilenceCommand {
     static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("pestilence")
                 .executes(PestilenceCommand::status)
+                .then(Commands.literal("halt").requires(PestilenceCommand::canDecide)
+                        .executes(c -> halt(c, PestilenceData.get(c.getSource().getServer()).phase()))
+                        .then(Commands.argument("phase", IntegerArgumentType.integer(0, Phase.MAX))
+                                .executes(c -> halt(c, IntegerArgumentType.getInteger(c, "phase")))))
+                .then(Commands.literal("resume").requires(PestilenceCommand::canDecide).executes(PestilenceCommand::resume))
                 .then(Commands.literal("points").requires(s -> s.hasPermission(2))
                         .then(Commands.literal("set").then(Commands.argument("value", DoubleArgumentType.doubleArg(0))
                                 .executes(c -> setPoints(c, DoubleArgumentType.getDouble(c, "value"), false))))
@@ -50,6 +56,24 @@ public final class PestilenceCommand {
                                                         Disease.valueOf(StringArgumentType.getString(c, "disease").toUpperCase()))))))));
     }
 
+    private static boolean canDecide(CommandSourceStack source) {
+        return source.hasPermission(2) || source.getPlayer() != null && Phase.canDecide(source.getServer(), source.getPlayer());
+    }
+
+    private static int halt(CommandContext<CommandSourceStack> ctx, int phase) {
+        PestilenceData.get(ctx.getSource().getServer()).halt(ctx.getSource().getServer(), phase);
+        ctx.getSource().getServer().getPlayerList().broadcastSystemMessage(Component.translatable("message." + Pestilence.MODID + ".halted", phase, Phase.name(phase))
+                .withStyle(net.minecraft.ChatFormatting.DARK_GREEN), false);
+        return phase;
+    }
+
+    private static int resume(CommandContext<CommandSourceStack> ctx) {
+        PestilenceData.get(ctx.getSource().getServer()).resume();
+        ctx.getSource().getServer().getPlayerList().broadcastSystemMessage(Component.translatable("message." + Pestilence.MODID + ".resumed")
+                .withStyle(net.minecraft.ChatFormatting.DARK_RED), false);
+        return 1;
+    }
+
     private static int status(CommandContext<CommandSourceStack> ctx) {
         MinecraftServer server = ctx.getSource().getServer();
         PestilenceData data = PestilenceData.get(server);
@@ -58,6 +82,10 @@ public final class PestilenceCommand {
                 : Component.literal(String.valueOf((int) PestilenceData.threshold(phase + 1)));
         ctx.getSource().sendSuccess(() -> Component.translatable("command." + Pestilence.MODID + ".status",
                 phase, Phase.name(phase), (int) data.points(), next), false);
+        if (data.cap() < Phase.MAX) {
+            ctx.getSource().sendSuccess(() -> Component.translatable("command." + Pestilence.MODID + ".capped", data.cap(), Phase.name(data.cap()),
+                    PestConfig.preset().name().toLowerCase()), false);
+        }
         return phase;
     }
 

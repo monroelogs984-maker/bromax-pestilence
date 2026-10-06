@@ -82,13 +82,17 @@ were swapped for Cold Sweat. Rat-leather and bone tiers were cut as filler.
 2. **Warnings and opt-outs**: at every phase change, offer a clickable prompt to stop the Pestilence
    advancing (caps the phase). Supports a lighter, "vanilla+-ish" plague. Host/op only in multiplayer.
    Pair with config presets: Vanilla+, Standard, Grim.
+   **DONE**: `difficulty.preset` (VANILLA_PLUS caps at phase 4, x0.5 growth, x0.6 contagion/spawns, no
+   fallen villages; GRIM x1.6 growth, x1.4 contagion, no natural recovery), `difficulty.maxPhase`,
+   `/pestilence halt [phase]` and `/pestilence resume` (op or singleplayer host), a clickable halt prompt
+   and a "next phase" warning on every rise, persisted `halt` in the phase data. Book: Staying the Tide.
 3. **More weapons**: 3 more, spread through the progression, each with its own attack speed
    (candidates: fast Bone Saw, slow smoke-clearing Censer Flail, long-reach Gravedigger's Spade).
 4. **Curios first**: render the mask and charms on the player (ICurioRenderer), add more charm-slot
    items, and design gear around slots.
 5. **Farming feeds the plague**: growing and harvesting crops speeds the Pestilence up (granaries draw
    rats), so farming carries a cost.
-6. **Texture pass**: the current art is placeholder quality and needs a real pass.
+6. **Texture pass**: **DONE** (items, effects, blocks and mob models remastered).
 
 Claude's additions:
 - A playtest before any of the above.

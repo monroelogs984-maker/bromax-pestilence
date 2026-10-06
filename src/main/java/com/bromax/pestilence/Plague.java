@@ -152,7 +152,7 @@ public final class Plague {
         if (stage < MAX_STAGE) {
             entity.addEffect(new MobEffectInstance(ModRegistry.PLAGUE, stageTicks(entity, disease, stage + 1), stage + 1));
             notify(entity, "stage" + (stage + 1));
-        } else if (isPerson(entity) && PestConfig.NATURAL_RECOVERY.get()) {
+        } else if (isPerson(entity) && PestConfig.naturalRecovery()) {
             clear(entity);
             notify(entity, "recovered");
         } else {

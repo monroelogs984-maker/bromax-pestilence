@@ -20,6 +20,7 @@ public class PestilenceData extends SavedData {
     private double points;
     private int phase;
     private long lastDay = -1;
+    private int halt = -1;
     private java.util.UUID rider;
     private long riderSince;
 
@@ -40,6 +41,7 @@ public class PestilenceData extends SavedData {
         data.lastDay = tag.contains("lastDay") ? tag.getLong("lastDay") : -1;
         if (tag.hasUUID("rider")) data.rider = tag.getUUID("rider");
         data.riderSince = tag.getLong("riderSince");
+        data.halt = tag.contains("halt") ? tag.getInt("halt") : -1;
         return data;
     }
 
@@ -50,6 +52,7 @@ public class PestilenceData extends SavedData {
         tag.putLong("lastDay", lastDay);
         if (rider != null) tag.putUUID("rider", rider);
         tag.putLong("riderSince", riderSince);
+        tag.putInt("halt", halt);
         return tag;
     }
 
@@ -65,8 +68,28 @@ public class PestilenceData extends SavedData {
         set(server, points + amount);
     }
 
+    /** The highest phase the Pestilence may reach: the config/preset cap, or where a player halted it. */
+    public int cap() {
+        return halt >= 0 ? Math.min(halt, PestConfig.maxPhase()) : PestConfig.maxPhase();
+    }
+
+    public int halted() {
+        return halt;
+    }
+
+    public void halt(MinecraftServer server, int atPhase) {
+        halt = atPhase;
+        set(server, points);
+    }
+
+    public void resume() {
+        halt = -1;
+        setDirty();
+    }
+
     public void set(MinecraftServer server, double value) {
         points = Math.max(0, Math.min(value, threshold(Phase.MAX) * 1.25));
+        if (cap() < Phase.MAX) points = Math.min(points, threshold(cap() + 1) - 0.01);
         int newPhase = phaseFor(points);
         if (newPhase != phase) {
             int old = phase;
@@ -84,7 +107,7 @@ public class PestilenceData extends SavedData {
             setDirty();
         } else if (day > lastDay) {
             lastDay = day;
-            add(server, PestConfig.DAILY_GROWTH.get());
+            add(server, PestConfig.dailyGrowth());
         }
     }
 
