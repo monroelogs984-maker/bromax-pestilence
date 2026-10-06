@@ -1,8 +1,8 @@
 {
   "name": "Medicinal Herbs",
   "icon": "bromaxpestilence:garlic",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 11,
+  "category": "bromaxpestilence:physician",
+  "sortnum": 0,
   "pages": [
     {
       "type": "patchouli:text",

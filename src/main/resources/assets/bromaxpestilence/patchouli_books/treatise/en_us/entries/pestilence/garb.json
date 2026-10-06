@@ -1,8 +1,8 @@
 {
   "name": "The Doctor's Garb",
   "icon": "bromaxpestilence:doctors_coat",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 15,
+  "category": "bromaxpestilence:physician",
+  "sortnum": 4,
   "pages": [
     {
       "type": "patchouli:text",

@@ -1,8 +1,8 @@
 {
   "name": "Villages",
   "icon": "minecraft:bell",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 16,
+  "category": "bromaxpestilence:villages",
+  "sortnum": 0,
   "pages": [
     {
       "type": "patchouli:text",

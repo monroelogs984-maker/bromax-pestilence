@@ -1,0 +1,23 @@
+{
+  "name": "The Plague's Spoils",
+  "icon": "bromaxpestilence:pestilent_ichor",
+  "category": "bromaxpestilence:arms",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "bromaxpestilence:pestilent_ichor",
+      "text": "Wrung from $(l)Miasma Wraiths$(), $(l)Pustules$() and $(l)Censer Monks$(), and found in the Gravewarden's hoard. It binds the Consecrated Cleaver and the Plaguebane Amulet."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "bromaxpestilence:surgeons_steel",
+      "text": "The Gravewarden's own blades, and some of the Pale Rider's. Forged into the $(l)Consecrated Cleaver$()."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "bromaxpestilence:heart_of_pestilence",
+      "text": "What remains of the Pale Rider. Bound in gold it becomes the $(l)Plaguebane Amulet$()."
+    }
+  ]
+}

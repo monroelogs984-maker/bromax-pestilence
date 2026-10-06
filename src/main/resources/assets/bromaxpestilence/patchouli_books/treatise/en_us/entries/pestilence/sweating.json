@@ -2,7 +2,7 @@
   "name": "Sweating Sickness",
   "icon": "minecraft:water_bucket",
   "category": "bromaxpestilence:pestilence",
-  "sortnum": 29,
+  "sortnum": 5,
   "pages": [
     {
       "type": "patchouli:text",

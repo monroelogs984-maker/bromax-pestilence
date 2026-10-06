@@ -1,8 +1,8 @@
 {
   "name": "The Phases",
   "icon": "minecraft:bell",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 5,
+  "category": "bromaxpestilence:progress",
+  "sortnum": 0,
   "pages": [
     {
       "type": "patchouli:text",

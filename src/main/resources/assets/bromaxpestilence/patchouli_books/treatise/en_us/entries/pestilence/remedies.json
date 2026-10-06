@@ -1,8 +1,8 @@
 {
   "name": "Remedies",
   "icon": "bromaxpestilence:theriac",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 13,
+  "category": "bromaxpestilence:physician",
+  "sortnum": 2,
   "pages": [
     {
       "type": "patchouli:text",

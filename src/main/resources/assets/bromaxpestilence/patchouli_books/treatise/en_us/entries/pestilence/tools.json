@@ -1,8 +1,8 @@
 {
   "name": "Physician's Tools",
   "icon": "bromaxpestilence:physicians_kit",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 14,
+  "category": "bromaxpestilence:physician",
+  "sortnum": 3,
   "pages": [
     {
       "type": "patchouli:crafting",

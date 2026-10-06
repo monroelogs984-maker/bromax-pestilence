@@ -1,8 +1,8 @@
 {
   "name": "The Consecrated Cleaver",
   "icon": "bromaxpestilence:consecrated_cleaver",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 27,
+  "category": "bromaxpestilence:arms",
+  "sortnum": 1,
   "pages": [
     {
       "type": "patchouli:text",

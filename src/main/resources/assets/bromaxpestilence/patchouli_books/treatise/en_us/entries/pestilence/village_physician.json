@@ -1,8 +1,8 @@
 {
   "name": "The Village Physician",
   "icon": "bromaxpestilence:apothecary_table",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 18,
+  "category": "bromaxpestilence:villages",
+  "sortnum": 2,
   "pages": [
     {
       "type": "patchouli:text",

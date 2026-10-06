@@ -1,8 +1,8 @@
 {
   "name": "The Heralds",
   "icon": "bromaxpestilence:plague_bearer_spawn_egg",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 19,
+  "category": "bromaxpestilence:enemies",
+  "sortnum": 1,
   "pages": [
     {
       "type": "patchouli:text",

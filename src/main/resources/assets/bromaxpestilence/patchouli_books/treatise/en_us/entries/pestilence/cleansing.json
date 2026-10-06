@@ -1,8 +1,8 @@
 {
   "name": "Cleansing",
   "icon": "bromaxpestilence:quicklime",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 10,
+  "category": "bromaxpestilence:progress",
+  "sortnum": 4,
   "pages": [
     {
       "type": "patchouli:text",

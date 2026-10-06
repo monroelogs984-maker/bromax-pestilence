@@ -1,8 +1,8 @@
 {
   "name": "The Apothecary Table",
   "icon": "bromaxpestilence:apothecary_table",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 12,
+  "category": "bromaxpestilence:physician",
+  "sortnum": 1,
   "pages": [
     {
       "type": "patchouli:text",

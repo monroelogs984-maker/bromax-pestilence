@@ -1,12 +1,12 @@
 {
   "name": "The Plague Doctor",
   "icon": "bromaxpestilence:plague_doctor_spawn_egg",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 4,
+  "category": "bromaxpestilence:villages",
+  "sortnum": 3,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "A wandering physician who goes where the sickness goes, and far more often to those already infected.$(br2)He sells the vinegar, the mask and pyres, pays an emerald for every four rat tails, and treats sick villagers and animals near him for nothing."
+      "text": "A wandering physician who goes where the sickness goes, and far more often to those already infected.$(br2)He sells Four Thieves Vinegar, Theriac, the Physician's Kit, the mask, pyres, quicklime, rue and wormwood (and this book), pays an emerald for every four rat tails, and treats any sick villager or animal near him for nothing."
     },
     {
       "type": "patchouli:entity",

@@ -1,8 +1,8 @@
 {
   "name": "The Pale Rider",
   "icon": "bromaxpestilence:heart_of_pestilence",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 25,
+  "category": "bromaxpestilence:enemies",
+  "sortnum": 5,
   "pages": [
     {
       "type": "patchouli:text",

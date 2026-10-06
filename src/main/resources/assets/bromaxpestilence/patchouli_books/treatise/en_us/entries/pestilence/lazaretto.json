@@ -1,8 +1,8 @@
 {
   "name": "The Lazaretto",
   "icon": "bromaxpestilence:crypt_seal",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 24,
+  "category": "bromaxpestilence:enemies",
+  "sortnum": 4,
   "pages": [
     {
       "type": "patchouli:text",

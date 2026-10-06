@@ -4,7 +4,13 @@
   "category": "bromaxpestilence:pestilence",
   "sortnum": 2,
   "pages": [
-    { "type": "patchouli:text", "text": "Herbs packed into a leather beak keep out the bad air. While you wear the mask, $(l)coughs cannot reach you$(), and a rat's bite is half as likely to sicken you.$(br2)It protects only the wearer: a sick doctor in a mask still coughs." },
-    { "type": "patchouli:crafting", "recipe": "bromaxpestilence:plague_mask" }
+    {
+      "type": "patchouli:text",
+      "text": "Herbs packed into a leather beak keep out the bad air. While you wear the mask, $(l)coughs cannot reach you$(), and a rat's bite is half as likely to sicken you.$(br2)It protects only the wearer: a sick doctor in a mask still coughs."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:plague_mask"
+    }
   ]
 }

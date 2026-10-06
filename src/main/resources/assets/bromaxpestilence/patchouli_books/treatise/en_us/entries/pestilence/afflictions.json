@@ -2,7 +2,7 @@
   "name": "Strange Afflictions",
   "icon": "minecraft:fermented_spider_eye",
   "category": "bromaxpestilence:pestilence",
-  "sortnum": 22,
+  "sortnum": 6,
   "pages": [
     {
       "type": "patchouli:text",

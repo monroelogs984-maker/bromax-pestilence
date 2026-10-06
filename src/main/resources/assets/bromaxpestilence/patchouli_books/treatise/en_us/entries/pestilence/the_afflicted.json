@@ -1,8 +1,8 @@
 {
   "name": "The Afflicted",
   "icon": "bromaxpestilence:afflicted_cow_spawn_egg",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 7,
+  "category": "bromaxpestilence:enemies",
+  "sortnum": 0,
   "pages": [
     {
       "type": "patchouli:text",

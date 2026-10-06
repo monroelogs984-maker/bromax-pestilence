@@ -1,8 +1,8 @@
 {
   "name": "The Rat King",
   "icon": "bromaxpestilence:rat_crown",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 23,
+  "category": "bromaxpestilence:enemies",
+  "sortnum": 3,
   "pages": [
     {
       "type": "patchouli:text",

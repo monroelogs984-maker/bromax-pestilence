@@ -1,8 +1,8 @@
 {
   "name": "Fire and Lime",
   "icon": "bromaxpestilence:quicklime_bomb",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 26,
+  "category": "bromaxpestilence:arms",
+  "sortnum": 0,
   "pages": [
     {
       "type": "patchouli:crafting",

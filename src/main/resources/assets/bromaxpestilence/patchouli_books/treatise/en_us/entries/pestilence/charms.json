@@ -1,8 +1,8 @@
 {
   "name": "Charms",
   "icon": "bromaxpestilence:pomander",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 28,
+  "category": "bromaxpestilence:arms",
+  "sortnum": 2,
   "pages": [
     {
       "type": "patchouli:crafting",

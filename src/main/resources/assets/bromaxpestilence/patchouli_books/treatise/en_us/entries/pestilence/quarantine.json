@@ -1,8 +1,8 @@
 {
   "name": "Quarantine",
   "icon": "bromaxpestilence:plague_cross",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 17,
+  "category": "bromaxpestilence:villages",
+  "sortnum": 1,
   "pages": [
     {
       "type": "patchouli:text",

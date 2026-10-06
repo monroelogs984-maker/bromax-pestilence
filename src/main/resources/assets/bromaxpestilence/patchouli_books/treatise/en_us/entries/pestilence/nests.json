@@ -1,8 +1,8 @@
 {
   "name": "Nests",
   "icon": "bromaxpestilence:rat_warren",
-  "category": "bromaxpestilence:pestilence",
-  "sortnum": 8,
+  "category": "bromaxpestilence:progress",
+  "sortnum": 2,
   "pages": [
     {
       "type": "patchouli:text",
