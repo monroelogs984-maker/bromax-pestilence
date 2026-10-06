@@ -25,3 +25,8 @@ textures/item/censer.png
 textures/item/pomander.png
 textures/item/plaguebane_amulet.png
 textures/item/heart_of_pestilence.png
+textures/item/pyre_torch.png
+textures/item/quicklime_bomb.png
+textures/item/fumigation_bomb.png
+textures/item/pestilent_ichor.png
+textures/item/surgeons_steel.png

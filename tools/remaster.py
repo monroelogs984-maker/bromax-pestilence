@@ -289,7 +289,39 @@ def round5():
     ]
 
 
-ROUNDS = [round1, round2, round3, round4, round5]
+def round6():
+    """Weapons, bombs and the plague's materials."""
+    E = '................'
+    return [
+        item('pyre_torch', [
+            '...........y....', '..........yY.y..', '.........yYOYy..', '.........yOrOy..', '........yOrrOy..',
+            '.........crrc...', '........cCCc....', '.......cCCc.....', '......wwc.......', '.....wWw........',
+            '....wWw.........', '...wWw..........', '..wWw...........', '..ww............', E, E],
+            {'y': '#f8d040', 'Y': '#fff4a0', 'O': '#f08020', 'r': '#c83010', 'c': '#3a2a1a', 'C': '#6a5040', 'w': '#5a3d22', 'W': '#8a6040'}),
+        item('quicklime_bomb', [
+            E, '.......tt.......', '......tTTt......', '.......ss.......', '.....pPPPPp.....',
+            '....pPWPPPPp....', '...pPWPPPPPPp...', '...pPPPPPPPPp...', '...pPPPPPPPdp...', '...pPPPPPPddp...',
+            '....pPPPPddp....', '.....pddddp.....', '......pppp......', E, E, E],
+            {'P': '#ece6d4', 'W': '#ffffff', 'd': '#c8c0a8', 'p': '#8a8270', 't': '#d8d0bc', 'T': '#f4f0e4', 's': '#8a6a3a'}),
+        item('fumigation_bomb', [
+            '......s..s......', '.......ff.......', '......fFFf......', '.......ss.......', '.....pPPPPp.....',
+            '....pPhPPhPp....', '...pPPPPhPPPp...', '...pPhPPPPPhp...', '...pPPPhPPPdp...', '...pPhPPPPddp...',
+            '....pPPPhddp....', '.....pddddp.....', '......pppp......', E, E, E],
+            {'P': '#7d8a6a', 'd': '#5a6650', 'p': '#3a4232', 'h': '#a8b878', 'f': '#6a5040', 'F': '#f08020', 's': '#c8c8cc'}),
+        item('pestilent_ichor', [
+            E, '.......o........', '......oGo.......', '......oGo.......', '.....oGGGo......',
+            '.....oGhGo......', '....oGhGGGo.....', '....oGGGGGo.....', '...oGGGGGGdo....', '...oGGGGGddo....',
+            '...oGGGGdddo....', '....oGddddo.....', '.....oooo.o.....', '..........o.....', E, E],
+            {'o': '#1e2a0a', 'G': '#7a9a28', 'h': '#d8f080', 'd': '#4a6018'}),
+        item('surgeons_steel', [
+            E, E, E, E, '......oooooooo..',
+            '.....oWWWWWWSo..', '....oWSSSSSSDo..', '...oWSSSrSSDo...', '..oSSSSSrrDo....', '..oDDDDDDDo.....',
+            '..ooooooooo.....', E, E, E, E, E],
+            {'o': '#2a3038', 'W': '#dce4ea', 'S': '#8e9aa4', 'D': '#5a646e', 'r': '#7a2a20'}),
+    ]
+
+
+ROUNDS = [round1, round2, round3, round4, round5, round6]
 
 if __name__ == '__main__':
     made = []
