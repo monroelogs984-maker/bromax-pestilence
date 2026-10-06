@@ -45,3 +45,17 @@ textures/block/blighted_soil_top.png
 textures/block/blighted_soil_side.png
 textures/block/withered_leaves.png
 textures/block/plague_cross.png
+textures/block/crypt_seal_top.png
+textures/block/crypt_seal_broken.png
+textures/block/garlic_stage0.png
+textures/block/garlic_stage1.png
+textures/block/garlic_stage2.png
+textures/block/garlic_stage3.png
+textures/block/rue_stage0.png
+textures/block/rue_stage1.png
+textures/block/rue_stage2.png
+textures/block/rue_stage3.png
+textures/block/sage_stage0.png
+textures/block/sage_stage1.png
+textures/block/sage_stage2.png
+textures/block/sage_stage3.png

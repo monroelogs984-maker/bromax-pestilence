@@ -480,7 +480,71 @@ def round9():
     return made
 
 
-ROUNDS = [round1, round2, round3, round4, round5, round6, round7, round8, round9]
+CROPS = {
+    # herb: (vanilla crop, its stage numbers, leaf ramp dark->light, flower accents, flower style)
+    'garlic': ('carrots', (0, 1, 2, 3), ['#1e3010', '#3a5a22', '#5c8538', '#87b05a'], ['#e8e2d4', '#c8b0d0'], 'umbel'),
+    'rue': ('potatoes', (0, 1, 2, 3), ['#1e3a34', '#3a6058', '#5d8878', '#85b0a0'], ['#f0d040', '#d8b030'], 'dots'),
+    'sage': ('beetroots', (0, 1, 2, 3), ['#2e3a2a', '#4e5c48', '#7d8f74', '#a3b398'], ['#a888c8', '#7a5aa0'], 'spike'),
+    'wormwood': ('carrots', (0, 1, 2, 3), ['#3a4038', '#6b7268', '#9fa89a', '#c8d0c2'], ['#f0d860', '#c8a830'], 'dots'),
+    'rosemary': ('wheat', (0, 2, 4, 6), ['#16301c', '#2f5236', '#4d7d52', '#6a9a6a'], ['#c0d4f0', '#8aa8d8'], 'dots'),
+}
+
+
+def crop(herb):
+    import random
+    src, stages, ramp, accents, style = CROPS[herb]
+    rng = random.Random(len(herb) * 31)
+    made = []
+    for i, n in enumerate(stages):
+        img = gradient_map(jar_png(f'block/{src}_stage{n}'), ramp)
+        if i == 3:                              # in flower: accents on the tallest tips
+            tops = {}
+            for x in range(16):
+                ys = [y for y in range(16) if img[y][x][3]]
+                if ys:
+                    tops[x] = min(ys)
+            for x in sorted(tops, key=lambda c: tops[c])[:5 if style != 'umbel' else 3]:
+                y = tops[x]
+                a, b = hexc(accents[0]), hexc(accents[1])
+                if style == 'umbel':
+                    for dx, dy in ((0, 0), (-1, 0), (1, 0), (0, -1)):
+                        if 0 <= x + dx < 16 and 0 <= y + dy < 16:
+                            img[y + dy][x + dx] = a if (dx + dy) % 2 == 0 else b
+                elif style == 'spike':
+                    for dy in range(3):
+                        if y - dy >= 0:
+                            img[y - dy][x] = a if dy % 2 else b
+                else:
+                    img[y][x] = a
+                    if y > 0 and rng.random() < 0.5:
+                        img[y - 1][x] = b
+        made.append(block(f'{herb}_stage{i}', img))
+    return made
+
+
+def round10():
+    """The crypt seal, whole and broken; garlic, rue and sage crops."""
+    made = []
+    for broken in (False, True):
+        img = gradient_map(jar_png('block/reinforced_deepslate_top'), ['#121216', '#24242a', '#36363e', '#4a4a54'])
+        for y in range(5, 11):                  # the red wax seal, stamped with the beak
+            for x in range(5, 11):
+                if (x - 7.5) ** 2 + (y - 7.5) ** 2 <= 8.5:
+                    img[y][x] = hexc('#3a1a18' if broken else ('#c02a20' if x + y < 15 else '#8a1814'))
+        if not broken:
+            for x, y in ((6, 7), (7, 7), (8, 8), (9, 8)):
+                img[y][x] = hexc('#e8c050')
+        else:
+            for x, y in ((2, 3), (3, 4), (4, 5), (5, 6), (6, 7), (7, 8), (8, 8), (9, 9), (10, 10), (11, 10), (12, 11), (13, 12),
+                         (11, 3), (10, 4), (9, 6), (6, 10), (5, 11), (4, 13)):
+                img[y][x] = hexc('#050506')
+        made.append(block('crypt_seal_broken' if broken else 'crypt_seal_top', img))
+    for herb in ('garlic', 'rue', 'sage'):
+        made += crop(herb)
+    return made
+
+
+ROUNDS = [round1, round2, round3, round4, round5, round6, round7, round8, round9, round10]
 
 if __name__ == '__main__':
     made = []
