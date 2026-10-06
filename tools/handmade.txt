@@ -59,3 +59,7 @@ textures/block/sage_stage0.png
 textures/block/sage_stage1.png
 textures/block/sage_stage2.png
 textures/block/sage_stage3.png
+textures/block/wormwood_stage0.png
+textures/block/wormwood_stage1.png
+textures/block/wormwood_stage2.png
+textures/block/wormwood_stage3.png
