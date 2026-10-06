@@ -84,7 +84,7 @@ public class VerminCloud extends PathfinderMob {
             Vec3 to = host.position().add(0, host.getBbHeight() * 0.5, 0).subtract(position());
             setDeltaMovement(to.normalize().scale(0.12));
             if (to.lengthSqr() < 1.5) {
-                Plague.tryContactInfect(host, 0.6, Disease.BUBONIC);
+                if (!Plague.verminWarded(host)) Plague.tryContactInfect(host, 0.6, Disease.BUBONIC);
                 discard();
                 return;
             }

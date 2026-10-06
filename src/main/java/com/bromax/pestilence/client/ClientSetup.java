@@ -75,6 +75,11 @@ public final class ClientSetup {
     }
 
     @SubscribeEvent
+    public static void clientSetup(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
+        if (com.bromax.pestilence.compat.Compat.curios()) event.enqueueWork(CurioRenderers::register);
+    }
+
+    @SubscribeEvent
     public static void registerParticles(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ModRegistry.FLY.get(), FlyParticle.Provider::new);
     }

@@ -92,6 +92,11 @@ public final class Plague {
         return com.bromax.pestilence.compat.Compat.wearing(entity, ModRegistry.POMANDER.get(), false) ? 0.5 : 1;
     }
 
+    /** The Rat-tail Bracelet: no rat, swarm, flea or fly can give you anything. */
+    public static boolean verminWarded(LivingEntity entity) {
+        return com.bromax.pestilence.compat.Compat.wearing(entity, ModRegistry.RAT_TAIL_BRACELET.get(), false);
+    }
+
     public static boolean airProtected(LivingEntity entity) {
         return airExposure(entity) == 0;
     }

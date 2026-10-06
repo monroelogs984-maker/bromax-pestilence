@@ -35,6 +35,11 @@ public final class Compat {
         return false;
     }
 
+    /** The first stack matching the test worn in any Curios slot, or empty (always empty without Curios). */
+    public static ItemStack worn(LivingEntity entity, java.util.function.Predicate<ItemStack> test) {
+        return curios() ? CuriosCompat.find(entity, test) : ItemStack.EMPTY;
+    }
+
     /** Cold Sweat body temperature (above 50 is overheating), or NaN without Cold Sweat. */
     public static double bodyTemperature(LivingEntity entity) {
         return coldSweat() ? ColdSweatCompat.body(entity) : Double.NaN;

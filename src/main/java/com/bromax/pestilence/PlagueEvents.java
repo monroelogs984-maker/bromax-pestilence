@@ -319,10 +319,26 @@ public final class PlagueEvents {
         if (player.tickCount % PestConfig.OUTBREAK_INTERVAL.get() == 0) rollOutbreak(level, player);
         if (player.tickCount % PestConfig.NEST_SEED_INTERVAL.get() == 0 && player instanceof ServerPlayer sp) NestSeeding.roll(level, sp);
         if (player.tickCount % 600 == 0 && player instanceof ServerPlayer sp) rollSweating(level, sp);
+        com.bromax.pestilence.item.CenserItem.tickBelt(level, player);
+        if (player.tickCount % 10 == 0 && player instanceof ServerPlayer sp && com.bromax.pestilence.compat.Compat.wearing(sp, ModRegistry.PHYSICIANS_MONOCLE.get(), false)) {
+            diagnose(level, sp);
+        }
         if (player.tickCount % PestConfig.FARM_INTERVAL.get() == 0 && player instanceof ServerPlayer sp) com.bromax.pestilence.world.Farming.roll(level, sp);
         if (player.tickCount % 100 == 0) {
             VillageOutbreaks villages = VillageOutbreaks.get(level.getServer());
             VillageOutbreaks.centre(level, player.blockPosition(), 64).filter(c -> !villages.known(c)).ifPresent(c -> villages.discover(level, c));
+        }
+    }
+
+    /** The Physician's Monocle: motes over every sick creature in sight, seen by the wearer alone, redder as the sickness worsens. */
+    private static void diagnose(ServerLevel level, ServerPlayer player) {
+        int[] tints = {0xd8c840, 0xd87830, 0xb02020};
+        for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(16), Plague::isSick)) {
+            if (e == player || !player.hasLineOfSight(e)) continue;
+            var effect = e.getEffect(ModRegistry.PLAGUE);
+            int stage = effect == null ? 0 : Math.min(2, effect.getAmplifier());
+            var mote = net.minecraft.core.particles.ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, 0xff000000 | tints[stage]);
+            level.sendParticles(player, mote, true, e.getX(), e.getY() + e.getBbHeight() + 0.3, e.getZ(), stage + 1, 0.2, 0.1, 0.2, 0);
         }
     }
 

@@ -15,8 +15,19 @@
       "text": "Bind the $(l)Heart of the Pestilence$() in gold and nothing it ever was can touch you again: no sickness, no Dread, no Delirium, no Rotting."
     },
     {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:rat_tail_bracelet",
+      "text": "Braid the tails of the vermin you kill into a $(l)Rat-tail Bracelet$() and they can no longer give you anything: no bite, swarm, flea or fly will make you sick (they still hurt)."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:physicians_monocle",
+      "text": "Through a $(l)Physician's Monocle$() you can see sickness: motes rise over every sick creature in sight, yellow, then orange, then red as it worsens. Only the wearer sees them."
+    },
+    {
       "type": "patchouli:text",
-      "text": "With Curios installed, the beaked mask can also be worn in a head slot, over a helmet."
+      "title": "Wearing them",
+      "text": "With Curios, each has its place: the mask in a $(l)head$() slot (over a helmet), the amulet and pomander at the $(l)necklace$(), the bracelet at the $(l)bracelet$(), the monocle and pomander as a $(l)charm$(), and a lit censer hung from the $(l)belt$() smokes as if held.$(br2)Without Curios, hold any of them in your offhand."
     }
   ]
 }

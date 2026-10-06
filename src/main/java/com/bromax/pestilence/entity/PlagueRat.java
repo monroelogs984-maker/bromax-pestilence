@@ -79,7 +79,7 @@ public class PlagueRat extends Monster implements GeoEntity, PhaseGated {
     @Override
     public boolean doHurtTarget(Entity target) {
         boolean hit = super.doHurtTarget(target);
-        if (hit && target instanceof LivingEntity living) Plague.tryContactInfect(living, PestConfig.RAT_BITE_CHANCE.get(), Disease.BUBONIC);
+        if (hit && target instanceof LivingEntity living && !Plague.verminWarded(living)) Plague.tryContactInfect(living, PestConfig.RAT_BITE_CHANCE.get(), Disease.BUBONIC);
         return hit;
     }
 

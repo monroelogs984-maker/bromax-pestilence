@@ -95,6 +95,11 @@ were swapped for Cold Sweat. Rat-leather and bone tiers were cut as filler.
    drop). Icons: remaster round 12 (also the bracelet and monocle charms). Book: Tools of the Trade.
 4. **Curios first**: render the mask and charms on the player (ICurioRenderer), add more charm-slot
    items, and design gear around slots.
+   **DONE**: slots head (mask), necklace (amulet, pomander), charm (pomander, monocle), bracelet
+   (Rat-tail Bracelet: vermin bites/swarms/fleas/flies can't infect), belt (censer: smokes while lit,
+   ticked from the player tick). Physician's Monocle sends stage-tinted motes over sick mobs in sight to
+   the wearer only. ICurioRenderers (client/CurioRenderers, loaded only with Curios): mask via its
+   GeoArmorRenderer, the rest as item sprites pinned to head/body/arm. Offhand fallback without Curios.
 5. **Farming feeds the plague**: growing and harvesting crops speeds the Pestilence up (granaries draw
    rats), so farming carries a cost.
    **DONE**: from phase 1, each mature crop a player harvests adds `farming.pointsHarvest` (0.25); every

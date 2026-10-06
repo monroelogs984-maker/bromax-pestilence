@@ -67,7 +67,7 @@ public class RatSwarm extends Monster implements GeoEntity, PhaseGated {
         for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(0.2),
                 e -> e != this && !(e instanceof PlagueRat) && !(e instanceof RatSwarm) && !(e instanceof AfflictedMob)
                         && !(e instanceof Player p && (p.isCreative() || p.isSpectator() || com.bromax.pestilence.item.RatCrownItem.wears(p))))) {
-            if (e.hurt(damageSources().mobAttack(this), 1f)) Plague.tryContactInfect(e, 0.05, Disease.BUBONIC);
+            if (e.hurt(damageSources().mobAttack(this), 1f) && !Plague.verminWarded(e)) Plague.tryContactInfect(e, 0.05, Disease.BUBONIC);
         }
     }
 

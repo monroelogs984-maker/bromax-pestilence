@@ -338,6 +338,9 @@ public final class ModRegistry {
     public static final DeferredItem<Item> GRAVEDIGGERS_SPADE = ITEMS.register("gravediggers_spade", () -> new com.bromax.pestilence.item.GravediggersSpadeItem(new Item.Properties()
             .rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
     public static final DeferredItem<Item> POMANDER = ITEMS.register("pomander", () -> new CharmItem(new Item.Properties().stacksTo(1), false));
+    public static final DeferredItem<Item> RAT_TAIL_BRACELET = ITEMS.register("rat_tail_bracelet", () -> new CharmItem(new Item.Properties().stacksTo(1), false));
+    public static final DeferredItem<Item> PHYSICIANS_MONOCLE = ITEMS.register("physicians_monocle", () -> new CharmItem(new Item.Properties().stacksTo(1)
+            .rarity(net.minecraft.world.item.Rarity.UNCOMMON), false));
     public static final DeferredItem<Item> PLAGUEBANE_AMULET = ITEMS.register("plaguebane_amulet", () -> new CharmItem(new Item.Properties().stacksTo(1)
             .rarity(net.minecraft.world.item.Rarity.EPIC).fireResistant(), true));
     public static final DeferredItem<Item> RAT_KING_SPAWN_EGG = egg("rat_king", RAT_KING, 0x3a302a, 0xd8cfb8);

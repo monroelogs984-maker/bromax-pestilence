@@ -52,7 +52,18 @@ public class CenserItem extends Item {
     }
 
     public static boolean isSwinging(Player player) {
-        return isLit(player.getMainHandItem()) || isLit(player.getOffhandItem());
+        return isLit(player.getMainHandItem()) || isLit(player.getOffhandItem()) || isLit(belt(player));
+    }
+
+    /** A censer hung from the belt (Curios), lit or not. */
+    public static ItemStack belt(Player player) {
+        return com.bromax.pestilence.compat.Compat.worn(player, s -> s.getItem() instanceof CenserItem);
+    }
+
+    /** Burns on from the belt as it would in hand (called from the player tick: Curios slots get no inventoryTick). */
+    public static void tickBelt(ServerLevel level, Player player) {
+        ItemStack censer = belt(player);
+        if (isLit(censer)) smoulder(level, player, censer);
     }
 
     /** Burn one herb from the inventory; false if there is none. */
@@ -87,7 +98,11 @@ public class CenserItem extends Item {
     public void inventoryTick(ItemStack stack, Level level, Entity holder, int slot, boolean selected) {
         if (!(level instanceof ServerLevel server) || !(holder instanceof Player player) || !isLit(stack)) return;
         boolean held = player.getMainHandItem() == stack || player.getOffhandItem() == stack;
-        if (!held || player.tickCount % 20 != 0) return;
+        if (held) smoulder(server, player, stack);
+    }
+
+    private static void smoulder(ServerLevel server, Player player, ItemStack stack) {
+        if (player.tickCount % 20 != 0) return;
         int left = burn(stack) - 20;
         if (left <= 0 && !refuel(player, stack)) setBurn(stack, 0);
         else if (left > 0) setBurn(stack, left);

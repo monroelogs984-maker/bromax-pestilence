@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "TTT",
+    "T T",
+    " B "
+  ],
+  "key": {
+    "T": {
+      "item": "bromaxpestilence:rat_tail"
+    },
+    "B": {
+      "item": "minecraft:bone"
+    }
+  },
+  "result": {
+    "id": "bromaxpestilence:rat_tail_bracelet",
+    "count": 1
+  }
+}
