@@ -1,0 +1,17 @@
+{
+  "name": "Villages",
+  "icon": "minecraft:bell",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 16,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "From the $(l)Outbreak$() the plague finds the villages. When a villager falls sick the bell rings and word goes out. The sick cough on their neighbours, shut their shops (a sick villager will not trade) and, in the worst stage, $(4)waste away and die$() unless treated. Their bodies rise as Afflicted."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Weathered or fallen",
+      "text": "Half a day after the last villager recovers, the outbreak is over. If anyone is left alive the village has $(2)weathered$() it: whoever treated its people is a hero there, and gets a better price.$(br2)If no one is left the village has $(4)fallen$(): its doors are marked and a Plague Pit opens in its square.$(br2)From the $(l)Heralds$() on, some villages are found already fallen."
+    }
+  ]
+}

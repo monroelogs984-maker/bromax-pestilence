@@ -1,0 +1,116 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "misc.idle": {
+      "loop": true,
+      "animation_length": 3.0,
+      "bones": {
+        "skull": {
+          "rotation": [
+            "12 + math.sin(query.anim_time * 120 + 0) * 3",
+            "math.sin(query.anim_time * 60 + 0) * 6",
+            "math.sin(query.anim_time * 240 + 0) * 2"
+          ]
+        },
+        "arms": {
+          "rotation": [
+            "math.sin(query.anim_time * 120 + 0) * 3",
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "move.walk": {
+      "loop": true,
+      "animation_length": 1.4,
+      "bones": {
+        "right_leg": {
+          "rotation": [
+            "math.sin(query.anim_time * 257 + 0) * 22",
+            0,
+            0
+          ]
+        },
+        "left_leg": {
+          "rotation": [
+            "math.sin(query.anim_time * 257 + 180) * 16",
+            0,
+            0
+          ]
+        },
+        "body": {
+          "rotation": [
+            0,
+            0,
+            "math.sin(query.anim_time * 257 + 0) * 3"
+          ]
+        },
+        "arms": {
+          "rotation": [
+            "math.sin(query.anim_time * 257 + 0) * 5",
+            0,
+            0
+          ]
+        },
+        "skull": {
+          "rotation": [
+            "15 + math.sin(query.anim_time * 514 + 0) * 3",
+            0,
+            "math.sin(query.anim_time * 257 + 0) * 4"
+          ]
+        }
+      }
+    },
+    "attack.bite": {
+      "loop": false,
+      "animation_length": 0.5,
+      "bones": {
+        "arms": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.15": [
+              20,
+              0,
+              0
+            ],
+            "0.3": [
+              -35,
+              0,
+              0
+            ],
+            "0.5": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "skull": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.3": [
+              20,
+              0,
+              0
+            ],
+            "0.5": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  },
+  "geckolib_format_version": 2
+}

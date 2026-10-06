@@ -1,0 +1,16 @@
+{
+  "name": "Quarantine",
+  "icon": "bromaxpestilence:plague_cross",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 17,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "A red cross on a door means the house is shut up with the plague. A sick villager within five blocks of a $(l)Plague Cross$() stays put, and cannot pass the sickness on.$(br2)It cures nothing. It only buys time for someone who can."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:plague_cross"
+    }
+  ]
+}

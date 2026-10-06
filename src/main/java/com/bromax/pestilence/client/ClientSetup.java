@@ -41,6 +41,7 @@ public final class ClientSetup {
         geo(event, ModRegistry.AFFLICTED_CHICKEN.get(), "afflicted_chicken", 1f);
         geo(event, ModRegistry.AFFLICTED_HORSE.get(), "afflicted_horse", 1f);
         geo(event, ModRegistry.AFFLICTED_WOLF.get(), "afflicted_wolf", 1f);
+        geo(event, ModRegistry.AFFLICTED_VILLAGER.get(), "afflicted_villager", 0.9375f);
         event.registerEntityRenderer(ModRegistry.CORPSE.get(), CorpseRenderer::new);
         event.registerEntityRenderer(ModRegistry.MIASMA_CLOUD.get(), NoopRenderer::new);
         event.registerBlockEntityRenderer(ModRegistry.APOTHECARY_TABLE_BE.get(), ItemHolderRenderer::new);

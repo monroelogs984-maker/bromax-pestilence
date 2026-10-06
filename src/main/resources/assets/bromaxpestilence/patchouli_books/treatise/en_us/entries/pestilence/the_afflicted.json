@@ -44,6 +44,12 @@
       "entity": "bromaxpestilence:afflicted_wolf",
       "name": "Afflicted Wolf",
       "text": "Howls when it finds prey, and every Afflicted nearby joins the hunt."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:afflicted_villager",
+      "name": "Afflicted Villager",
+      "text": "Opens doors, and never stops coughing: stand too close without a mask and you may catch pneumonic plague from it."
     }
   ]
 }

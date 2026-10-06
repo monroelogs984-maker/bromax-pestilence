@@ -895,6 +895,35 @@ def doctors_garb():
           'geometry.doctors_garb', bounds=(2, 2.5, 1))
 
 
+def plague_cross():
+    rng = random.Random(55)
+    img = []
+    for y in range(16):
+        row = []
+        for x in range(16):
+            board = (y // 4) % 2
+            c = scale(rgba('#7a5a3a' if board else '#6b4f33'), 1 + rng.uniform(-0.08, 0.08))
+            if y % 4 == 0:
+                c = scale(c, 0.75)                              # gaps between boards
+            row.append(c)
+        img.append(row)
+    for i in range(1, 15):                                      # the red cross, daubed thick
+        for t in (0, 1):
+            for x, y in ((i + t, i), (15 - i - t, i)):
+                if 0 <= x < 16:
+                    img[y][x] = scale(rgba('#9a1c14'), 1 + rng.uniform(-0.12, 0.08))
+    for x, y0 in ((4, 12), (11, 11), (8, 9)):                   # drips
+        for y in range(y0, min(16, y0 + 3)):
+            img[y][x] = scale(rgba('#7a140e'), 1)
+    write_png(os.path.join(ASSETS, 'textures', 'block', 'plague_cross.png'), img)
+    write_json(os.path.join(ASSETS, 'models', 'block', 'plague_cross.json'), {
+        'parent': 'minecraft:block/block', 'textures': {'particle': 'bromaxpestilence:block/plague_cross', 'cross': 'bromaxpestilence:block/plague_cross',
+                                                        'edge': 'minecraft:block/stripped_oak_log'},
+        'elements': [{'from': [1, 1, 15], 'to': [15, 15, 16], 'faces': {
+            'north': {'texture': '#cross', 'uv': [1, 1, 15, 15]}, 'south': {'texture': '#edge'},
+            'east': {'texture': '#edge'}, 'west': {'texture': '#edge'}, 'up': {'texture': '#edge'}, 'down': {'texture': '#edge'}}}]})
+
+
 def apothecary_models():
     def box(fr, to, tex, top=None):
         return {'from': fr, 'to': to, 'faces': {f: {'texture': top if f in ('up', 'down') and top else tex}
@@ -929,5 +958,6 @@ if __name__ == '__main__':
     apothecary_icons()
     doctors_garb()
     apothecary_models()
+    plague_cross()
     import vanilla_afflicted
     vanilla_afflicted.build_all()

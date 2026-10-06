@@ -87,6 +87,9 @@ public class RemedyItem extends Item {
     private void apply(LivingEntity patient, @Nullable Player physician) {
         boolean wasSick = Plague.isSick(patient);
         if (Plague.treat(patient, cures)) {
+            if (patient instanceof net.minecraft.world.entity.npc.Villager villager && patient.level() instanceof ServerLevel level) {
+                com.bromax.pestilence.world.VillageOutbreaks.get(level.getServer()).noteCure(level, villager, physician);
+            }
             if (patient.level() instanceof ServerLevel level) {
                 level.sendParticles(ParticleTypes.HAPPY_VILLAGER, patient.getX(), patient.getEyeY(), patient.getZ(), 8, 0.3, 0.3, 0.3, 0.0);
             }

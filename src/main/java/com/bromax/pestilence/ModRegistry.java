@@ -26,6 +26,11 @@ import com.bromax.pestilence.entity.afflicted.AfflictedMob;
 import com.bromax.pestilence.entity.afflicted.AfflictedPig;
 import com.bromax.pestilence.entity.afflicted.AfflictedSheep;
 import com.bromax.pestilence.entity.afflicted.AfflictedWolf;
+import com.bromax.pestilence.entity.afflicted.AfflictedVillager;
+import com.bromax.pestilence.block.PlagueCrossBlock;
+import com.google.common.collect.ImmutableSet;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import com.bromax.pestilence.item.PlagueMaskItem;
 import com.bromax.pestilence.item.ShroudedCorpseItem;
 import com.bromax.pestilence.apothecary.ApothecaryRecipe;
@@ -96,6 +101,8 @@ public final class ModRegistry {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(Registries.POINT_OF_INTEREST_TYPE, MODID);
+    public static final DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(Registries.VILLAGER_PROFESSION, MODID);
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MODID);
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(Registries.RECIPE_TYPE, MODID);
     public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, MODID);
@@ -129,6 +136,7 @@ public final class ModRegistry {
     public static final DeferredHolder<EntityType<?>, EntityType<AfflictedSheep>> AFFLICTED_SHEEP = mob("afflicted_sheep", AfflictedSheep::new, MobCategory.MONSTER, 0.9f, 1.3f);
     public static final DeferredHolder<EntityType<?>, EntityType<AfflictedChicken>> AFFLICTED_CHICKEN = mob("afflicted_chicken", AfflictedChicken::new, MobCategory.MONSTER, 0.4f, 0.7f);
     public static final DeferredHolder<EntityType<?>, EntityType<AfflictedHorse>> AFFLICTED_HORSE = mob("afflicted_horse", AfflictedHorse::new, MobCategory.MONSTER, 1.3f, 1.6f);
+    public static final DeferredHolder<EntityType<?>, EntityType<AfflictedVillager>> AFFLICTED_VILLAGER = mob("afflicted_villager", AfflictedVillager::new, MobCategory.MONSTER, 0.6f, 1.95f);
     public static final DeferredHolder<EntityType<?>, EntityType<AfflictedWolf>> AFFLICTED_WOLF = mob("afflicted_wolf", AfflictedWolf::new, MobCategory.MONSTER, 0.6f, 0.85f);
     public static final DeferredHolder<EntityType<?>, EntityType<Corpse>> CORPSE = ENTITIES.register("corpse",
             () -> EntityType.Builder.<Corpse>of(Corpse::new, MobCategory.MISC).sized(0.9f, 0.5f).clientTrackingRange(8).updateInterval(10).build(MODID + ":corpse"));
@@ -164,6 +172,9 @@ public final class ModRegistry {
             () -> BlockEntityType.Builder.of(NestBlockEntity::new, RAT_WARREN.get(), PLAGUE_PIT.get(), MIASMA_WELL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BrazierBlockEntity>> BRAZIER_BE = BLOCK_ENTITIES.register("herb_brazier",
             () -> BlockEntityType.Builder.of(BrazierBlockEntity::new, HERB_BRAZIER.get()).build(null));
+
+    public static final DeferredBlock<PlagueCrossBlock> PLAGUE_CROSS = BLOCKS.register("plague_cross", () -> new PlagueCrossBlock(
+            BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(0.5f).sound(SoundType.WOOD).noCollission().ignitedByLava()));
 
     public static final TagKey<Item> BRAZIER_FUEL = TagKey.create(Registries.ITEM, Pestilence.id("brazier_fuel"));
     public static final TagKey<Item> CENSER_FUEL = TagKey.create(Registries.ITEM, Pestilence.id("censer_fuel"));
@@ -206,6 +217,13 @@ public final class ModRegistry {
         return dried;
     }
 
+    // The village physician works at an Apothecary Table.
+    public static final DeferredHolder<PoiType, PoiType> APOTHECARY_POI = POI_TYPES.register("apothecary",
+            () -> new PoiType(ImmutableSet.copyOf(APOTHECARY_TABLE.get().getStateDefinition().getPossibleStates()), 1, 1));
+    public static final DeferredHolder<VillagerProfession, VillagerProfession> PHYSICIAN = PROFESSIONS.register("physician",
+            () -> new VillagerProfession("physician", h -> h.is(APOTHECARY_POI.getKey()), h -> h.is(APOTHECARY_POI.getKey()),
+                    ImmutableSet.of(), ImmutableSet.of(), SoundEvents.VILLAGER_WORK_CLERIC));
+
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> GARB_MATERIAL = ARMOR_MATERIALS.register("doctors_garb", () -> {
         EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
         defense.put(ArmorItem.Type.HELMET, 1);
@@ -238,6 +256,8 @@ public final class ModRegistry {
             new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(13))));
     public static final DeferredItem<?> APOTHECARY_TABLE_ITEM = ITEMS.registerSimpleBlockItem(APOTHECARY_TABLE);
     public static final DeferredItem<?> DRYING_RACK_ITEM = ITEMS.registerSimpleBlockItem(DRYING_RACK);
+    public static final DeferredItem<?> PLAGUE_CROSS_ITEM = ITEMS.registerSimpleBlockItem(PLAGUE_CROSS);
+    public static final DeferredItem<Item> AFFLICTED_VILLAGER_SPAWN_EGG = egg("afflicted_villager", AFFLICTED_VILLAGER, 0x7a6a5a, 0x8c8a3a);
     public static final DeferredItem<Item> RAT_TAIL = ITEMS.registerSimpleItem("rat_tail");
     public static final DeferredItem<Item> SHROUDED_CORPSE = ITEMS.register("shrouded_corpse", () -> new ShroudedCorpseItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<?> PYRE_ITEM = ITEMS.registerSimpleBlockItem(PYRE);
@@ -295,6 +315,8 @@ public final class ModRegistry {
         ITEMS.register(bus);
         TABS.register(bus);
         ATTACHMENTS.register(bus);
+        POI_TYPES.register(bus);
+        PROFESSIONS.register(bus);
         RECIPE_TYPES.register(bus);
         RECIPE_SERIALIZERS.register(bus);
         bus.addListener(ModRegistry::onAttributes);
@@ -310,6 +332,7 @@ public final class ModRegistry {
         event.put(AFFLICTED_CHICKEN.get(), AfflictedChicken.createAttributes().build());
         event.put(AFFLICTED_HORSE.get(), AfflictedHorse.createAttributes().build());
         event.put(AFFLICTED_WOLF.get(), AfflictedWolf.createAttributes().build());
+        event.put(AFFLICTED_VILLAGER.get(), AfflictedVillager.createAttributes().build());
     }
 
     private static void onSpawnPlacements(RegisterSpawnPlacementsEvent event) {
@@ -317,7 +340,7 @@ public final class ModRegistry {
                 Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(PLAGUE_DOCTOR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        for (var type : List.of(AFFLICTED_COW, AFFLICTED_PIG, AFFLICTED_SHEEP, AFFLICTED_CHICKEN, AFFLICTED_HORSE, AFFLICTED_WOLF)) {
+        for (var type : List.of(AFFLICTED_COW, AFFLICTED_PIG, AFFLICTED_SHEEP, AFFLICTED_CHICKEN, AFFLICTED_HORSE, AFFLICTED_WOLF, AFFLICTED_VILLAGER)) {
             registerAfflicted(event, type.get());
         }
     }

@@ -16,6 +16,11 @@ public final class PestConfig {
     public static final ModConfigSpec.IntValue IMMUNITY_TICKS;
     public static final ModConfigSpec.BooleanValue NAUSEA;
     public static final ModConfigSpec.IntValue MOB_PLAGUE_DAMAGE_INTERVAL;
+    public static final ModConfigSpec.IntValue VILLAGER_PLAGUE_DAMAGE_INTERVAL;
+    public static final ModConfigSpec.DoubleValue FALLEN_VILLAGE_CHANCE;
+    public static final ModConfigSpec.DoubleValue POINTS_VILLAGER_DEATH;
+    public static final ModConfigSpec.DoubleValue POINTS_VILLAGE_SAVED;
+    public static final ModConfigSpec.DoubleValue POINTS_VILLAGE_FALLEN;
 
     // spread
     public static final ModConfigSpec.DoubleValue CONTAGION_RADIUS;
@@ -91,6 +96,8 @@ public final class PestConfig {
                 .define("nausea", true);
         MOB_PLAGUE_DAMAGE_INTERVAL = b.comment("Animals in the Buboes stage (phase 2+) lose 1 health every this many ticks until they die.")
                 .defineInRange("mobPlagueDamageInterval", 100, 10, 72000);
+        VILLAGER_PLAGUE_DAMAGE_INTERVAL = b.comment("From the Outbreak phase, villagers in the worst stage lose 1 health every this many ticks (they die unless treated).")
+                .defineInRange("villagerPlagueDamageInterval", 400, 20, 72000);
         b.pop();
 
         b.push("spread");
@@ -135,6 +142,11 @@ public final class PestConfig {
                 .defineInRange("pointsCure", -4.0, -1000.0, 1000.0);
         POINTS_CORPSE_BURN = b.defineInRange("pointsCorpseBurn", -6.0, -1000.0, 1000.0);
         POINTS_AFFLICTED_KILL = b.defineInRange("pointsAfflictedKill", -1.0, -1000.0, 1000.0);
+        POINTS_VILLAGER_DEATH = b.defineInRange("pointsVillagerDeath", 6.0, -1000.0, 1000.0);
+        POINTS_VILLAGE_SAVED = b.defineInRange("pointsVillageSaved", -15.0, -1000.0, 1000.0);
+        POINTS_VILLAGE_FALLEN = b.defineInRange("pointsVillageFallen", 25.0, -1000.0, 1000.0);
+        FALLEN_VILLAGE_CHANCE = b.comment("From the Heralds phase, chance that a village found for the first time has already fallen to the plague.")
+                .defineInRange("fallenVillageChance", 0.25, 0.0, 1.0);
         b.pop();
 
         b.push("corpses");

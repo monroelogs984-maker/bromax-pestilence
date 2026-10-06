@@ -135,5 +135,15 @@
   "item.bromaxpestilence.doctors_boots": "Doctor's Boots",
   "item.bromaxpestilence.doctors_garb.desc": "Waxed against contagion. With the mask, the full garb keeps bites and filth from infecting you.",
   "block.bromaxpestilence.apothecary_table": "Apothecary Table",
-  "block.bromaxpestilence.drying_rack": "Drying Rack"
+  "block.bromaxpestilence.drying_rack": "Drying Rack",
+  "entity.bromaxpestilence.afflicted_villager": "Afflicted Villager",
+  "item.bromaxpestilence.afflicted_villager_spawn_egg": "Afflicted Villager Spawn Egg",
+  "block.bromaxpestilence.plague_cross": "Plague Cross",
+  "entity.minecraft.villager.physician": "Physician",
+  "message.bromaxpestilence.village_outbreak": "The plague has come to the village. Coughing behind every door...",
+  "message.bromaxpestilence.village_survived": "The village has weathered the plague.",
+  "message.bromaxpestilence.village_fallen": "The village has fallen to the Pestilence.",
+  "message.bromaxpestilence.village_found_fallen": "This village was lost to the plague. The doors are marked, and the dead lie unburied.",
+  "message.bromaxpestilence.village_thanks": "The villagers will not forget your care (%s treated).",
+  "message.bromaxpestilence.too_sick_to_trade": "This villager is too sick to trade."
 }

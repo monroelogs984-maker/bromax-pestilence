@@ -60,7 +60,8 @@ public abstract class AfflictedMob extends Monster implements GeoEntity {
                     EntityType.HORSE, ModRegistry.AFFLICTED_HORSE.get(),
                     EntityType.DONKEY, ModRegistry.AFFLICTED_HORSE.get(),
                     EntityType.MULE, ModRegistry.AFFLICTED_HORSE.get(),
-                    EntityType.WOLF, ModRegistry.AFFLICTED_WOLF.get());
+                    EntityType.WOLF, ModRegistry.AFFLICTED_WOLF.get(),
+                    EntityType.VILLAGER, ModRegistry.AFFLICTED_VILLAGER.get());
         }
         return type == null ? null : forms.get(type);
     }

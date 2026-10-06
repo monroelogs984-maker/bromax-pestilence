@@ -93,6 +93,18 @@ public final class NestSeeding {
         }
     }
 
+    /** Place a young nest on open ground within `radius` of a spot (used when a village falls). */
+    public static void placeNear(ServerLevel level, BlockPos centre, NestKind kind, int radius) {
+        RandomSource random = level.getRandom();
+        for (int attempt = 0; attempt < 16; attempt++) {
+            BlockPos pos = surface(level, centre.getX() + random.nextInt(2 * radius + 1) - radius, centre.getZ() + random.nextInt(2 * radius + 1) - radius);
+            if (pos != null && !Tracker.nestWithin(level, pos, 8)) {
+                place(level, pos, kind);
+                return;
+            }
+        }
+    }
+
     @Nullable
     private static NestKind pickKind(int phase, RandomSource random) {
         int total = 0;

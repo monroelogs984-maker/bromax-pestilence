@@ -1,0 +1,12 @@
+{
+  "name": "The Village Physician",
+  "icon": "bromaxpestilence:apothecary_table",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 18,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Set an $(l)Apothecary Table$() in a village and an unemployed villager may take it up as its $(l)Physician$(): masked, robed, and worth having. A healthy physician treats a sick neighbour every half minute, for free.$(br2)Physicians buy herbs and rat tails, and sell remedies, the kit, quicklime, and in time the whole of the Doctor's Garb and Theriac."
+    }
+  ]
+}

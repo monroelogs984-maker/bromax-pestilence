@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "bromaxpestilence:block/plague_cross",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "bromaxpestilence:block/plague_cross",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "bromaxpestilence:block/plague_cross",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bromaxpestilence:block/plague_cross",
+      "y": 270
+    }
+  }
+}

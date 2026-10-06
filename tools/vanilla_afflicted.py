@@ -392,6 +392,87 @@ def horse():
     write('afflicted_horse', bones, extend(img, rng))
 
 
+def overlay(base, top):
+    return [[t if t[3] else b for b, t in zip(rb, rt)] for rb, rt in zip(base, top)]
+
+
+def villager():
+    rng = random.Random(7)
+    base = 64
+    img = overlay(jar_png('entity/villager/villager'), jar_png('entity/villager/type/plains'))
+    face = faces(0, 0, 8, 10, 8)['north']
+    eyes = [(x, y) for y in range(face[1], face[1] + face[3]) for x in range(face[0], face[0] + face[2])
+            if img[y][x][3] and img[y][x][1] > img[y][x][0] + 20 and img[y][x][1] > img[y][x][2]]
+    img = sicken(img, rng)
+    for x, y in eyes:
+        img[y][x] = GLOW
+    body = faces(16, 20, 8, 12, 6)
+    sores(img, body['north'], rng, 4); sores(img, faces(0, 0, 8, 10, 8)['east'], rng, 2)
+    robe = faces(0, 38, 8, 20, 6)
+    for f in ('north', 'east', 'west'):
+        patches(img, robe[f], rng, 4, color=(70, 58, 48, 255))   # filth and stains on the robe
+    parts = with_skull([
+        part('head', (0, 0, 0), [(0, 0, -4, -10, -4, 8, 10, 8), (32, 0, -4, -10, -4, 8, 10, 8, 0.51)]),
+        part('nose', (0, -2, 0), [(24, 0, -1, -1, -6, 2, 4, 2)], parent='head'),
+        part('body', (0, 0, 0), [(16, 20, -4, 0, -3, 8, 12, 6), (0, 38, -4, 0, -3, 8, 20, 6, 0.5)]),
+        # vanilla holds its arms folded at -0.75 rad; the Afflicted hunch them further forward, clutching
+        part('arms', (0, 3, -1), [(44, 22, -8, -2, -2, 4, 8, 4), (44, 22, 4, -2, -2, 4, 8, 4, 0, True), (40, 38, -4, 2, -2, 8, 4, 4)],
+             rot=(-1.05, 0, 0)),
+        part('right_leg', (-2, 12, 0), [(0, 22, -2, 0, -2, 4, 12, 4)]),
+        part('left_leg', (2, 12, 0), [(0, 22, -2, 0, -2, 4, 12, 4, 0, True)]),
+    ])
+    bones = convert(parts, {'body': [((4, 19, -1), (1, 2, 2), (0, base)), ((-5, 15, 0), (1, 2, 2), (0, base))],
+                            'skull': [((3.5, 25, -2), (1, 2, 2), (0, base))]})
+    write('afflicted_villager', bones, extend(img, rng))
+
+
+def physician_overlays():
+    """The physician's robe: the vanilla cleric's overlay re-dyed to waxed black and brass, with a masked face."""
+    def redye(img):
+        out = []
+        for row in img:
+            new = []
+            for r, g, b, a in row:
+                if a == 0:
+                    new.append((r, g, b, a)); continue
+                lum = (0.3 * r + 0.59 * g + 0.11 * b) / 255
+                if b > g + 15 and (r > g or b > r):          # cleric purple -> waxed black leather
+                    v = 30 + lum * 60
+                    new.append((int(v * 1.05), int(v * 0.95), int(v * 0.88), a))
+                elif r > b + 50 and g > b + 20:               # gold trim -> brass
+                    new.append((int(110 + lum * 90), int(85 + lum * 70), int(30 + lum * 35), a))
+                else:
+                    new.append((r, g, b, a))
+            out.append(new)
+        return out
+    for kind in ('villager', 'zombie_villager'):
+        img = redye(jar_png(f'entity/{kind}/profession/cleric'))
+        # The waxed robe also covers the chest and the folded arms, buttoned in brass down the front.
+        drng = random.Random(9)
+        for u, v, w, h, d in ((16, 20, 8, 12, 6), (44, 22, 4, 8, 4), (40, 38, 8, 4, 4)):
+            for x0, y0, fw, fh in faces(u, v, w, h, d).values():
+                for y in range(y0, y0 + fh):
+                    for x in range(x0, x0 + fw):
+                        if img[y][x][3] == 0:
+                            k = 1 + drng.uniform(-0.08, 0.08)
+                            img[y][x] = (int(46 * k), int(42 * k), int(40 * k), 255)
+        bx, by, _, bh = faces(16, 20, 8, 12, 6)['north']
+        for y in range(by + 1, by + bh - 1, 3):
+            img[y][bx + 3] = (176, 141, 60, 255)
+        hat = faces(32, 0, 8, 10, 8)['north']                    # the hat layer's face, drawn over the villager's
+        x0, y0, w, h = hat
+        for x in range(x0, x0 + w):
+            for y in range(y0 + 6, y0 + h):
+                img[y][x] = (60, 46, 34, 255)                    # leather mask over nose and mouth
+        for ex in (x0 + 1, x0 + 5):
+            for dx, dy in ((0, 0), (1, 0), (0, 1), (1, 1)):
+                img[y0 + 4 + dy][ex + dx] = (176, 141, 60, 255)  # brass lens rims
+            img[y0 + 4][ex + 1] = (159, 199, 192, 255)            # glass
+        path = os.path.join(ASSETS, 'textures', 'entity', kind, 'profession', 'physician.png')
+        write_png(path, img)
+    print('physician overlays written')
+
+
 # ------------------------------------------------------------------------------------------------
 # Animations (vanilla bone names; head look-turning is GeckoLib's, so motion goes on 'skull')
 # ------------------------------------------------------------------------------------------------
@@ -445,6 +526,20 @@ def animations():
                 'skull': {'rotation': {'0.0': [0, 0, 0], '0.1': [35, 0, 0], '0.2': [-5, 0, 0], '0.3': [0, 0, 0]}}}},
         },
     }
+    anims['afflicted_villager'] = {
+        'misc.idle': {'loop': True, 'animation_length': 3.0, 'bones': {
+            'skull': {'rotation': [f'12 + {swing(3, 120)}', swing(6, 60), swing(2, 240)]},
+            'arms': {'rotation': [swing(3, 120), 0, 0]}}},
+        'move.walk': {'loop': True, 'animation_length': 1.4, 'bones': {
+            'right_leg': {'rotation': [swing(22, 257), 0, 0]},
+            'left_leg': {'rotation': [swing(16, 257, 180), 0, 0]},     # dragging one foot
+            'body': {'rotation': [0, 0, swing(3, 257)]},
+            'arms': {'rotation': [swing(5, 257), 0, 0]},
+            'skull': {'rotation': [f'15 + {swing(3, 514)}', 0, swing(4, 257)]}}},
+        'attack.bite': {'loop': False, 'animation_length': 0.5, 'bones': {
+            'arms': {'rotation': {'0.0': [0, 0, 0], '0.15': [20, 0, 0], '0.3': [-35, 0, 0], '0.5': [0, 0, 0]}},
+            'skull': {'rotation': {'0.0': [0, 0, 0], '0.3': [20, 0, 0], '0.5': [0, 0, 0]}}}},
+    }
     for name, a in anims.items():
         write_json(os.path.join(ASSETS, 'animations', 'entity', f'{name}.animation.json'),
                    {'format_version': '1.8.0', 'animations': a, 'geckolib_format_version': 2})
@@ -457,6 +552,8 @@ def build_all():
     chicken()
     wolf()
     horse()
+    villager()
+    physician_overlays()
     animations()
 
 

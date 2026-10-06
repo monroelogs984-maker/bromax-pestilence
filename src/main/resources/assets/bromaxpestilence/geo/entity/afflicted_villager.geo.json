@@ -1,0 +1,321 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.afflicted_villager",
+        "texture_width": 64,
+        "texture_height": 80,
+        "visible_bounds_width": 3,
+        "visible_bounds_height": 3,
+        "visible_bounds_offset": [
+          0,
+          1,
+          0
+        ]
+      },
+      "bones": [
+        {
+          "name": "root",
+          "pivot": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "head",
+          "parent": "root",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "skull",
+          "parent": "head",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                24,
+                -4
+              ],
+              "size": [
+                8,
+                10,
+                8
+              ],
+              "uv": [
+                0,
+                0
+              ]
+            },
+            {
+              "origin": [
+                -4,
+                24,
+                -4
+              ],
+              "size": [
+                8,
+                10,
+                8
+              ],
+              "uv": [
+                32,
+                0
+              ],
+              "inflate": 0.51
+            },
+            {
+              "origin": [
+                3.5,
+                25,
+                -2
+              ],
+              "size": [
+                1,
+                2,
+                2
+              ],
+              "uv": [
+                0,
+                64
+              ]
+            }
+          ]
+        },
+        {
+          "name": "nose",
+          "parent": "skull",
+          "pivot": [
+            0,
+            26,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                23,
+                -6
+              ],
+              "size": [
+                2,
+                4,
+                2
+              ],
+              "uv": [
+                24,
+                0
+              ]
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "parent": "root",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                12,
+                -3
+              ],
+              "size": [
+                8,
+                12,
+                6
+              ],
+              "uv": [
+                16,
+                20
+              ]
+            },
+            {
+              "origin": [
+                -4,
+                4,
+                -3
+              ],
+              "size": [
+                8,
+                20,
+                6
+              ],
+              "uv": [
+                0,
+                38
+              ],
+              "inflate": 0.5
+            },
+            {
+              "origin": [
+                4,
+                19,
+                -1
+              ],
+              "size": [
+                1,
+                2,
+                2
+              ],
+              "uv": [
+                0,
+                64
+              ]
+            },
+            {
+              "origin": [
+                -5,
+                15,
+                0
+              ],
+              "size": [
+                1,
+                2,
+                2
+              ],
+              "uv": [
+                0,
+                64
+              ]
+            }
+          ]
+        },
+        {
+          "name": "arms",
+          "parent": "root",
+          "pivot": [
+            0,
+            21,
+            -1
+          ],
+          "rotation": [
+            -60.1606,
+            0.0,
+            0.0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -8,
+                15,
+                -3
+              ],
+              "size": [
+                4,
+                8,
+                4
+              ],
+              "uv": [
+                44,
+                22
+              ]
+            },
+            {
+              "origin": [
+                4,
+                15,
+                -3
+              ],
+              "size": [
+                4,
+                8,
+                4
+              ],
+              "uv": [
+                44,
+                22
+              ],
+              "mirror": true
+            },
+            {
+              "origin": [
+                -4,
+                15,
+                -3
+              ],
+              "size": [
+                8,
+                4,
+                4
+              ],
+              "uv": [
+                40,
+                38
+              ]
+            }
+          ]
+        },
+        {
+          "name": "right_leg",
+          "parent": "root",
+          "pivot": [
+            -2,
+            12,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                0,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "uv": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        {
+          "name": "left_leg",
+          "parent": "root",
+          "pivot": [
+            2,
+            12,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                0,
+                -2
+              ],
+              "size": [
+                4,
+                12,
+                4
+              ],
+              "uv": [
+                0,
+                22
+              ],
+              "mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
