@@ -40,3 +40,8 @@ textures/mob_effect/plague.png
 textures/mob_effect/plague_immunity.png
 textures/mob_effect/dread.png
 textures/mob_effect/delirium.png
+textures/mob_effect/rotting.png
+textures/block/blighted_soil_top.png
+textures/block/blighted_soil_side.png
+textures/block/withered_leaves.png
+textures/block/plague_cross.png

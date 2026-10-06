@@ -414,7 +414,73 @@ def round8():
     ]
 
 
-ROUNDS = [round1, round2, round3, round4, round5, round6, round7, round8]
+def gradient_map(img, ramp):
+    """Recolour by luminance onto a dark-to-light ramp of hex colours (keeps vanilla's grain, swaps its palette)."""
+    stops = [hexc(c) for c in ramp]
+    out = []
+    for row in img:
+        new = []
+        for r, g, b, a in row:
+            if not a:
+                new.append((0, 0, 0, 0)); continue
+            t = min(0.999, (0.3 * r + 0.59 * g + 0.11 * b) / 255) * (len(stops) - 1)
+            i, f = int(t), t - int(t)
+            c0, c1 = stops[i], stops[i + 1]
+            new.append(tuple(int(c0[k] + (c1[k] - c0[k]) * f) for k in range(3)) + (a,))
+        out.append(new)
+    return out
+
+
+def block(name, img):
+    write_png(os.path.join(ASSETS, 'textures', 'block', f'{name}.png'), img)
+    return f'textures/block/{name}.png'
+
+
+def round9():
+    """Rotting, and the Blight's blocks and the plague cross (from vanilla textures, re-coloured and painted)."""
+    import random
+    rng = random.Random(9)
+    made = [effect('rotting', [
+        '..................', '..................', '...........k.k....', '..........kwkwk...', '...........k.k....',
+        '....oooooo........', '...oRRRRRRoo......', '..oRRrRRRRRRo.....', '..oRrRGRRRRRRo....', '..oRRRRRRGRRRBo...',
+        '..oRGRRRRRRRRBBo..', '...oRRRGRRRRBBBo..', '....oRRRRRRBBBo...', '.....oooooBBBo....', '..........oBBo....',
+        '...........oo.....', '..................', '..................'],
+        {'o': '#2a1a10', 'R': '#8a4a3a', 'r': '#b07060', 'G': '#7a8a3a', 'B': '#e8dcc8', 'k': '#1a1612', 'w': '#c8d0e0'})]
+    # Blighted soil: mycelium's grain in rot colours, with a few weeping sores.
+    top = gradient_map(jar_png('block/mycelium_top'), ['#1e1a1c', '#3a3034', '#4e4448', '#6a5c58', '#857468'])
+    for _ in range(2):                          # rot veins, wrapping so the tile still tiles
+        x, y = rng.randrange(16), rng.randrange(16)
+        for _ in range(10):
+            top[y % 16][x % 16] = hexc('#5a3a5a')
+            x += rng.choice((-1, 0, 1)); y += rng.choice((0, 1))
+    for _ in range(6):
+        x, y = rng.randrange(16), rng.randrange(16)
+        top[y][x] = hexc('#8c8a3a')
+        top[(y + 1) % 16][x] = hexc('#5a2a30')
+    made.append(block('blighted_soil_top', top))
+    side = jar_png('block/mycelium_side')
+    dirt = jar_png('block/dirt')
+    band = gradient_map(side, ['#1e1a1c', '#3a3034', '#4e4448', '#6a5c58', '#857468'])
+    side_out = [[band[y][x] if y < 5 and side[y][x] != dirt[y][x] else gradient_map([[dirt[y][x]]], ['#2e2620', '#4a3a2e', '#5e4a3a', '#7a624c'])[0][0]
+                 for x in range(16)] for y in range(16)]
+    made.append(block('blighted_soil_side', side_out))
+    # Withered leaves: oak's leaf mask, dead and brown.
+    made.append(block('withered_leaves', gradient_map(jar_png('block/oak_leaves'), ['#2e2418', '#4e3e26', '#6e5a36', '#8e7648', '#a89060'])))
+    # The plague cross: dark spruce boards, a thick red cross daubed on and running.
+    cross = gradient_map(jar_png('block/spruce_planks'), ['#1e140c', '#33241a', '#4a3424', '#5e4430'])
+    red, dark = hexc('#a81c14'), hexc('#6e1210')
+    for i in range(2, 14):
+        for t in (0, 1):
+            for x, y in ((i + t, i), (15 - i - t, i)):
+                cross[y][x] = red if (x + y) % 5 else dark
+    for x, y0, n in ((5, 11, 4), (10, 10, 5), (8, 9, 3), (3, 13, 2)):
+        for y in range(y0, min(16, y0 + n)):
+            cross[y][x] = dark
+    made.append(block('plague_cross', cross))
+    return made
+
+
+ROUNDS = [round1, round2, round3, round4, round5, round6, round7, round8, round9]
 
 if __name__ == '__main__':
     made = []
