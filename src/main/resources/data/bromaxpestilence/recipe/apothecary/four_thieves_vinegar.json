@@ -1,0 +1,25 @@
+{
+  "type": "bromaxpestilence:apothecary",
+  "base": {
+    "item": "minecraft:glass_bottle"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:fermented_spider_eye"
+    },
+    {
+      "item": "bromaxpestilence:garlic"
+    },
+    {
+      "item": "bromaxpestilence:dried_rosemary"
+    },
+    {
+      "item": "bromaxpestilence:dried_sage"
+    }
+  ],
+  "result": {
+    "id": "bromaxpestilence:four_thieves_vinegar",
+    "count": 2
+  },
+  "heated": false
+}

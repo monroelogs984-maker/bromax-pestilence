@@ -9,7 +9,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -19,9 +18,9 @@ import net.neoforged.neoforge.common.EffectCure;
 import java.util.Set;
 
 /**
- * The plague. Amplifier is the stage: 0 Incubation, 1 Fever, 2 Buboes. Each stage costs one heart
- * of max health; symptoms are short hidden effects so they vanish with the plague. Stage changes,
- * recovery and animal deaths are driven by {@link com.bromax.pestilence.PlagueEvents}.
+ * Sickness: the one visible effect for every disease. Amplifier is the stage (0 Incubation, 1, 2).
+ * Each stage costs one heart of max health; the disease itself (see {@link com.bromax.pestilence.disease.Disease})
+ * decides the symptoms. Stage changes, recovery and animal deaths are driven by PlagueEvents.
  */
 public class PlagueEffect extends MobEffect {
     public PlagueEffect() {
@@ -36,20 +35,7 @@ public class PlagueEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity entity, int stage) {
-        if (!(entity.level() instanceof ServerLevel level)) return true;
-        boolean person = Plague.isPerson(entity);
-        if (stage >= 1) {
-            if (person) entity.addEffect(new MobEffectInstance(MobEffects.HUNGER, 60, 0, true, false, false));
-            if (entity.getRandom().nextInt(3) == 0) cough(level, entity);
-        }
-        if (stage >= 2) {
-            entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60, 0, true, false, false));
-            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, true, false, false));
-            if (person) entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 60, 0, true, false, false));
-            if (person && PestConfig.NAUSEA.get() && entity.getRandom().nextInt(12) == 0) {
-                entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 120, 0, true, false, false));
-            }
-        }
+        if (entity.level() instanceof ServerLevel level) Plague.disease(entity).symptoms(level, entity, stage, Plague.isPerson(entity));
         return true;
     }
 

@@ -5,6 +5,9 @@ import com.bromax.pestilence.phase.PestilenceData;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.bromax.pestilence.disease.Disease;
+import net.minecraft.commands.SharedSuggestionProvider;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -19,7 +22,7 @@ import net.minecraft.world.entity.LivingEntity;
  * /pestilence                     current phase and points (anyone)
  * /pestilence points set|add <n>  (op)
  * /pestilence phase <0-8>         jump to the start of a phase (op)
- * /pestilence infect <targets> [stage]   (op, bypasses phase/immunity rules)
+ * /pestilence infect <targets> [stage] [disease]   (op, bypasses phase/immunity rules)
  */
 public final class PestilenceCommand {
     private PestilenceCommand() {}
@@ -37,9 +40,14 @@ public final class PestilenceCommand {
                                 .executes(c -> setPoints(c, PestilenceData.threshold(IntegerArgumentType.getInteger(c, "phase")), false))))
                 .then(Commands.literal("infect").requires(s -> s.hasPermission(2))
                         .then(Commands.argument("targets", EntityArgument.entities())
-                                .executes(c -> infect(c, 0))
+                                .executes(c -> infect(c, 0, Disease.BUBONIC))
                                 .then(Commands.argument("stage", IntegerArgumentType.integer(0, Plague.MAX_STAGE))
-                                        .executes(c -> infect(c, IntegerArgumentType.getInteger(c, "stage")))))));
+                                        .executes(c -> infect(c, IntegerArgumentType.getInteger(c, "stage"), Disease.BUBONIC))
+                                        .then(Commands.argument("disease", StringArgumentType.word())
+                                                .suggests((c, b) -> SharedSuggestionProvider.suggest(
+                                                        java.util.Arrays.stream(Disease.values()).map(Disease::getSerializedName), b))
+                                                .executes(c -> infect(c, IntegerArgumentType.getInteger(c, "stage"),
+                                                        Disease.valueOf(StringArgumentType.getString(c, "disease").toUpperCase()))))))));
     }
 
     private static int status(CommandContext<CommandSourceStack> ctx) {
@@ -60,12 +68,11 @@ public final class PestilenceCommand {
         return status(ctx);
     }
 
-    private static int infect(CommandContext<CommandSourceStack> ctx, int stage) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+    private static int infect(CommandContext<CommandSourceStack> ctx, int stage, Disease disease) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         int count = 0;
         for (Entity e : EntityArgument.getEntities(ctx, "targets")) {
             if (e instanceof LivingEntity living) {
-                living.removeEffect(ModRegistry.IMMUNITY);
-                living.addEffect(new MobEffectInstance(ModRegistry.PLAGUE, Plague.stageTicks(living, stage), stage));
+                Plague.force(living, disease, stage);
                 count++;
             }
         }

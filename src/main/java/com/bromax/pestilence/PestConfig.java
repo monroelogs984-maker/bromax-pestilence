@@ -24,6 +24,9 @@ public final class PestConfig {
     public static final ModConfigSpec.DoubleValue RAT_BITE_CHANCE;
     public static final ModConfigSpec.DoubleValue AFFLICTED_BITE_CHANCE;
     public static final ModConfigSpec.DoubleValue ROTTEN_FLESH_CHANCE;
+    public static final ModConfigSpec.DoubleValue RAW_MEAT_CHANCE;
+    public static final ModConfigSpec.DoubleValue FOUL_WATER_CHANCE;
+    public static final ModConfigSpec.DoubleValue LEECH_CHANCE;
     public static final ModConfigSpec.DoubleValue MASK_BITE_REDUCTION;
     public static final ModConfigSpec.DoubleValue MIASMA_CHANCE;
     public static final ModConfigSpec.IntValue OUTBREAK_INTERVAL;
@@ -101,9 +104,15 @@ public final class PestConfig {
                 .defineInRange("ratBiteChance", 0.3, 0.0, 1.0);
         AFFLICTED_BITE_CHANCE = b.comment("Chance that a hit from an Afflicted mob infects its target.")
                 .defineInRange("afflictedBiteChance", 0.25, 0.0, 1.0);
-        ROTTEN_FLESH_CHANCE = b.comment("Chance that eating rotten flesh infects a player.")
+        ROTTEN_FLESH_CHANCE = b.comment("Chance that eating rotten flesh gives a player dysentery.")
                 .defineInRange("rottenFleshChance", 0.15, 0.0, 1.0);
-        MASK_BITE_REDUCTION = b.comment("How much the Plague Doctor's Mask reduces bite infection (it fully blocks airborne contagion and miasma).")
+        RAW_MEAT_CHANCE = b.comment("Chance that eating raw meat (#c:foods/raw_meat) gives a player dysentery.")
+                .defineInRange("rawMeatChance", 0.05, 0.0, 1.0);
+        FOUL_WATER_CHANCE = b.comment("Chance that drinking a water bottle near a plague nest gives a player dysentery.")
+                .defineInRange("foulWaterChance", 0.5, 0.0, 1.0);
+        LEECH_CHANCE = b.comment("Chance that filling a bottle in swamp water brings up a Leech Jar instead.")
+                .defineInRange("leechChance", 0.25, 0.0, 1.0);
+        MASK_BITE_REDUCTION = b.comment("How much the Plague Doctor's Mask reduces contact infection (it fully blocks coughs and miasma). The other three Doctor's Garb pieces split the rest.")
                 .defineInRange("maskBiteReduction", 0.5, 0.0, 1.0);
         MIASMA_CHANCE = b.comment("Chance per second that an unmasked host standing in a miasma cloud catches the plague.")
                 .defineInRange("miasmaChance", 0.25, 0.0, 1.0);

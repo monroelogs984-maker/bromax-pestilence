@@ -1,0 +1,22 @@
+{
+  "type": "bromaxpestilence:apothecary",
+  "base": {
+    "item": "minecraft:paper"
+  },
+  "ingredients": [
+    {
+      "item": "bromaxpestilence:garlic"
+    },
+    {
+      "item": "bromaxpestilence:sage"
+    },
+    {
+      "item": "bromaxpestilence:dried_rue"
+    }
+  ],
+  "result": {
+    "id": "bromaxpestilence:plague_poultice",
+    "count": 2
+  },
+  "heated": false
+}

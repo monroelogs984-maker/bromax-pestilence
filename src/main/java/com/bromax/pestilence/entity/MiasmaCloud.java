@@ -2,6 +2,7 @@ package com.bromax.pestilence.entity;
 
 import com.bromax.pestilence.PestConfig;
 import com.bromax.pestilence.Plague;
+import com.bromax.pestilence.disease.Disease;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import com.bromax.pestilence.ModRegistry;
 
-/** A lingering cloud of foul air. Unmasked people and animals standing in it may catch the plague. */
+/** A lingering cloud of foul air. Unmasked people and animals standing in it may catch pneumonic plague. */
 public class MiasmaCloud extends Entity {
     private static final EntityDataAccessor<Float> RADIUS = SynchedEntityData.defineId(MiasmaCloud.class, EntityDataSerializers.FLOAT);
     private static final int COLOR = 0x6b7330;
@@ -67,8 +68,8 @@ public class MiasmaCloud extends Entity {
         if (tickCount % 20 == 0) {
             AABB box = new AABB(getX() - r, getY() - 0.5, getZ() - r, getX() + r, getY() + 2, getZ() + r);
             for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, box,
-                    e -> e.distanceToSqr(getX(), e.getY(), getZ()) <= r * r && Plague.canCatch(e) && !Plague.wearsMask(e))) {
-                if (random.nextDouble() < PestConfig.MIASMA_CHANCE.get()) Plague.infect(e);
+                    e -> e.distanceToSqr(getX(), e.getY(), getZ()) <= r * r && Plague.canCatch(e) && !Plague.airProtected(e))) {
+                if (random.nextDouble() < PestConfig.MIASMA_CHANCE.get()) Plague.infect(e, Disease.PNEUMONIC);
             }
         }
     }

@@ -1,5 +1,10 @@
 {
   "values": [
-    "#minecraft:small_flowers"
+    "#minecraft:small_flowers",
+    "bromaxpestilence:dried_garlic",
+    "bromaxpestilence:dried_rue",
+    "bromaxpestilence:dried_sage",
+    "bromaxpestilence:dried_wormwood",
+    "bromaxpestilence:dried_rosemary"
   ]
 }

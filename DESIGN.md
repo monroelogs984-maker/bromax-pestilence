@@ -35,7 +35,7 @@ first-person friendly (no screen effects that hide combat).
 
 ## Systems (build order)
 
-Status: 1 done (0.2.0), 2 done (0.3.0). Fetid water / dysentery moved to system 3 with the disease roster.
+Status: 1 done (0.2.0), 2 done (0.3.0), 3 done (0.4.0). System 3 changes: no separate alembic (heated recipes need a fire, campfire or lit brazier within 2 blocks of the table); Sweating Sickness moves to 7 (seasons); The Rot moves to 5.
 
 1. **Phases, corpses and pyres, Afflicted animals**: world Plague Points, announcements, `/pestilence`;
    corpse entity (flies, rises after a delay; burn it, haul it, or keep it near a lit pyre);

@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "bromaxpestilence:block/apothecary_table",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "bromaxpestilence:block/apothecary_table",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "bromaxpestilence:block/apothecary_table",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bromaxpestilence:block/apothecary_table",
+      "y": 270
+    }
+  }
+}

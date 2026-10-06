@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "bromaxpestilence:block/drying_rack",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "bromaxpestilence:block/drying_rack",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "bromaxpestilence:block/drying_rack",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bromaxpestilence:block/drying_rack",
+      "y": 270
+    }
+  }
+}

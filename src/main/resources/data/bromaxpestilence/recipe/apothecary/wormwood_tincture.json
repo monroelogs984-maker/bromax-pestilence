@@ -1,0 +1,22 @@
+{
+  "type": "bromaxpestilence:apothecary",
+  "base": {
+    "item": "minecraft:glass_bottle"
+  },
+  "ingredients": [
+    {
+      "item": "bromaxpestilence:dried_wormwood"
+    },
+    {
+      "item": "bromaxpestilence:dried_wormwood"
+    },
+    {
+      "item": "bromaxpestilence:dried_rosemary"
+    }
+  ],
+  "result": {
+    "id": "bromaxpestilence:wormwood_tincture",
+    "count": 1
+  },
+  "heated": true
+}

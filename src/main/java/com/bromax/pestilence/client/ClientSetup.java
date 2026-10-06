@@ -2,6 +2,7 @@ package com.bromax.pestilence.client;
 
 import com.bromax.pestilence.ModRegistry;
 import com.bromax.pestilence.Pestilence;
+import com.bromax.pestilence.item.GarbItem;
 import com.bromax.pestilence.item.PlagueMaskItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -42,6 +43,8 @@ public final class ClientSetup {
         geo(event, ModRegistry.AFFLICTED_WOLF.get(), "afflicted_wolf", 1f);
         event.registerEntityRenderer(ModRegistry.CORPSE.get(), CorpseRenderer::new);
         event.registerEntityRenderer(ModRegistry.MIASMA_CLOUD.get(), NoopRenderer::new);
+        event.registerBlockEntityRenderer(ModRegistry.APOTHECARY_TABLE_BE.get(), ItemHolderRenderer::new);
+        event.registerBlockEntityRenderer(ModRegistry.DRYING_RACK_BE.get(), ItemHolderRenderer::new);
     }
 
     private static <T extends Entity & GeoEntity> void geo(EntityRenderersEvent.RegisterRenderers event, EntityType<T> type, String model, float scale) {
@@ -66,5 +69,18 @@ public final class ClientSetup {
                 return renderer;
             }
         }, ModRegistry.PLAGUE_MASK.get());
+        // The coat, trousers and boots share one model; GeckoLib shows the bones for the slot being drawn.
+        for (var garb : java.util.List.of(ModRegistry.DOCTORS_COAT, ModRegistry.DOCTORS_TROUSERS, ModRegistry.DOCTORS_BOOTS)) {
+            event.registerItem(new IClientItemExtensions() {
+                private GeoArmorRenderer<GarbItem> renderer;
+
+                @Override
+                public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> original) {
+                    if (renderer == null) renderer = new GeoArmorRenderer<>(new DefaultedItemGeoModel<>(Pestilence.id("armor/doctors_garb")));
+                    renderer.prepForRender(entity, stack, slot, original);
+                    return renderer;
+                }
+            }, garb.get());
+        }
     }
 }

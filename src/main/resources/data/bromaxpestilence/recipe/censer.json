@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " C ",
+    "GFG",
+    " G "
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:chain"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "F": {
+      "tag": "bromaxpestilence:censer_fuel"
+    }
+  },
+  "result": {
+    "id": "bromaxpestilence:censer",
+    "count": 1
+  }
+}

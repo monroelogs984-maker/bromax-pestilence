@@ -1,0 +1,22 @@
+{
+  "type": "bromaxpestilence:apothecary",
+  "base": {
+    "item": "minecraft:bowl"
+  },
+  "ingredients": [
+    {
+      "item": "bromaxpestilence:garlic"
+    },
+    {
+      "item": "bromaxpestilence:dried_sage"
+    },
+    {
+      "item": "bromaxpestilence:dried_rosemary"
+    }
+  ],
+  "result": {
+    "id": "bromaxpestilence:herbal_broth",
+    "count": 1
+  },
+  "heated": true
+}

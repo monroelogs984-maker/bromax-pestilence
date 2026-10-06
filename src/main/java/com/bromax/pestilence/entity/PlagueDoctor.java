@@ -43,7 +43,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.Optional;
 
 /**
- * A wandering trader in a beaked mask. Sells the cure, the mask and the pyre, pays for rat tails,
+ * A wandering trader in a beaked mask. Sells cures, herbs, the kit, the mask and the pyre, pays for rat tails,
  * never catches the plague, and treats sick villagers and animals around him for free.
  */
 public class PlagueDoctor extends WanderingTrader implements GeoEntity {
@@ -82,6 +82,10 @@ public class PlagueDoctor extends WanderingTrader implements GeoEntity {
     protected void updateTrades() {
         MerchantOffers offers = getOffers();
         offers.add(new MerchantOffer(new ItemCost(Items.EMERALD, 3), new ItemStack(ModRegistry.FOUR_THIEVES_VINEGAR.get()), 8, 1, 0.05f));
+        offers.add(new MerchantOffer(new ItemCost(Items.EMERALD, 12), new ItemStack(ModRegistry.THERIAC.get()), 3, 1, 0.05f));
+        offers.add(new MerchantOffer(new ItemCost(Items.EMERALD, 4), new ItemStack(ModRegistry.PHYSICIANS_KIT.get()), 2, 1, 0.05f));
+        offers.add(new MerchantOffer(new ItemCost(Items.EMERALD, 1), new ItemStack(ModRegistry.HERB_ITEMS.get("rue").get(), 3), 8, 1, 0.05f));
+        offers.add(new MerchantOffer(new ItemCost(Items.EMERALD, 1), new ItemStack(ModRegistry.HERB_ITEMS.get("wormwood").get(), 3), 8, 1, 0.05f));
         offers.add(new MerchantOffer(new ItemCost(Items.EMERALD, 10), Optional.of(new ItemCost(Items.LEATHER, 3)),
                 new ItemStack(ModRegistry.PLAGUE_MASK.get()), 2, 1, 0.05f));
         offers.add(new MerchantOffer(new ItemCost(Items.EMERALD, 2), new ItemStack(ModRegistry.PYRE_ITEM.get()), 6, 1, 0.05f));

@@ -1,0 +1,25 @@
+{
+  "type": "bromaxpestilence:apothecary",
+  "base": {
+    "item": "minecraft:glass_bottle"
+  },
+  "ingredients": [
+    {
+      "item": "bromaxpestilence:dried_rue"
+    },
+    {
+      "item": "bromaxpestilence:dried_wormwood"
+    },
+    {
+      "item": "minecraft:honey_bottle"
+    },
+    {
+      "item": "bromaxpestilence:rat_tail"
+    }
+  ],
+  "result": {
+    "id": "bromaxpestilence:theriac",
+    "count": 1
+  },
+  "heated": true
+}

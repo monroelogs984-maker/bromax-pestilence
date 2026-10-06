@@ -1,0 +1,21 @@
+{
+  "name": "The Doctor's Garb",
+  "icon": "bromaxpestilence:doctors_coat",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 15,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The beaked mask keeps out bad air but only halves the danger of a bite or of handling the sick. A waxed $(l)coat$(), $(l)trousers$() and $(l)boots$() each take a share of the rest.$(br2)In the $(2)full garb$(), no bite, blow, flea or corpse can infect you. Coughs and miasma still need the mask, or a censer."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:doctors_coat",
+      "recipe2": "bromaxpestilence:doctors_trousers"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:doctors_boots"
+    }
+  ]
+}

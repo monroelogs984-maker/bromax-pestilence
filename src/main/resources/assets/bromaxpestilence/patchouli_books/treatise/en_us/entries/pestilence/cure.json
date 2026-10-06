@@ -6,7 +6,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Thieves who robbed the dead swore by it. Drink it and the Pestilence leaves you at once, and you are $(2)immune$() for a while after.$(br2)Use it on a sick villager or animal to cure them too. Every cure pushes the Pestilence back a little."
+      "text": "Thieves who robbed the dead swore by it. It cures $(l)Pneumonic Plague$(), and leaves you $(2)immune$() for a while after, as every cure does.$(br2)It can be mixed plainly at a crafting table, or more richly at an Apothecary Table."
     },
     {
       "type": "patchouli:crafting",

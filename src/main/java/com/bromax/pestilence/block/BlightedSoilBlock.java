@@ -2,6 +2,7 @@ package com.bromax.pestilence.block;
 
 import com.bromax.pestilence.PestConfig;
 import com.bromax.pestilence.Plague;
+import com.bromax.pestilence.disease.Disease;
 import com.bromax.pestilence.world.Blight;
 import com.bromax.pestilence.world.Tracker;
 import net.minecraft.core.BlockPos;
@@ -16,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Grass the Blight has reached. Nothing can be planted in it (it is not dirt), it gives off spores,
- * and lingering on it unmasked may make you sick. With no nest nearby it turns back into grass.
+ * and its fleas may give you bubonic plague. With no nest nearby it turns back into grass.
  */
 public class BlightedSoilBlock extends Block {
     public BlightedSoilBlock(Properties properties) {
@@ -30,9 +31,8 @@ public class BlightedSoilBlock extends Block {
 
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-        if (!level.isClientSide && entity instanceof LivingEntity living && !Plague.wearsMask(living)
-                && level.random.nextDouble() < PestConfig.BLIGHT_STEP_INFECT_CHANCE.get()) {
-            Plague.infect(living);
+        if (!level.isClientSide && entity instanceof LivingEntity living) {
+            Plague.tryContactInfect(living, PestConfig.BLIGHT_STEP_INFECT_CHANCE.get(), Disease.BUBONIC);
         }
         super.stepOn(level, pos, state, entity);
     }

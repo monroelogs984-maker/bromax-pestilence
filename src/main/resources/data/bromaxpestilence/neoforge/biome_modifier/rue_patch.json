@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_savanna",
+  "features": "bromaxpestilence:rue_patch",
+  "step": "vegetal_decoration"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "The Apothecary Table",
+  "icon": "bromaxpestilence:apothecary_table",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 12,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Lay a $(l)base$() on the table (a glass bottle, a bowl or paper) and up to four ingredients, then work them with a $(l)Mortar and Pestle$(). An empty hand takes back the last thing laid down.$(br2)Some preparations must be $(4)heated$(): keep a fire, lit campfire or lit Herb Brazier within two blocks."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:apothecary_table",
+      "recipe2": "bromaxpestilence:mortar_and_pestle"
+    }
+  ]
+}

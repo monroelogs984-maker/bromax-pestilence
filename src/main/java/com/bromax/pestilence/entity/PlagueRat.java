@@ -2,6 +2,7 @@ package com.bromax.pestilence.entity;
 
 import com.bromax.pestilence.PestConfig;
 import com.bromax.pestilence.Plague;
+import com.bromax.pestilence.disease.Disease;
 import com.bromax.pestilence.phase.Phase;
 import com.bromax.pestilence.phase.PestilenceData;
 import net.minecraft.sounds.SoundEvent;
@@ -72,7 +73,7 @@ public class PlagueRat extends Monster implements GeoEntity {
     @Override
     public boolean doHurtTarget(Entity target) {
         boolean hit = super.doHurtTarget(target);
-        if (hit && target instanceof LivingEntity living) Plague.tryBiteInfect(living, PestConfig.RAT_BITE_CHANCE.get());
+        if (hit && target instanceof LivingEntity living) Plague.tryContactInfect(living, PestConfig.RAT_BITE_CHANCE.get(), Disease.BUBONIC);
         return hit;
     }
 

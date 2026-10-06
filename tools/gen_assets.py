@@ -705,6 +705,218 @@ def nest_models():
                 render_type='minecraft:cutout')
 
 
+# ---------------------------------------------------------------------------------------------
+# System 3: herbs, apothecary icons, Doctor's Garb
+# ---------------------------------------------------------------------------------------------
+
+HERB_STYLE = {
+    # stem, leaf colours, accent (flower/bulb), leaf shape
+    'garlic': ('#5d7a3a', ['#6f9a45', '#5c8538', '#87b05a'], '#e8e2d4', 'blade'),
+    'rue': ('#4d6b4a', ['#6f9a8a', '#5d8878', '#85b0a0'], '#e3c94a', 'round'),
+    'sage': ('#5a6650', ['#8fa085', '#7d8f74', '#a3b398'], '#8a6ab0', 'broad'),
+    'wormwood': ('#6b7268', ['#b3bcae', '#9fa89a', '#c8d0c2'], '#d8c24a', 'feather'),
+    'rosemary': ('#5a4a32', ['#3f6b45', '#355c3a', '#4d7d52'], '#9fb8e0', 'needle'),
+}
+STAGE_HEIGHT = [5, 8, 11, 15]
+
+
+def herb_sprite(name, stage):
+    stem, leaves, accent, shape = HERB_STYLE[name]
+    rng = random.Random(hash((name, stage)) & 0xffff)
+    img = [[(0, 0, 0, 0)] * 16 for _ in range(16)]
+
+    def put(x, y, c):
+        if 0 <= x < 16 and 0 <= y < 16:
+            img[y][x] = rgba(c)
+    h = STAGE_HEIGHT[stage]
+    stems = [3, 7, 11, 13] if stage >= 2 else [5, 10]
+    for sx in stems:
+        top = 16 - h + rng.randrange(0, 3)
+        x = sx
+        for y in range(15, top - 1, -1):
+            put(x, y, stem if shape in ('needle', 'feather') or y > 13 else leaves[1])
+            if shape == 'blade':
+                continue
+            if y % 2 == 0 and y < 14:
+                side = 1 if (y // 2) % 2 else -1
+                if shape == 'round':
+                    put(x + side, y, rng.choice(leaves)); put(x + side, y - 1, rng.choice(leaves))
+                elif shape == 'broad':
+                    for dx in (1, 2):
+                        put(x + side * dx, y, rng.choice(leaves)); put(x + side * dx, y - 1, rng.choice(leaves))
+                elif shape == 'feather':
+                    for dx in (1, 2, 3):
+                        if rng.random() < 0.7: put(x + side * dx, y - (dx // 2), rng.choice(leaves))
+                elif shape == 'needle':
+                    put(x - 1, y, rng.choice(leaves)); put(x + 1, y, rng.choice(leaves))
+            if shape == 'blade' and rng.random() < 0.3:
+                x += rng.choice((-1, 1))
+        if shape == 'blade':                      # garlic: a second blade leaning off each stem
+            for y in range(15, top + 2, -1):
+                put(sx + (15 - y) // 4 + 1, y, rng.choice(leaves))
+        if stage == 3:
+            if shape == 'blade':                  # flower head on the scape
+                for dx, dy in ((0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)):
+                    put(sx + dx, top + dy, accent)
+            else:
+                put(sx, top, accent); put(sx + rng.choice((-1, 1)), top + 1, accent)
+    return img
+
+
+def dried(img):
+    out = []
+    for row in img:
+        new = []
+        for r, g, b, a in row:
+            if a == 0:
+                new.append((r, g, b, a)); continue
+            lum = 0.3 * r + 0.59 * g + 0.11 * b
+            mix = [v * 0.35 + lum * 0.65 for v in (r, g, b)]
+            new.append((int(mix[0] * 0.9 + 22), int(mix[1] * 0.8 + 10), int(mix[2] * 0.55), a))
+        out.append(new)
+    return out
+
+
+HERB_ICONS = {
+    'garlic': ['................', '.......g........', '......gg........', '.......g........', '.......g........',
+               '......www.......', '.....wWWWw......', '....wWWwWWw.....', '....wWWwWWw.....', '....wWwWwWw.....',
+               '....wWwWwWw.....', '.....wWWWw......', '......ddd.......', '................', '................', '................'],
+    'rue': ['................', '.....y..y.......', '....yyyyyy......', '.....lyyl.......', '....lLs.Ll......',
+            '...lL.s.lLl.....', '....l.s..l......', '...lLls.Ll......', '....lLs.lLl.....', '.....l.sLl......',
+            '.......s........', '.......s........', '......s.........', '................', '................', '................'],
+    'sage': ['................', '........LL......', '.......LlLL.....', '......LlLLL.....', '......LlLLL.....',
+             '...LL.LlLL......', '..LlLL.LL.......', '..LlLLLs........', '...LLLls........', '.......s........',
+             '......s.........', '......s.........', '.....s..........', '................', '................', '................'],
+    'wormwood': ['................', '.......y........', '....l.lsl.l.....', '...lLl.s.lLl....', '....l.lsl.l.....',
+                 '..lLl..s..lLl...', '...l.l.s.l.l....', '..lLl.lsl.lLl...', '....l..s..l.....', '.......s........',
+                 '.......s........', '......s.........', '................', '................', '................', '................'],
+    'rosemary': ['................', '.........b......', '........lsl.....', '.......lsl......', '........sl......',
+                 '.......lsl......', '......lsl.......', '.......sl.......', '......lsl.......', '.....lsl........',
+                 '......s.........', '.....s..........', '....s...........', '................', '................', '................'],
+}
+
+
+def herbs():
+    blocks = os.path.join(ASSETS, 'textures', 'block')
+    items = os.path.join(ASSETS, 'textures', 'item')
+    for name, (stem, leaves, accent, _) in HERB_STYLE.items():
+        for stage in range(4):
+            write_png(os.path.join(blocks, f'{name}_stage{stage}.png'), herb_sprite(name, stage))
+        key = {'g': leaves[0], 'w': '#ddd6c6', 'W': '#f2ede2', 'd': '#9c8f75', 'y': accent, 'b': accent,
+               'l': leaves[0], 'L': leaves[1], 's': stem}
+        icon = [[rgba(key[c]) if c != '.' else (0, 0, 0, 0) for c in row] for row in HERB_ICONS[name]]
+        write_png(os.path.join(items, f'{name}.png'), icon)
+        write_png(os.path.join(items, f'dried_{name}.png'), dried(icon))
+
+
+def bottle(liquid, light, dark, cork='#8a6a43', label=None):
+    rows = ['................', '.......cc.......', '.......cc.......', '......gnng......', '.......gg.......',
+            '......gvvg......', '.....gvvvvg.....', '....gvvVvvvg....', '....gvVvvvvg....', '....gvvvvvvg....',
+            '....gvvvvvvg....', '....gvvvvvDg....', '....gvvvvDDg....', '.....gDDDDg.....', '......gggg......', '................']
+    if label:
+        rows[9] = '....gLLLLLLg....'
+    return rows, {'c': cork, 'g': '#c8dfe0', 'n': '#a9c4c6', 'v': liquid, 'V': light, 'D': dark, 'L': label or '#000000'}
+
+
+def apothecary_icons():
+    items = os.path.join(ASSETS, 'textures', 'item')
+    for name, args in {'wormwood_tincture': ('#5b6b2a', '#8a9a48', '#3e4a1c', '#7a5a3a', '#d9c9a0'),
+                       'theriac': ('#6e2416', '#a8442a', '#45140c', '#3a2a1a', '#e0c070')}.items():
+        rows, key = bottle(*args[:4], label=args[4])
+        sprite(os.path.join(items, f'{name}.png'), rows, key)
+    icons = {
+        'herbal_broth': (['................', '................', '................', '................', '................',
+                          '................', '...g..s..g......', '..bbbbbbbbbbb...', '..bBBgBBBgBBb...', '..wbBBBBBsBbw...',
+                          '...wbbbbbbbw....', '....wwwwwww.....', '.....ddddd......', '................', '................', '................'],
+                         {'b': '#b8a050', 'B': '#c9b260', 'g': '#5c8538', 's': '#8fa085', 'w': '#8a6a43', 'd': '#6b5233'}),
+        'plague_poultice': (['................', '................', '................', '...cccccccccc...', '...cCCCgCCCCc...',
+                             '...cCgggCCCCc...', '...cCCgCCsCCc...', '...rrrrrrrrrr...', '...cCCCCsCCCc...', '...cCCgCCCgCc...',
+                             '...cCCCCCCCCc...', '...cccccccccc...', '................', '................', '................', '................'],
+                            {'c': '#a89f84', 'C': '#d9cfb0', 'g': '#5c8538', 's': '#8fa085', 'r': '#7a5a3a'}),
+        'mortar_and_pestle': (['................', '...........ww...', '..........wW....', '.........wW.....', '........wW......',
+                               '.......wW.......', '..ssssswssssss..', '..sSSSSwSSSSSs..', '..sSSSSSSSSSSs..', '...sSSSSSSSSs...',
+                               '....sSSSSSSs....', '.....ssssss.....', '....dddddddd....', '................', '................', '................'],
+                              {'s': '#6f6f6f', 'S': '#9a9a9a', 'w': '#6b4a2b', 'W': '#8f6a42', 'd': '#4a4a4a'}),
+        'physicians_kit': (['................', '................', '.....hhhhhh.....', '.....h....h.....', '..llllllllllll..',
+                            '..lLLLLLLLLLLl..', '..lLLLLbbLLLLl..', '..lllllbBlllll..', '..lLLLLLLLLLLl..', '..lLLLLLLLLLLl..',
+                            '..lLLLLLLLLLLl..', '..lLLLLLLLLLLl..', '..llllllllllll..', '................', '................', '................'],
+                           {'h': '#4a3424', 'l': '#4a3424', 'L': '#7a5638', 'b': '#b08d3c', 'B': '#e0c070'}),
+        'lancet': (['................', '................', '................', '............ss..', '...........sSs..',
+                    '..........sSs...', '.........sSs....', '........sSs.....', '.......gg.......', '......whg.......',
+                    '.....whw........', '....whw.........', '...whw..........', '...ww...........', '................', '................'],
+                   {'s': '#8f9ba3', 'S': '#dfe8ee', 'g': '#b08d3c', 'w': '#5a3d22', 'h': '#8f6a42'}),
+        'leech_jar': (['................', '.....cccccc.....', '.....cccccc.....', '....gggggggg....', '....gwwwwwwg....',
+                       '....gwkwwwwg....', '....gwkkwkwg....', '....gwwwwkwg....', '....gwkwwkwg....', '....gwkkwwwg....',
+                       '....gwwwwkkg....', '....gwwkwwwg....', '....gggggggg....', '................', '................', '................'],
+                      {'c': '#8a6a43', 'g': '#c8dfe0', 'w': '#4f6a4a', 'k': '#1a1612'}),
+        'censer': (['.......c........', '.......c........', '.......c........', '......ccc.......', '.....bBBBb......',
+                    '....bBhBhBb.....', '....bBBBBBb.....', '...bhBBhBBhb....', '...bBBBBBBBb....', '....bBhBhBb.....',
+                    '....bBBBBBb.....', '.....bbbbb......', '......bbb.......', '................', '................', '................'],
+                   {'c': '#6e6e6e', 'b': '#7a5f22', 'B': '#c8a048', 'h': '#2a2018'}),
+        'doctors_coat': (['................', '...cc.....cc....', '..cCCcccccCCc...', '..cCCCCCCCCCc...', '..cCCCbCbCCCc...',
+                          '..cCCCCCCCCCc...', '...cCCbCbCCc....', '....cCCCCCc.....', '....cCCbCbCc....', '....rrrBrrrr....',
+                          '....cCCCCCCc....', '...cCCCCCCCCc...', '...cCCCCCCCCc...', '...cccccccccc...', '................', '................'],
+                         {'c': '#1a1716', 'C': '#2e2a28', 'b': '#b08d3c', 'r': '#5a3d22', 'B': '#b08d3c'}),
+        'doctors_trousers': (['................', '................', '...cccccccccc...', '...cCCCCCCCCc...', '...cCCCCCCCCc...',
+                              '...cCCCccCCCc...', '...cCCCc.cCCc...', '...cCCc..cCCc...', '...cCCc..cCCc...', '...cCCc..cCCc...',
+                              '...cCCc..cCCc...', '...cCCc..cCCc...', '...cccc..cccc...', '................', '................', '................'],
+                             {'c': '#1a1716', 'C': '#2a2522'}),
+        'doctors_boots': (['................', '................', '................', '................', '...cccc..cccc...',
+                           '...cCCc..cCCc...', '...cCCc..cCCc...', '...cCCc..cCCc...', '...cCCc..cCCc...', '..cCCCc.cCCCc...',
+                           '.cCCCCc.cCCCCc..', '.cCCCCc.cCCCCc..', '.cccccc.cccccc..', '................', '................', '................'],
+                          {'c': '#0f0d0c', 'C': '#1f1b18'}),
+    }
+    for name, (rows, key) in icons.items():
+        sprite(os.path.join(items, f'{name}.png'), rows, key)
+
+
+def doctors_garb():
+    names = ['armorHead', 'armorBody', 'armorRightArm', 'armorLeftArm', 'armorRightLeg', 'armorLeftLeg', 'armorRightBoot', 'armorLeftBoot']
+    pivots = {'armorHead': [0, 24, 0], 'armorBody': [0, 24, 0], 'armorRightArm': [-5, 22, 0], 'armorLeftArm': [5, 22, 0],
+              'armorRightLeg': [-1.9, 12, 0], 'armorLeftLeg': [1.9, 12, 0], 'armorRightBoot': [-1.9, 12, 0], 'armorLeftBoot': [1.9, 12, 0]}
+    bones = [{'name': n, 'pivot': pivots[n]} for n in names]
+    cubes = [
+        cube('armorBody', [-4, 12, -2], [8, 12, 4], 'coat', inflate=0.6, decor={'north': coat_front}),
+        cube('armorBody', [-4, 20, -2], [8, 4, 4], 'cape', inflate=1.0),                      # shoulder capelet
+        cube('armorBody', [-4, 4, -2], [8, 8, 4], 'coat', inflate=1.0, decor={'north': skirt_front}),   # long skirts
+        cube('armorBody', [-4, 11, -2], [8, 2, 4], 'belt', inflate=0.75, decor={'north': belt_front}),
+        cube('armorRightArm', [-8, 12, -2], [4, 12, 4], 'coat', inflate=0.55),
+        cube('armorRightArm', [-8, 12, -2], [4, 3, 4], 'glove', inflate=0.7),
+        cube('armorLeftArm', [4, 12, -2], [4, 12, 4], 'coat', inflate=0.55),
+        cube('armorLeftArm', [4, 12, -2], [4, 3, 4], 'glove', inflate=0.7),
+        cube('armorRightLeg', [-3.9, 3, -2], [4, 9, 4], '#2a2522', inflate=0.45),
+        cube('armorLeftLeg', [-0.1, 3, -2], [4, 9, 4], '#2a2522', inflate=0.45),
+        cube('armorRightBoot', [-3.9, 0, -2], [4, 5, 4], 'boot', inflate=0.7),
+        cube('armorLeftBoot', [-0.1, 0, -2], [4, 5, 4], 'boot', inflate=0.7),
+    ]
+    build('doctors_garb', bones, cubes, 303,
+          os.path.join(ASSETS, 'geo', 'item', 'armor', 'doctors_garb.geo.json'),
+          os.path.join(ASSETS, 'textures', 'item', 'armor', 'doctors_garb.png'),
+          'geometry.doctors_garb', bounds=(2, 2.5, 1))
+
+
+def apothecary_models():
+    def box(fr, to, tex, top=None):
+        return {'from': fr, 'to': to, 'faces': {f: {'texture': top if f in ('up', 'down') and top else tex}
+                                                for f in ('north', 'south', 'east', 'west', 'up', 'down')}}
+    legs = [box([x, 0, z], [x + 2, 14, z + 2], '#leg', top='#leg_top') for x, z in ((1, 1), (13, 1), (1, 13), (13, 13))]
+    table = legs + [box([0, 14, 0], [16, 16, 16], '#top'), box([2, 4, 2], [14, 5, 14], '#shelf'),
+                    box([2, 5, 10], [6, 9, 14], '#jar', top='#jar_top'), box([10, 5, 3], [13, 8, 6], '#jar', top='#jar_top')]
+    write_json(os.path.join(ASSETS, 'models', 'block', 'apothecary_table.json'), {
+        'parent': 'minecraft:block/block', 'textures': {
+            'particle': 'minecraft:block/spruce_planks', 'top': 'minecraft:block/spruce_planks', 'shelf': 'minecraft:block/oak_planks',
+            'leg': 'minecraft:block/stripped_spruce_log', 'leg_top': 'minecraft:block/stripped_spruce_log_top',
+            'jar': 'minecraft:block/glass', 'jar_top': 'minecraft:block/barrel_top'},
+        'render_type': 'minecraft:cutout', 'elements': table})
+    rack = [box([1, 0, 7], [3, 16, 9], '#post', top='#post_top'), box([13, 0, 7], [15, 16, 9], '#post', top='#post_top'),
+            box([0, 13, 7.5], [16, 15, 8.5], '#bar'), box([3, 2, 7.5], [13, 3, 8.5], '#bar'),
+            box([0, 0, 5], [4, 1, 11], '#post', top='#post_top'), box([12, 0, 5], [16, 1, 11], '#post', top='#post_top')]
+    write_json(os.path.join(ASSETS, 'models', 'block', 'drying_rack.json'), {
+        'parent': 'minecraft:block/block', 'textures': {
+            'particle': 'minecraft:block/stripped_oak_log', 'post': 'minecraft:block/stripped_oak_log',
+            'post_top': 'minecraft:block/stripped_oak_log_top', 'bar': 'minecraft:block/oak_planks'}, 'elements': rack})
+
+
 if __name__ == '__main__':
     plague_doctor()
     plague_mask()
@@ -713,5 +925,9 @@ if __name__ == '__main__':
     icons()
     block_textures()
     nest_models()
+    herbs()
+    apothecary_icons()
+    doctors_garb()
+    apothecary_models()
     import vanilla_afflicted
     vanilla_afflicted.build_all()

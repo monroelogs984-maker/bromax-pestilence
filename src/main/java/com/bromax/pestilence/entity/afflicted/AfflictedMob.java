@@ -3,6 +3,7 @@ package com.bromax.pestilence.entity.afflicted;
 import com.bromax.pestilence.ModRegistry;
 import com.bromax.pestilence.PestConfig;
 import com.bromax.pestilence.Plague;
+import com.bromax.pestilence.disease.Disease;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -91,7 +92,7 @@ public abstract class AfflictedMob extends Monster implements GeoEntity {
     @Override
     public boolean doHurtTarget(Entity target) {
         boolean hit = super.doHurtTarget(target);
-        if (hit && target instanceof LivingEntity living) Plague.tryBiteInfect(living, PestConfig.AFFLICTED_BITE_CHANCE.get());
+        if (hit && target instanceof LivingEntity living) Plague.tryContactInfect(living, PestConfig.AFFLICTED_BITE_CHANCE.get(), Disease.SEPTICEMIC);
         return hit;
     }
 

@@ -1,0 +1,22 @@
+{
+  "name": "Remedies",
+  "icon": "bromaxpestilence:theriac",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 13,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Poultice and Tincture",
+      "text": "$(l)Plague Poultice$() (Bubonic): paper; garlic, sage, dried rue. Makes two.$(br2)$(l)Wormwood Tincture$() (Septicemic, heated): glass bottle; two dried wormwood, dried rosemary."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Broth, Vinegar, Theriac",
+      "text": "$(l)Herbal Broth$() (Dysentery, heated): bowl; garlic, dried sage, dried rosemary.$(br2)$(l)Four Thieves Vinegar$() (Pneumonic): glass bottle; fermented spider eye, garlic, dried rosemary, dried sage. Makes two.$(br2)$(l)Theriac$() (any, heated): glass bottle; dried rue, dried wormwood, honey bottle, rat tail."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The wrong remedy is wasted and does nothing. Any remedy can be given to a sick villager or animal as well as taken yourself."
+    }
+  ]
+}

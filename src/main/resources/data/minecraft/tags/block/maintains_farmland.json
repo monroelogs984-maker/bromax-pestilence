@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "bromaxpestilence:garlic_plant",
+    "bromaxpestilence:rue_plant",
+    "bromaxpestilence:sage_plant",
+    "bromaxpestilence:wormwood_plant",
+    "bromaxpestilence:rosemary_plant"
+  ]
+}

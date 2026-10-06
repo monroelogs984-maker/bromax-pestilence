@@ -1,0 +1,28 @@
+{
+  "name": "Physician's Tools",
+  "icon": "bromaxpestilence:physicians_kit",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 14,
+  "pages": [
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:physicians_kit",
+      "text": "Use on a patient, or in the air on yourself, to name the sickness and how far along it is."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:lancet",
+      "text": "$(l)Lancing$() severe buboes knocks Bubonic Plague back a stage. It hurts, but never below a heart."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Leeches",
+      "text": "Fill a bottle in a $(l)swamp$() and you may bring up a jar of leeches. Bloodletting draws $(l)Septicemic Plague$() back a stage (and cures it in the first). On anyone else they only feed."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:censer",
+      "text": "Light a $(l)Censer$() and carry it: it burns dried herbs, and its smoke shields you and anyone within four blocks from coughs and miasma."
+    }
+  ]
+}

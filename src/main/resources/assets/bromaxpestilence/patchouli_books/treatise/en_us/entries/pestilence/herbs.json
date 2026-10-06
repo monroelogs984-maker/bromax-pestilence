@@ -1,0 +1,17 @@
+{
+  "name": "Medicinal Herbs",
+  "icon": "bromaxpestilence:garlic",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 11,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Five herbs are the physician's stock. Each grows wild in its own country, and the herb itself can be planted again on farmland or plain dirt.$(br2)$(l)Garlic$(): plains.$(br)$(l)Rue$(): savanna.$(br)$(l)Sage$(): mountains.$(br)$(l)Wormwood$(): swamps.$(br)$(l)Rosemary$(): forests."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:drying_rack",
+      "text": "Many remedies want $(l)dried$() herbs. Hang fresh ones on a $(l)Drying Rack$() (up to four) and take them down a minute later."
+    }
+  ]
+}

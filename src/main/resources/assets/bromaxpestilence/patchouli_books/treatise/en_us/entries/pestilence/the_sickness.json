@@ -4,7 +4,14 @@
   "category": "bromaxpestilence:pestilence",
   "sortnum": 0,
   "pages": [
-    { "type": "patchouli:text", "text": "The Pestilence moves through three stages. It $(l)will not kill you$(), but it will make you weak, slow and miserable, and it costs one $(c)heart$() per stage.$(br2)Milk does nothing for it." },
-    { "type": "patchouli:text", "title": "The Three Stages", "text": "$(l)Incubation$() (about 5 minutes): a chill, nothing more. You are not yet contagious.$(br)$(l)Fever$() (about 7 minutes): hunger and coughing. $(4)You now spread it.$()$(br)$(l)Buboes$() (about 10 minutes): weakness, heavy limbs and dizzy spells.$(br2)Then the fever breaks, and you are immune for a time." }
+    {
+      "type": "patchouli:text",
+      "text": "There is not one sickness but four, and they all begin the same way: a chill, then worse. Each moves through three stages and costs a $(c)heart$() per stage. None of them will kill you outright, and milk does nothing for any of them.$(br2)Each needs its own cure, so you must first know which one you have."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Telling them apart",
+      "text": "$(l)Bubonic$(): fever, then heavy, swollen limbs. Some coughing.$(br)$(l)Pneumonic$(): coughing without end, short of breath. The fastest.$(br)$(l)Septicemic$(): weakness, then bleeding (never below two hearts). No cough.$(br)$(l)Dysentery$(): ravenous hunger and dizziness. No cough.$(br2)A $(l)Physician's Kit$() removes all doubt."
+    }
   ]
 }

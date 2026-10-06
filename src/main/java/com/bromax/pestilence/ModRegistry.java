@@ -28,7 +28,28 @@ import com.bromax.pestilence.entity.afflicted.AfflictedSheep;
 import com.bromax.pestilence.entity.afflicted.AfflictedWolf;
 import com.bromax.pestilence.item.PlagueMaskItem;
 import com.bromax.pestilence.item.ShroudedCorpseItem;
-import com.bromax.pestilence.item.VinegarItem;
+import com.bromax.pestilence.apothecary.ApothecaryRecipe;
+import com.bromax.pestilence.block.ApothecaryTableBlock;
+import com.bromax.pestilence.block.ApothecaryTableBlockEntity;
+import com.bromax.pestilence.block.DryingRackBlock;
+import com.bromax.pestilence.block.DryingRackBlockEntity;
+import com.bromax.pestilence.block.HerbBlock;
+import com.bromax.pestilence.disease.Ailment;
+import com.bromax.pestilence.disease.Disease;
+import com.bromax.pestilence.item.CenserItem;
+import com.bromax.pestilence.item.GarbItem;
+import com.bromax.pestilence.item.PhysiciansKitItem;
+import com.bromax.pestilence.item.RemedyItem;
+import com.bromax.pestilence.item.TreatmentItem;
+import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
@@ -75,6 +96,23 @@ public final class ModRegistry {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MODID);
+    public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(Registries.RECIPE_TYPE, MODID);
+    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, MODID);
+
+    // Disease state (which sickness, and whether it has been diagnosed)
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Ailment>> AILMENT = ATTACHMENTS.register("ailment",
+            () -> AttachmentType.builder(() -> Ailment.NONE).serialize(Ailment.CODEC).build());
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<ApothecaryRecipe>> APOTHECARY_TYPE = RECIPE_TYPES.register("apothecary",
+            () -> new RecipeType<ApothecaryRecipe>() {
+                @Override
+                public String toString() {
+                    return MODID + ":apothecary";
+                }
+            });
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ApothecaryRecipe>> APOTHECARY_SERIALIZER =
+            RECIPE_SERIALIZERS.register("apothecary", ApothecaryRecipe.Serializer::new);
 
     // Effects
     public static final DeferredHolder<MobEffect, MobEffect> PLAGUE = EFFECTS.register("plague", PlagueEffect::new);
@@ -128,11 +166,78 @@ public final class ModRegistry {
             () -> BlockEntityType.Builder.of(BrazierBlockEntity::new, HERB_BRAZIER.get()).build(null));
 
     public static final TagKey<Item> BRAZIER_FUEL = TagKey.create(Registries.ITEM, Pestilence.id("brazier_fuel"));
+    public static final TagKey<Item> CENSER_FUEL = TagKey.create(Registries.ITEM, Pestilence.id("censer_fuel"));
+    public static final TagKey<Item> DOCTORS_GARB = TagKey.create(Registries.ITEM, Pestilence.id("doctors_garb"));
+
+    // Apothecary blocks
+    public static final DeferredBlock<ApothecaryTableBlock> APOTHECARY_TABLE = BLOCKS.register("apothecary_table", () -> new ApothecaryTableBlock(
+            BlockBehaviour.Properties.ofFullCopy(Blocks.CRAFTING_TABLE).noOcclusion()));
+    public static final DeferredBlock<DryingRackBlock> DRYING_RACK = BLOCKS.register("drying_rack", () -> new DryingRackBlock(
+            BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.5f).sound(SoundType.WOOD).noOcclusion().ignitedByLava()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ApothecaryTableBlockEntity>> APOTHECARY_TABLE_BE = BLOCK_ENTITIES.register(
+            "apothecary_table", () -> BlockEntityType.Builder.of(ApothecaryTableBlockEntity::new, APOTHECARY_TABLE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DryingRackBlockEntity>> DRYING_RACK_BE = BLOCK_ENTITIES.register(
+            "drying_rack", () -> BlockEntityType.Builder.of(DryingRackBlockEntity::new, DRYING_RACK.get()).build(null));
+
+    // Herbs: the plant, the herb (which is also its seed) and the dried herb.
+    public static final String[] HERBS = {"garlic", "rue", "sage", "wormwood", "rosemary"};
+    public static final Map<String, DeferredBlock<HerbBlock>> HERB_PLANTS = new LinkedHashMap<>();
+    public static final Map<String, DeferredItem<Item>> HERB_ITEMS = new LinkedHashMap<>();
+    public static final Map<String, DeferredItem<Item>> DRIED_HERBS = new LinkedHashMap<>();
+
+    static {
+        for (String herb : HERBS) {
+            DeferredBlock<HerbBlock> plant = BLOCKS.register(herb + "_plant", () -> new HerbBlock(HERB_ITEMS.get(herb),
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT)));
+            HERB_PLANTS.put(herb, plant);
+            HERB_ITEMS.put(herb, ITEMS.register(herb, () -> new ItemNameBlockItem(plant.get(), new Item.Properties())));
+            DRIED_HERBS.put(herb, ITEMS.registerSimpleItem("dried_" + herb));
+        }
+    }
+
+    private static Map<Item, Item> dried;
+
+    /** Fresh herb -> dried herb, for the Drying Rack. */
+    public static Map<Item, Item> driedForms() {
+        if (dried == null) {
+            dried = new java.util.HashMap<>();
+            for (String herb : HERBS) dried.put(HERB_ITEMS.get(herb).get(), DRIED_HERBS.get(herb).get());
+        }
+        return dried;
+    }
+
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> GARB_MATERIAL = ARMOR_MATERIALS.register("doctors_garb", () -> {
+        EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.HELMET, 1);
+        defense.put(ArmorItem.Type.CHESTPLATE, 3);
+        defense.put(ArmorItem.Type.LEGGINGS, 2);
+        defense.put(ArmorItem.Type.BOOTS, 1);
+        defense.put(ArmorItem.Type.BODY, 3);
+        return new ArmorMaterial(defense, 15, SoundEvents.ARMOR_EQUIP_LEATHER, () -> Ingredient.of(Items.LEATHER),
+                List.of(new ArmorMaterial.Layer(Pestilence.id("doctors_garb"))), 0f, 0f);
+    });
 
     // Items
     public static final DeferredItem<Item> PLAGUE_MASK = ITEMS.register("plague_mask",
             () -> new PlagueMaskItem(PLAGUE_MASK_MATERIAL, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(13))));
-    public static final DeferredItem<Item> FOUR_THIEVES_VINEGAR = ITEMS.register("four_thieves_vinegar", () -> new VinegarItem(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> FOUR_THIEVES_VINEGAR = remedy("four_thieves_vinegar", UseAnim.DRINK, Items.GLASS_BOTTLE, Disease.PNEUMONIC);
+    public static final DeferredItem<Item> PLAGUE_POULTICE = remedy("plague_poultice", UseAnim.BRUSH, null, Disease.BUBONIC);
+    public static final DeferredItem<Item> WORMWOOD_TINCTURE = remedy("wormwood_tincture", UseAnim.DRINK, Items.GLASS_BOTTLE, Disease.SEPTICEMIC);
+    public static final DeferredItem<Item> HERBAL_BROTH = remedy("herbal_broth", UseAnim.EAT, Items.BOWL, Disease.DYSENTERY);
+    public static final DeferredItem<Item> THERIAC = remedy("theriac", UseAnim.DRINK, Items.GLASS_BOTTLE);
+    public static final DeferredItem<Item> MORTAR_AND_PESTLE = ITEMS.register("mortar_and_pestle", () -> new Item(new Item.Properties().durability(128)));
+    public static final DeferredItem<Item> PHYSICIANS_KIT = ITEMS.register("physicians_kit", () -> new PhysiciansKitItem(new Item.Properties().durability(64)));
+    public static final DeferredItem<Item> LANCET = ITEMS.register("lancet", () -> new TreatmentItem(new Item.Properties().durability(32), TreatmentItem.Kind.LANCET));
+    public static final DeferredItem<Item> LEECH_JAR = ITEMS.register("leech_jar", () -> new TreatmentItem(new Item.Properties().stacksTo(16), TreatmentItem.Kind.LEECHES));
+    public static final DeferredItem<Item> CENSER = ITEMS.register("censer", () -> new CenserItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> DOCTORS_COAT = ITEMS.register("doctors_coat", () -> new GarbItem(GARB_MATERIAL, ArmorItem.Type.CHESTPLATE,
+            new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(13))));
+    public static final DeferredItem<Item> DOCTORS_TROUSERS = ITEMS.register("doctors_trousers", () -> new GarbItem(GARB_MATERIAL, ArmorItem.Type.LEGGINGS,
+            new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(13))));
+    public static final DeferredItem<Item> DOCTORS_BOOTS = ITEMS.register("doctors_boots", () -> new GarbItem(GARB_MATERIAL, ArmorItem.Type.BOOTS,
+            new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(13))));
+    public static final DeferredItem<?> APOTHECARY_TABLE_ITEM = ITEMS.registerSimpleBlockItem(APOTHECARY_TABLE);
+    public static final DeferredItem<?> DRYING_RACK_ITEM = ITEMS.registerSimpleBlockItem(DRYING_RACK);
     public static final DeferredItem<Item> RAT_TAIL = ITEMS.registerSimpleItem("rat_tail");
     public static final DeferredItem<Item> SHROUDED_CORPSE = ITEMS.register("shrouded_corpse", () -> new ShroudedCorpseItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<?> PYRE_ITEM = ITEMS.registerSimpleBlockItem(PYRE);
@@ -172,6 +277,10 @@ public final class ModRegistry {
                 .noLootTable().lightLevel(state -> light == 0 ? 0 : light + state.getValue(NestBlock.STAGE))));
     }
 
+    private static DeferredItem<Item> remedy(String name, UseAnim anim, @org.jetbrains.annotations.Nullable Item container, Disease... cures) {
+        return ITEMS.register(name, () -> new RemedyItem(new Item.Properties().stacksTo(16), Set.of(cures), anim, container));
+    }
+
     private static DeferredItem<Item> egg(String name, Supplier<? extends EntityType<? extends Mob>> type, int bg, int fg) {
         return ITEMS.register(name + "_spawn_egg", () -> new DeferredSpawnEggItem(type, bg, fg, new Item.Properties()));
     }
@@ -185,6 +294,9 @@ public final class ModRegistry {
         BLOCK_ENTITIES.register(bus);
         ITEMS.register(bus);
         TABS.register(bus);
+        ATTACHMENTS.register(bus);
+        RECIPE_TYPES.register(bus);
+        RECIPE_SERIALIZERS.register(bus);
         bus.addListener(ModRegistry::onAttributes);
         bus.addListener(ModRegistry::onSpawnPlacements);
     }

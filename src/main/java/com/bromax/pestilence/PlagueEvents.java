@@ -33,9 +33,30 @@ import com.bromax.pestilence.world.NestSeeding;
 import com.bromax.pestilence.world.Tracker;
 import net.minecraft.server.level.ServerPlayer;
 
+import com.bromax.pestilence.disease.Disease;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+
 import java.util.List;
 
 public final class PlagueEvents {
+    private static final TagKey<Item> RAW_MEAT = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "foods/raw_meat"));
+    private static final TagKey<Biome> SWAMPS = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("c", "is_swamp"));
+
     private PlagueEvents() {}
 
     /**
@@ -61,12 +82,15 @@ public final class PlagueEvents {
         }
     }
 
+    /** Coughing: only the contagious diseases, and never through a mask or censer smoke. */
     private static void spread(LivingEntity source) {
+        Disease disease = Plague.disease(source);
+        if (!disease.contagious) return;
         double radius = PestConfig.CONTAGION_RADIUS.get();
-        double chance = PestConfig.CONTAGION_CHANCE.get();
+        double chance = PestConfig.CONTAGION_CHANCE.get() * disease.contagion;
         for (LivingEntity other : source.level().getEntitiesOfClass(LivingEntity.class,
                 source.getBoundingBox().inflate(radius), o -> o != source && Plague.canCatch(o))) {
-            if (!Plague.wearsMask(other) && source.getRandom().nextDouble() < chance) Plague.infect(other);
+            if (!Plague.airProtected(other) && source.getRandom().nextDouble() < chance) Plague.infect(other, disease);
         }
     }
 
@@ -89,9 +113,15 @@ public final class PlagueEvents {
     public static void onFinishUsing(LivingEntityUseItemEvent.Finish event) {
         LivingEntity entity = event.getEntity();
         if (entity.level().isClientSide || !(entity instanceof Player)) return;
-        if (event.getItem().is(Items.ROTTEN_FLESH) && entity.getRandom().nextDouble() < PestConfig.ROTTEN_FLESH_CHANCE.get()) {
-            Plague.infect(entity);
+        // Bad food and bad water: dysentery.
+        double chance = 0;
+        if (event.getItem().is(Items.ROTTEN_FLESH)) chance = PestConfig.ROTTEN_FLESH_CHANCE.get();
+        else if (event.getItem().is(RAW_MEAT)) chance = PestConfig.RAW_MEAT_CHANCE.get();
+        else if (event.getItem().is(Items.POTION) && event.getItem().getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(Potions.WATER)
+                && Tracker.nestWithin(entity.level(), entity.blockPosition(), PestConfig.BLIGHT_HEAL_RANGE.get())) {
+            chance = PestConfig.FOUL_WATER_CHANCE.get();
         }
+        if (chance > 0 && entity.getRandom().nextDouble() < chance) Plague.infect(entity, Disease.DYSENTERY);
     }
 
     /** Phase gates for natural spawns: few rats while dormant, no Afflicted before Rat Season. */
@@ -128,7 +158,7 @@ public final class PlagueEvents {
         if (player.getRandom().nextDouble() >= PestConfig.OUTBREAK_CHANCE_PER_PHASE.get() * (phase - 1)) return;
         List<LivingEntity> animals = level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(48),
                 e -> Plague.isHostAnimal(e) && Plague.canCatch(e) && e.distanceToSqr(player) > 16 * 16);
-        if (!animals.isEmpty()) Plague.infect(animals.get(player.getRandom().nextInt(animals.size())));
+        if (!animals.isEmpty()) Plague.infect(animals.get(player.getRandom().nextInt(animals.size())), Disease.BUBONIC);
     }
 
     /** Plague Doctor visits: a periodic roll per Overworld player, much likelier while infected. */
@@ -160,6 +190,22 @@ public final class PlagueEvents {
             return true;
         }
         return false;
+    }
+
+    /** Filling a bottle in swamp water sometimes brings up a jar of leeches instead. */
+    @SubscribeEvent
+    public static void onUseItem(PlayerInteractEvent.RightClickItem event) {
+        Player player = event.getEntity();
+        if (!event.getItemStack().is(Items.GLASS_BOTTLE) || player.level().isClientSide) return;
+        HitResult hit = player.pick(player.blockInteractionRange(), 0f, true);
+        if (!(hit instanceof BlockHitResult bhr) || !player.level().getFluidState(bhr.getBlockPos()).is(FluidTags.WATER)) return;
+        if (!player.level().getBiome(bhr.getBlockPos()).is(SWAMPS) || player.getRandom().nextDouble() >= PestConfig.LEECH_CHANCE.get()) return;
+        event.getItemStack().consume(1, player);
+        ItemStack jar = new ItemStack(ModRegistry.LEECH_JAR.get());
+        if (!player.getInventory().add(jar)) player.drop(jar, false);
+        player.level().playSound(null, player.blockPosition(), SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 1f, 0.7f);
+        event.setCanceled(true);
+        event.setCancellationResult(InteractionResult.SUCCESS);
     }
 
     @SubscribeEvent

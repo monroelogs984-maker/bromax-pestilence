@@ -6,7 +6,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "$(l)Rats.$() Plague Rats come out in the dark and their bite often carries it.$(br2)$(l)Bad meat.$() Rotten flesh sometimes does.$(br2)$(l)The sick.$() Anyone with Fever or Buboes coughs it onto players and villagers standing close by. Keep your distance, or wear a mask. Later, $(l)Afflicted$() blows and $(l)miasma$() clouds carry it too."
+      "text": "$(l)Bubonic$(): rat bites, the fleas in blighted soil, handling the dead.$(br)$(l)Pneumonic$(): miasma clouds, and the coughs of the sick.$(br)$(l)Septicemic$(): blows from the Afflicted.$(br)$(l)Dysentery$(): rotten flesh, raw meat, and water drunk near a plague nest.$(br2)Only the two plagues of the breath and the bubo are caught from coughing people."
     },
     {
       "type": "patchouli:entity",

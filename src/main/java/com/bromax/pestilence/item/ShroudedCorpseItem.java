@@ -3,6 +3,7 @@ package com.bromax.pestilence.item;
 import com.bromax.pestilence.PestConfig;
 import com.bromax.pestilence.Pestilence;
 import com.bromax.pestilence.Plague;
+import com.bromax.pestilence.disease.Disease;
 import com.bromax.pestilence.entity.Corpse;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -60,10 +61,7 @@ public class ShroudedCorpseItem extends Item {
     public void inventoryTick(ItemStack stack, Level level, Entity holder, int slot, boolean selected) {
         if (!(level instanceof ServerLevel server) || !(holder instanceof Player player) || player.tickCount % 20 != 0) return;
         player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1, true, false, true));
-        if (player.tickCount % 200 == 0 && !Plague.wearsMask(player)
-                && player.getRandom().nextDouble() < PestConfig.CARRY_INFECT_CHANCE.get()) {
-            Plague.infect(player);
-        }
+        if (player.tickCount % 200 == 0) Plague.tryContactInfect(player, PestConfig.CARRY_INFECT_CHANCE.get(), Disease.BUBONIC);
 
         CompoundTag tag = data(stack);
         int age = tag.getInt("age") + 20;

@@ -1,7 +1,8 @@
 package com.bromax.pestilence.item;
 
-import com.bromax.pestilence.ModRegistry;
+import com.bromax.pestilence.Pestilence;
 import com.bromax.pestilence.Plague;
+import com.bromax.pestilence.disease.Disease;
 import com.bromax.pestilence.entity.afflicted.AfflictedMob;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -20,17 +21,31 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ItemLike;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
-/** The cure. Drink it, or use it on a sick villager or animal. Leaves a glass bottle, like honey. */
-public class VinegarItem extends Item {
-    public VinegarItem(Properties properties) {
+/**
+ * A cure for particular diseases (Theriac: all of them). Taken yourself, or used on a sick villager
+ * or animal. The wrong remedy is used up and does nothing, so diagnose first.
+ */
+public class RemedyItem extends Item {
+    private final Set<Disease> cures;
+    private final UseAnim anim;
+    @Nullable
+    private final ItemLike container;
+
+    public RemedyItem(Properties properties, Set<Disease> cures, UseAnim anim, @Nullable ItemLike container) {
         super(properties);
+        this.cures = cures.isEmpty() ? EnumSet.allOf(Disease.class) : EnumSet.copyOf(cures);
+        this.anim = anim;
+        this.container = container;
     }
 
     @Override
@@ -44,34 +59,48 @@ public class VinegarItem extends Item {
             CriteriaTriggers.CONSUME_ITEM.trigger(player, stack);
             player.awardStat(Stats.ITEM_USED.get(this));
         }
-        if (!level.isClientSide) Plague.cure(entity);
+        if (!level.isClientSide) apply(entity, entity instanceof Player p ? p : null);
         if (entity instanceof Player player && player.getAbilities().instabuild) return stack;
         stack.shrink(1);
-        if (stack.isEmpty()) return new ItemStack(Items.GLASS_BOTTLE);
-        if (entity instanceof Player player && !player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE))) {
-            player.drop(new ItemStack(Items.GLASS_BOTTLE), false);
+        if (container == null) return stack;
+        if (stack.isEmpty()) return new ItemStack(container);
+        if (entity instanceof Player player && !player.getInventory().add(new ItemStack(container))) {
+            player.drop(new ItemStack(container), false);
         }
         return stack;
     }
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand) {
-        if (target instanceof AfflictedMob || !target.hasEffect(ModRegistry.PLAGUE)) return InteractionResult.PASS;
+        if (target instanceof AfflictedMob || !Plague.isSick(target)) return InteractionResult.PASS;
         if (player.level() instanceof ServerLevel level) {
-            Plague.cure(target);
+            apply(target, player);
             level.playSound(null, target.blockPosition(), SoundEvents.GENERIC_DRINK, SoundSource.NEUTRAL, 1f, 1f);
-            level.sendParticles(ParticleTypes.HAPPY_VILLAGER, target.getX(), target.getEyeY(), target.getZ(), 8, 0.3, 0.3, 0.3, 0.0);
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
-                if (!player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE))) player.drop(new ItemStack(Items.GLASS_BOTTLE), false);
+                if (container != null && !player.getInventory().add(new ItemStack(container))) player.drop(new ItemStack(container), false);
             }
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
     }
 
+    private void apply(LivingEntity patient, @Nullable Player physician) {
+        boolean wasSick = Plague.isSick(patient);
+        if (Plague.treat(patient, cures)) {
+            if (patient.level() instanceof ServerLevel level) {
+                level.sendParticles(ParticleTypes.HAPPY_VILLAGER, patient.getX(), patient.getEyeY(), patient.getZ(), 8, 0.3, 0.3, 0.3, 0.0);
+            }
+            if (physician != null) physician.displayClientMessage(Component.translatable("message." + Pestilence.MODID + ".cured")
+                    .withStyle(ChatFormatting.DARK_GREEN), true);
+        } else if (physician != null) {
+            physician.displayClientMessage(Component.translatable("message." + Pestilence.MODID + (wasSick ? ".wrong_remedy" : ".not_sick"))
+                    .withStyle(ChatFormatting.GRAY), true);
+        }
+    }
+
     @Override
     public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.DRINK;
+        return anim;
     }
 
     @Override
