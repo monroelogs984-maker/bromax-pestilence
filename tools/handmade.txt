@@ -10,3 +10,8 @@ textures/item/rue.png
 textures/item/sage.png
 textures/item/wormwood.png
 textures/item/rosemary.png
+textures/item/dried_garlic.png
+textures/item/dried_rue.png
+textures/item/dried_sage.png
+textures/item/dried_wormwood.png
+textures/item/dried_rosemary.png

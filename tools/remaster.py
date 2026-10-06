@@ -173,7 +173,42 @@ def round2():
     return made
 
 
-ROUNDS = [round1, round2]
+def dry(name, twine):
+    """A dried bundle: greens to olive and straw, flowers faded, outlines browned, tied with twine at `twine`."""
+    import colorsys
+    fresh = __import__('preview').read_png(os.path.join(ITEMS, f'{name}.png'))
+    out = []
+    for row in fresh:
+        new = []
+        for r, g, b, a in row:
+            if not a:
+                new.append((0, 0, 0, 0)); continue
+            h, l, s_ = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
+            if l > 0.75:                        # pale skins (garlic): papery tan
+                h, s_, l = 0.09, 0.38, l * 0.84
+            elif 0.15 < h < 0.55:               # greens and blue-greens: warm olive-straw
+                h, s_, l = 0.10 + (h - 0.15) * 0.08, 0.36 + 0.1 * (l > 0.45), l * 0.9
+            else:                               # flowers and stems: faded, browned
+                s_, l = s_ * 0.6, l * 0.88
+            rr, gg, bb = colorsys.hls_to_rgb(h, max(0, min(1, l)), max(0, min(1, s_)))
+            new.append((int(rr * 255), int(gg * 255), int(bb * 255), a))
+        out.append(new)
+    for x, y in twine:
+        out[y][x] = hexc('#c8a86a') if (x + y) % 2 else hexc('#8a6a3a')
+    write_png(os.path.join(ITEMS, f'dried_{name}.png'), out)
+    return f'textures/item/dried_{name}.png'
+
+
+def round3():
+    """The dried herbs, from the fresh ones (run after round 2)."""
+    return [dry('garlic', [(6, 4), (7, 4), (8, 4), (9, 4)]),
+            dry('rue', [(5, 11), (6, 11), (6, 10), (7, 10)]),
+            dry('sage', [(8, 11), (9, 11), (8, 12)]),
+            dry('wormwood', [(4, 11), (5, 11), (6, 11), (7, 11)]),
+            dry('rosemary', [(5, 11), (6, 11), (7, 11)])]
+
+
+ROUNDS = [round1, round2, round3]
 
 if __name__ == '__main__':
     made = []
