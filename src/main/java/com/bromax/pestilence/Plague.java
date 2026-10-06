@@ -95,7 +95,11 @@ public final class Plague {
     }
 
     public static void addPoints(Entity source, double amount) {
-        MinecraftServer server = source.level().getServer();
+        addPoints(source.level(), amount);
+    }
+
+    public static void addPoints(net.minecraft.world.level.Level level, double amount) {
+        MinecraftServer server = level.getServer();
         if (server != null && amount != 0) PestilenceData.get(server).add(server, amount);
     }
 

@@ -1,0 +1,1 @@
+{ "variants": { "lit=false": { "model": "bromaxpestilence:block/herb_brazier" }, "lit=true": { "model": "bromaxpestilence:block/herb_brazier_lit" } } }

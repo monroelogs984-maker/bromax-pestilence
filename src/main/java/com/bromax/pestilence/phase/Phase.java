@@ -15,7 +15,9 @@ public final class Phase {
     public static final int FULL_RATS = 1;
     public static final int MURRAIN = 2;        // animals sicken and die, corpses rise
     public static final int RAT_SEASON = 3;     // Afflicted spawn naturally at night
-    public static final int OUTBREAK = 4;
+    public static final int OUTBREAK = 4;       // the Blight
+    public static final int HERALDS = 5;        // plague pits
+    public static final int BLACK_DEATH = 6;    // miasma wells
 
     private Phase() {}
 

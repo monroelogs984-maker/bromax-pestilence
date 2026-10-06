@@ -17,27 +17,34 @@ from gen_assets import write_png  # noqa: E402
 
 
 def read_png(path):
+    """8-bit PNG reader for RGBA, RGB, palette and greyscale images; always returns RGBA rows."""
     data = open(path, 'rb').read()
-    pos, idat, w = 8, b'', 0
+    pos, idat, plte, trns = 8, b'', b'', b''
     while pos < len(data):
         n, tag = struct.unpack('>I4s', data[pos:pos + 8])
         body = data[pos + 8:pos + 8 + n]
         if tag == b'IHDR':
-            w, h = struct.unpack('>II', body[:8])
+            w, h, depth, ctype = struct.unpack('>IIBB', body[:10])
         elif tag == b'IDAT':
             idat += body
+        elif tag == b'PLTE':
+            plte = body
+        elif tag == b'tRNS':
+            trns = body
         pos += 12 + n
+    channels = {0: 1, 2: 3, 3: 1, 4: 2, 6: 4}[ctype]
+    bpp = max(1, channels * depth // 8)
     raw = zlib.decompress(idat)
-    stride = w * 4
+    stride = (w * channels * depth + 7) // 8
     rows, prev, i = [], bytearray(stride), 0
     for _ in range(h):
         f = raw[i]
         line = bytearray(raw[i + 1:i + 1 + stride])
         i += 1 + stride
         for x in range(stride):
-            a = line[x - 4] if x >= 4 else 0
+            a = line[x - bpp] if x >= bpp else 0
             b = prev[x]
-            c = prev[x - 4] if x >= 4 else 0
+            c = prev[x - bpp] if x >= bpp else 0
             if f == 1:
                 line[x] = (line[x] + a) & 255
             elif f == 2:
@@ -48,8 +55,29 @@ def read_png(path):
                 p = a + b - c
                 pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
                 line[x] = (line[x] + (a if pa <= pb and pa <= pc else b if pb <= pc else c)) & 255
-        rows.append([tuple(line[j:j + 4]) for j in range(0, stride, 4)])
-        prev = line
+        prev = bytearray(line)
+        if depth < 8:   # unpack 1/2/4-bit samples to one byte each
+            per = 8 // depth
+            line = bytearray((line[k // per] >> (8 - depth * (k % per + 1))) & ((1 << depth) - 1) for k in range(w))
+            if ctype == 0:
+                line = bytearray(v * 255 // ((1 << depth) - 1) for v in line)
+        row = []
+        step = channels
+        for j in range(0, w * step, step):
+            px = line[j:j + step]
+            if ctype == 6:
+                row.append(tuple(px))
+            elif ctype == 2:
+                row.append((px[0], px[1], px[2], 255))
+            elif ctype == 3:
+                k = px[0]
+                alpha = trns[k] if k < len(trns) else 255
+                row.append((plte[3 * k], plte[3 * k + 1], plte[3 * k + 2], alpha))
+            elif ctype == 0:
+                row.append((px[0], px[0], px[0], 255))
+            else:
+                row.append((px[0], px[0], px[0], px[1]))
+        rows.append(row)
     return rows
 
 

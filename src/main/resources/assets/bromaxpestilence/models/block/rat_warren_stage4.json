@@ -1,0 +1,282 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/coarse_dirt",
+    "dirt": "minecraft:block/coarse_dirt",
+    "top": "minecraft:block/rooted_dirt",
+    "gravel": "minecraft:block/gravel",
+    "hole": "minecraft:block/black_concrete",
+    "bone": "minecraft:block/bone_block_side"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        7,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#dirt"
+        },
+        "south": {
+          "texture": "#dirt"
+        },
+        "east": {
+          "texture": "#dirt"
+        },
+        "west": {
+          "texture": "#dirt"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "down": {
+          "texture": "#dirt"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        7,
+        2
+      ],
+      "to": [
+        14,
+        12,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#dirt"
+        },
+        "south": {
+          "texture": "#dirt"
+        },
+        "east": {
+          "texture": "#dirt"
+        },
+        "west": {
+          "texture": "#dirt"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "down": {
+          "texture": "#dirt"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        12,
+        4
+      ],
+      "to": [
+        12,
+        16,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#top"
+        },
+        "south": {
+          "texture": "#top"
+        },
+        "east": {
+          "texture": "#top"
+        },
+        "west": {
+          "texture": "#top"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "down": {
+          "texture": "#top"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        0.5,
+        -0.01
+      ],
+      "to": [
+        10,
+        4,
+        -0.01
+      ],
+      "faces": {
+        "north": {
+          "texture": "#hole"
+        }
+      }
+    },
+    {
+      "from": [
+        16.01,
+        0.5,
+        6
+      ],
+      "to": [
+        16.01,
+        4,
+        10
+      ],
+      "faces": {
+        "east": {
+          "texture": "#hole"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        0.5,
+        16.01
+      ],
+      "to": [
+        10,
+        4,
+        16.01
+      ],
+      "faces": {
+        "south": {
+          "texture": "#hole"
+        }
+      }
+    },
+    {
+      "from": [
+        -0.01,
+        0.5,
+        6
+      ],
+      "to": [
+        -0.01,
+        4,
+        10
+      ],
+      "faces": {
+        "west": {
+          "texture": "#hole"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        7,
+        10
+      ],
+      "to": [
+        4,
+        9,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#gravel"
+        },
+        "south": {
+          "texture": "#gravel"
+        },
+        "east": {
+          "texture": "#gravel"
+        },
+        "west": {
+          "texture": "#gravel"
+        },
+        "up": {
+          "texture": "#gravel"
+        },
+        "down": {
+          "texture": "#gravel"
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        7,
+        1
+      ],
+      "to": [
+        15,
+        8,
+        4
+      ],
+      "faces": {
+        "north": {
+          "texture": "#gravel"
+        },
+        "south": {
+          "texture": "#gravel"
+        },
+        "east": {
+          "texture": "#gravel"
+        },
+        "west": {
+          "texture": "#gravel"
+        },
+        "up": {
+          "texture": "#gravel"
+        },
+        "down": {
+          "texture": "#gravel"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        16,
+        4
+      ],
+      "to": [
+        8,
+        19,
+        5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bone"
+        },
+        "south": {
+          "texture": "#bone"
+        },
+        "east": {
+          "texture": "#bone"
+        },
+        "west": {
+          "texture": "#bone"
+        },
+        "up": {
+          "texture": "#bone"
+        },
+        "down": {
+          "texture": "#bone"
+        }
+      },
+      "rotation": {
+        "origin": [
+          7.5,
+          16,
+          4.5
+        ],
+        "axis": "x",
+        "angle": 22.5
+      }
+    }
+  ]
+}

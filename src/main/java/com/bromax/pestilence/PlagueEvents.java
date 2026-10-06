@@ -28,6 +28,10 @@ import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import com.bromax.pestilence.world.NestSeeding;
+import com.bromax.pestilence.world.Tracker;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
 
@@ -114,6 +118,7 @@ public final class PlagueEvents {
         if (player.isSpectator() || player.tickCount == 0) return;
         if (player.tickCount % PestConfig.DOCTOR_CHECK_INTERVAL.get() == 0) rollDoctorVisit(level, player);
         if (player.tickCount % PestConfig.OUTBREAK_INTERVAL.get() == 0) rollOutbreak(level, player);
+        if (player.tickCount % PestConfig.NEST_SEED_INTERVAL.get() == 0 && player instanceof ServerPlayer sp) NestSeeding.roll(level, sp);
     }
 
     /** From the Murrain on, animals near players fall sick on their own; the herd does the rest. */
@@ -155,6 +160,12 @@ public final class PlagueEvents {
             return true;
         }
         return false;
+    }
+
+    @SubscribeEvent
+    public static void onServerStopped(ServerStoppedEvent event) {
+        Tracker.clear();
+        NestSeeding.clear();
     }
 
     @SubscribeEvent

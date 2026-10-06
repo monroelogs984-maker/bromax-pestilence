@@ -1,0 +1,127 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/mud",
+    "mud": "minecraft:block/mud",
+    "soil": "minecraft:block/soul_soil",
+    "bone": "minecraft:block/bone_block_side",
+    "skull": "minecraft:block/bone_block_side",
+    "skull_top": "minecraft:block/bone_block_top"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        15,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#mud"
+        },
+        "south": {
+          "texture": "#mud"
+        },
+        "east": {
+          "texture": "#mud"
+        },
+        "west": {
+          "texture": "#mud"
+        },
+        "up": {
+          "texture": "#soil"
+        },
+        "down": {
+          "texture": "#mud"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        15,
+        4
+      ],
+      "to": [
+        4,
+        20,
+        5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bone"
+        },
+        "south": {
+          "texture": "#bone"
+        },
+        "east": {
+          "texture": "#bone"
+        },
+        "west": {
+          "texture": "#bone"
+        },
+        "up": {
+          "texture": "#bone"
+        },
+        "down": {
+          "texture": "#bone"
+        }
+      },
+      "rotation": {
+        "origin": [
+          3.5,
+          15,
+          4.5
+        ],
+        "axis": "x",
+        "angle": 22.5
+      }
+    },
+    {
+      "from": [
+        11,
+        15,
+        10
+      ],
+      "to": [
+        12,
+        19,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bone"
+        },
+        "south": {
+          "texture": "#bone"
+        },
+        "east": {
+          "texture": "#bone"
+        },
+        "west": {
+          "texture": "#bone"
+        },
+        "up": {
+          "texture": "#bone"
+        },
+        "down": {
+          "texture": "#bone"
+        }
+      },
+      "rotation": {
+        "origin": [
+          11.5,
+          15,
+          10.5
+        ],
+        "axis": "z",
+        "angle": -22.5
+      }
+    }
+  ]
+}

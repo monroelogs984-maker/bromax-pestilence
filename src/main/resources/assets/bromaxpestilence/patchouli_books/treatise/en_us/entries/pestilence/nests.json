@@ -1,0 +1,27 @@
+{
+  "name": "Nests",
+  "icon": "bromaxpestilence:rat_warren",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 8,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "From $(l)Rat Season$() on, the Pestilence builds itself homes near wherever people are, never close to where they sleep. You will hear one form: scratching, a smell, the ground opening.$(br2)A nest grows from stage $(l)I$() to $(l)IV$() over the days, getting harder to break each time, and it feeds the Pestilence every day it stands. A stage IV nest $(4)plants new ones$()."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Rat Warren",
+      "text": "A burrowed mound that keeps breeding rats. Breaking it lets out whatever was still inside, so come ready. Each stage adds a burrow hole."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Plague Pit",
+      "text": "Opens from $(l)Heralds$() on, or wherever three corpses have risen close together. It turns up bodies that will rise if left. It is almost too hard to dig; $(l)quicklime$() fills it in, one stage per handful."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Miasma Well",
+      "text": "From the $(l)Black Death$() on. A stone ring full of green sludge that breathes miasma clouds and spreads the Blight fastest of all. Go masked."
+    }
+  ]
+}

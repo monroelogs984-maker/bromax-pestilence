@@ -1,0 +1,17 @@
+{
+  "name": "The Blight",
+  "icon": "bromaxpestilence:blighted_soil",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 9,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "From the $(l)Outbreak$() on, nests sicken the land around them. Grass turns to $(l)blighted soil$(), where nothing can be planted and the spores can make you ill. Leaves wither, small plants die, and crops are knocked back to seedlings.$(br2)Nothing else is ever touched, and nothing is lost for good."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "bromaxpestilence:blighted_soil",
+      "text": "With no nest left nearby, blighted soil and withered leaves slowly recover on their own: grass returns, and each tree its own kind of leaf. Kill the nest and the land heals."
+    }
+  ]
+}

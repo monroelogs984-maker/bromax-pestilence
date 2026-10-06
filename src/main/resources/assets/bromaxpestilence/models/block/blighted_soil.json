@@ -1,0 +1,1 @@
+{ "parent": "minecraft:block/cube_bottom_top", "textures": { "top": "bromaxpestilence:block/blighted_soil_top", "side": "bromaxpestilence:block/blighted_soil_side", "bottom": "minecraft:block/dirt" } }

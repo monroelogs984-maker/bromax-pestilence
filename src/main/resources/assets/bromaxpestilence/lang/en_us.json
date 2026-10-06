@@ -58,5 +58,18 @@
   "phase.bromaxpestilence.7": "Danse Macabre",
   "phase.bromaxpestilence.7.desc": "The dead outnumber the living.",
   "phase.bromaxpestilence.8": "The Pale Rider",
-  "phase.bromaxpestilence.8.desc": "Pestilence rides."
+  "phase.bromaxpestilence.8.desc": "Pestilence rides.",
+  "block.bromaxpestilence.rat_warren": "Rat Warren",
+  "block.bromaxpestilence.plague_pit": "Plague Pit",
+  "block.bromaxpestilence.miasma_well": "Miasma Well",
+  "block.bromaxpestilence.blighted_soil": "Blighted Soil",
+  "block.bromaxpestilence.withered_leaves": "Withered Leaves",
+  "block.bromaxpestilence.herb_brazier": "Herb Brazier",
+  "item.bromaxpestilence.quicklime": "Quicklime",
+  "message.bromaxpestilence.nest_formed.rat_warren": "You hear scratching beneath the earth nearby...",
+  "message.bromaxpestilence.nest_formed.plague_pit": "Somewhere nearby, the ground opens over the dead...",
+  "message.bromaxpestilence.nest_formed.miasma_well": "A foul green smell drifts in on the wind...",
+  "message.bromaxpestilence.nest_destroyed.rat_warren": "The warren collapses. The Pestilence weakens.",
+  "message.bromaxpestilence.nest_destroyed.plague_pit": "The pit is filled. The Pestilence weakens.",
+  "message.bromaxpestilence.nest_destroyed.miasma_well": "The well runs dry. The Pestilence weakens."
 }

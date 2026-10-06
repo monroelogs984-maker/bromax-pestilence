@@ -46,6 +46,22 @@ public final class PestConfig {
     public static final ModConfigSpec.IntValue PYRE_RADIUS;
     public static final ModConfigSpec.DoubleValue CARRY_INFECT_CHANCE;
 
+    // nests and blight
+    public static final ModConfigSpec.IntValue NEST_STAGE_TICKS;
+    public static final ModConfigSpec.IntValue NEST_SEED_INTERVAL;
+    public static final ModConfigSpec.DoubleValue NEST_SEED_CHANCE_PER_PHASE;
+    public static final ModConfigSpec.IntValue NEST_SPACING;
+    public static final ModConfigSpec.BooleanValue NEST_SPREADS;
+    public static final ModConfigSpec.DoubleValue POINTS_NEST_DAILY;
+    public static final ModConfigSpec.DoubleValue POINTS_NEST_DESTROYED;
+    public static final ModConfigSpec.BooleanValue BLIGHT_ENABLED;
+    public static final ModConfigSpec.IntValue BLIGHT_INTERVAL;
+    public static final ModConfigSpec.IntValue BLIGHT_RADIUS_PER_STAGE;
+    public static final ModConfigSpec.IntValue BLIGHT_HEAL_RANGE;
+    public static final ModConfigSpec.DoubleValue BLIGHT_STEP_INFECT_CHANCE;
+    public static final ModConfigSpec.IntValue BRAZIER_RADIUS;
+    public static final ModConfigSpec.IntValue BRAZIER_FUEL_TICKS;
+
     // doctor
     public static final ModConfigSpec.IntValue DOCTOR_CHECK_INTERVAL;
     public static final ModConfigSpec.DoubleValue DOCTOR_CHANCE;
@@ -121,6 +137,40 @@ public final class PestConfig {
                 .defineInRange("pyreRadius", 3, 1, 8);
         CARRY_INFECT_CHANCE = b.comment("Chance every 10 seconds that carrying a shrouded corpse without a mask infects you.")
                 .defineInRange("carryInfectChance", 0.05, 0.0, 1.0);
+        b.pop();
+
+        b.push("nests");
+        NEST_STAGE_TICKS = b.comment("Ticks for a nest to grow one stage (I to IV).")
+                .defineInRange("stageTicks", 24000, 200, 10_000_000);
+        NEST_SEED_INTERVAL = b.comment("Ticks between rolls (per Overworld player) for a new nest to form nearby, from phase 3.")
+                .defineInRange("seedInterval", 6000, 200, 10_000_000);
+        NEST_SEED_CHANCE_PER_PHASE = b.comment("Chance per roll, multiplied by (phase - 2).")
+                .defineInRange("seedChancePerPhase", 0.08, 0.0, 1.0);
+        NEST_SPACING = b.comment("Minimum blocks between nests.")
+                .defineInRange("spacing", 40, 8, 512);
+        NEST_SPREADS = b.comment("Stage IV nests plant a new stage I nest nearby every stage interval.")
+                .define("stageFourSpreads", true);
+        POINTS_NEST_DAILY = b.comment("Plague Points each nest adds per day, multiplied by its stage.")
+                .defineInRange("pointsPerDay", 5.0, -1000.0, 1000.0);
+        POINTS_NEST_DESTROYED = b.comment("Plague Points for destroying a nest, multiplied by its stage.")
+                .defineInRange("pointsDestroyed", -8.0, -1000.0, 1000.0);
+        b.pop();
+
+        b.push("blight");
+        BLIGHT_ENABLED = b.comment("Whether nests spread the Blight (from phase 4). It only changes grass, natural leaves, crops and small plants, and heals on its own.")
+                .define("enabled", true);
+        BLIGHT_INTERVAL = b.comment("Ticks between blight spread attempts per nest.")
+                .defineInRange("interval", 100, 10, 72000);
+        BLIGHT_RADIUS_PER_STAGE = b.comment("Blight radius around a nest per stage.")
+                .defineInRange("radiusPerStage", 3, 1, 16);
+        BLIGHT_HEAL_RANGE = b.comment("Blighted blocks with no nest within this range slowly heal.")
+                .defineInRange("healRange", 32, 8, 128);
+        BLIGHT_STEP_INFECT_CHANCE = b.comment("Chance per tick that an unmasked host standing on blighted soil catches the plague.")
+                .defineInRange("stepInfectChance", 0.0015, 0.0, 1.0);
+        BRAZIER_RADIUS = b.comment("Radius a lit Herb Brazier protects from blight, miasma and nests.")
+                .defineInRange("brazierRadius", 10, 2, 48);
+        BRAZIER_FUEL_TICKS = b.comment("Ticks of burn time per herb added to a brazier (max 4 herbs' worth).")
+                .defineInRange("brazierFuelTicks", 6000, 20, 1_000_000);
         b.pop();
 
         b.push("doctor");

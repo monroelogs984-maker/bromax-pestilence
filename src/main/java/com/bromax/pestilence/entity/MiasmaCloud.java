@@ -60,7 +60,7 @@ public class MiasmaCloud extends Entity {
             }
             return;
         }
-        if (tickCount >= duration) {
+        if (tickCount >= duration || tickCount % 20 == 1 && com.bromax.pestilence.world.Tracker.inBrazier(level(), blockPosition())) {
             discard();
             return;
         }

@@ -1,6 +1,18 @@
 package com.bromax.pestilence;
 
+import com.bromax.pestilence.block.BlightedSoilBlock;
+import com.bromax.pestilence.block.BrazierBlockEntity;
+import com.bromax.pestilence.block.HerbBrazierBlock;
+import com.bromax.pestilence.block.NestBlock;
+import com.bromax.pestilence.block.NestBlockEntity;
+import com.bromax.pestilence.block.NestKind;
 import com.bromax.pestilence.block.PyreBlock;
+import com.bromax.pestilence.block.WitheredLeavesBlock;
+import com.bromax.pestilence.item.QuicklimeItem;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.material.PushReaction;
 import com.bromax.pestilence.effect.ImmunityEffect;
 import com.bromax.pestilence.effect.PlagueEffect;
 import com.bromax.pestilence.entity.Corpse;
@@ -61,6 +73,7 @@ public final class ModRegistry {
     public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(Registries.PARTICLE_TYPE, MODID);
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     // Effects
@@ -98,6 +111,24 @@ public final class ModRegistry {
             .mapColor(MapColor.WOOD).strength(2f).sound(SoundType.WOOD).noOcclusion().ignitedByLava()
             .lightLevel(state -> state.getValue(PyreBlock.LIT) ? 15 : 0)));
 
+    public static final DeferredBlock<NestBlock> RAT_WARREN = nest(NestKind.WARREN, MapColor.DIRT, SoundType.ROOTED_DIRT, 0);
+    public static final DeferredBlock<NestBlock> PLAGUE_PIT = nest(NestKind.PIT, MapColor.TERRACOTTA_BROWN, SoundType.MUD, 0);
+    public static final DeferredBlock<NestBlock> MIASMA_WELL = nest(NestKind.WELL, MapColor.COLOR_GREEN, SoundType.STONE, 3);
+    public static final DeferredBlock<BlightedSoilBlock> BLIGHTED_SOIL = BLOCKS.register("blighted_soil", () -> new BlightedSoilBlock(
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT).mapColor(MapColor.TERRACOTTA_GRAY).sound(SoundType.ROOTED_DIRT).randomTicks()));
+    public static final DeferredBlock<WitheredLeavesBlock> WITHERED_LEAVES = BLOCKS.register("withered_leaves", () -> new WitheredLeavesBlock(
+            BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES).mapColor(MapColor.TERRACOTTA_BROWN)));
+    public static final DeferredBlock<HerbBrazierBlock> HERB_BRAZIER = BLOCKS.register("herb_brazier", () -> new HerbBrazierBlock(
+            BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.5f).sound(SoundType.LANTERN).noOcclusion()
+                    .lightLevel(state -> state.getValue(HerbBrazierBlock.LIT) ? 13 : 0)));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<NestBlockEntity>> NEST_BE = BLOCK_ENTITIES.register("nest",
+            () -> BlockEntityType.Builder.of(NestBlockEntity::new, RAT_WARREN.get(), PLAGUE_PIT.get(), MIASMA_WELL.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BrazierBlockEntity>> BRAZIER_BE = BLOCK_ENTITIES.register("herb_brazier",
+            () -> BlockEntityType.Builder.of(BrazierBlockEntity::new, HERB_BRAZIER.get()).build(null));
+
+    public static final TagKey<Item> BRAZIER_FUEL = TagKey.create(Registries.ITEM, Pestilence.id("brazier_fuel"));
+
     // Items
     public static final DeferredItem<Item> PLAGUE_MASK = ITEMS.register("plague_mask",
             () -> new PlagueMaskItem(PLAGUE_MASK_MATERIAL, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(13))));
@@ -105,6 +136,13 @@ public final class ModRegistry {
     public static final DeferredItem<Item> RAT_TAIL = ITEMS.registerSimpleItem("rat_tail");
     public static final DeferredItem<Item> SHROUDED_CORPSE = ITEMS.register("shrouded_corpse", () -> new ShroudedCorpseItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<?> PYRE_ITEM = ITEMS.registerSimpleBlockItem(PYRE);
+    public static final DeferredItem<Item> QUICKLIME = ITEMS.register("quicklime", () -> new QuicklimeItem(new Item.Properties()));
+    public static final DeferredItem<?> HERB_BRAZIER_ITEM = ITEMS.registerSimpleBlockItem(HERB_BRAZIER);
+    public static final DeferredItem<?> BLIGHTED_SOIL_ITEM = ITEMS.registerSimpleBlockItem(BLIGHTED_SOIL);
+    public static final DeferredItem<?> WITHERED_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(WITHERED_LEAVES);
+    public static final DeferredItem<?> RAT_WARREN_ITEM = ITEMS.registerSimpleBlockItem(RAT_WARREN);
+    public static final DeferredItem<?> PLAGUE_PIT_ITEM = ITEMS.registerSimpleBlockItem(PLAGUE_PIT);
+    public static final DeferredItem<?> MIASMA_WELL_ITEM = ITEMS.registerSimpleBlockItem(MIASMA_WELL);
     public static final DeferredItem<Item> PLAGUE_RAT_SPAWN_EGG = egg("plague_rat", PLAGUE_RAT, 0x4a3f38, 0xc48b86);
     public static final DeferredItem<Item> PLAGUE_DOCTOR_SPAWN_EGG = egg("plague_doctor", PLAGUE_DOCTOR, 0x1c1a1a, 0xc9b48a);
     public static final DeferredItem<Item> AFFLICTED_COW_SPAWN_EGG = egg("afflicted_cow", AFFLICTED_COW, 0x4f4237, 0x8c8a3a);
@@ -128,6 +166,12 @@ public final class ModRegistry {
                 .clientTrackingRange(10).build(MODID + ":" + name));
     }
 
+    private static DeferredBlock<NestBlock> nest(NestKind kind, MapColor color, SoundType sound, int light) {
+        return BLOCKS.register(kind.id, () -> new NestBlock(kind, BlockBehaviour.Properties.of().mapColor(color).sound(sound)
+                .strength(kind.hardness, kind.hardness * 2).pushReaction(PushReaction.BLOCK)
+                .noLootTable().lightLevel(state -> light == 0 ? 0 : light + state.getValue(NestBlock.STAGE))));
+    }
+
     private static DeferredItem<Item> egg(String name, Supplier<? extends EntityType<? extends Mob>> type, int bg, int fg) {
         return ITEMS.register(name + "_spawn_egg", () -> new DeferredSpawnEggItem(type, bg, fg, new Item.Properties()));
     }
@@ -138,6 +182,7 @@ public final class ModRegistry {
         ENTITIES.register(bus);
         ARMOR_MATERIALS.register(bus);
         BLOCKS.register(bus);
+        BLOCK_ENTITIES.register(bus);
         ITEMS.register(bus);
         TABS.register(bus);
         bus.addListener(ModRegistry::onAttributes);

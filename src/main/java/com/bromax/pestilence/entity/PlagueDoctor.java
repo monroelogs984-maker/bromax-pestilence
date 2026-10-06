@@ -85,6 +85,7 @@ public class PlagueDoctor extends WanderingTrader implements GeoEntity {
         offers.add(new MerchantOffer(new ItemCost(Items.EMERALD, 10), Optional.of(new ItemCost(Items.LEATHER, 3)),
                 new ItemStack(ModRegistry.PLAGUE_MASK.get()), 2, 1, 0.05f));
         offers.add(new MerchantOffer(new ItemCost(Items.EMERALD, 2), new ItemStack(ModRegistry.PYRE_ITEM.get()), 6, 1, 0.05f));
+        offers.add(new MerchantOffer(new ItemCost(Items.EMERALD, 1), new ItemStack(ModRegistry.QUICKLIME.get(), 4), 12, 1, 0.05f));
         offers.add(new MerchantOffer(new ItemCost(ModRegistry.RAT_TAIL.get(), 4), new ItemStack(Items.EMERALD), 16, 1, 0.05f));
         DataComponentType<?> bookComponent = BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.fromNamespaceAndPath("patchouli", "book"));
         if (bookComponent != null) {

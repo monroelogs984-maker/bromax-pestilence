@@ -173,6 +173,7 @@ public class Corpse extends Entity {
                 level.sendParticles(ParticleTypes.SQUID_INK, getX(), getY() + 0.5, getZ(), 20, 0.4, 0.4, 0.4, 0.02);
                 level.playSound(null, blockPosition(), SoundEvents.ZOMBIE_INFECT, SoundSource.HOSTILE, 1.2f, 0.7f);
                 Plague.addPoints(mob, PestConfig.POINTS_CORPSE_RISE.get());
+                com.bromax.pestilence.world.NestSeeding.corpseRose(level, blockPosition());
             }
         }
         discard();
@@ -187,6 +188,13 @@ public class Corpse extends Entity {
                 ignite();
                 if (stack.is(Items.FLINT_AND_STEEL)) stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
                 else stack.consume(1, player);
+            }
+            return InteractionResult.sidedSuccess(level().isClientSide);
+        }
+        if (stack.is(ModRegistry.QUICKLIME.get())) {
+            if (!level().isClientSide) {
+                stack.consume(1, player);
+                consume();
             }
             return InteractionResult.sidedSuccess(level().isClientSide);
         }

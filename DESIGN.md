@@ -35,6 +35,8 @@ first-person friendly (no screen effects that hide combat).
 
 ## Systems (build order)
 
+Status: 1 done (0.2.0), 2 done (0.3.0). Fetid water / dysentery moved to system 3 with the disease roster.
+
 1. **Phases, corpses and pyres, Afflicted animals**: world Plague Points, announcements, `/pestilence`;
    corpse entity (flies, rises after a delay; burn it, haul it, or keep it near a lit pyre);
    Afflicted cow, pig, sheep, chicken, horse, wolf; miasma clouds; mobs die of late-stage plague.
@@ -60,4 +62,5 @@ horse, wolf, fox, Pestilent Dead. Only flesh-and-blood mobs can be Afflicted.
 ## Assets
 
 `tools/gen_assets.py` builds every model, animation and texture from cube lists; edit there and
-rerun. `tools/preview.py` renders a contact sheet of a model for review without the game.
+rerun. `tools/preview.py` renders a contact sheet of a model for review without the game;
+`tools/preview_block.py` does the same for block models, reading vanilla textures from the MC client jar.

@@ -743,6 +743,138 @@ def icons():
     circle_icon(os.path.join(effects, 'plague_immunity.png'), '#2f5a24', '#5f9a4a', cross)
 
 
+# ---------------------------------------------------------------------------------------------
+# Block textures and block models (system 2: nests and the Blight)
+# ---------------------------------------------------------------------------------------------
+
+def noise_tex(size, base, var, seed):
+    rng = random.Random(seed)
+    return [[scale(rgba(base), 1 + rng.uniform(-var, var) / 100) for _ in range(size)] for _ in range(size)]
+
+
+def block_textures():
+    tex = os.path.join(ASSETS, 'textures', 'block')
+    rng = random.Random(404)
+    top = noise_tex(16, '#4a4038', 12, 1)
+    for _ in range(3):                                   # rot veins
+        x, y = rng.randrange(16), rng.randrange(16)
+        for _ in range(9):
+            top[y % 16][x % 16] = rgba('#5a3a52')
+            x += rng.choice((-1, 0, 1)); y += rng.choice((0, 1))
+    for _ in range(7):
+        top[rng.randrange(16)][rng.randrange(16)] = rgba('#8c8a3a')
+    write_png(os.path.join(tex, 'blighted_soil_top.png'), top)
+    side = noise_tex(16, '#6b4f35', 10, 2)
+    for x in range(16):
+        depth = 3 + rng.randrange(3)
+        for y in range(depth):
+            side[y][x] = scale(rgba('#4a4038'), 1 + rng.uniform(-0.1, 0.1))
+        if rng.random() < 0.4:
+            side[depth][x] = rgba('#5a3a52')
+    write_png(os.path.join(tex, 'blighted_soil_side.png'), side)
+    leaves = []
+    for y in range(16):
+        row = []
+        for x in range(16):
+            if rng.random() < 0.28:
+                row.append((0, 0, 0, 0))
+            else:
+                row.append(scale(rgba(rng.choice(['#6e5a3e', '#5a4a34', '#8a7550', '#4f4030'])), 1 + rng.uniform(-0.08, 0.08)))
+        leaves.append(row)
+    write_png(os.path.join(tex, 'withered_leaves.png'), leaves)
+    sprite(os.path.join(ASSETS, 'textures', 'item', 'quicklime.png'), [
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '.......ww.......',
+        '......wWWw......',
+        '.....wWWWWw.....',
+        '....wWWwWWWw....',
+        '...wWWWWWwWWw...',
+        '..wWWwWWWWWWWw..',
+        '..gwWWWWWwWWwg..',
+        '...ggggggggggg..',
+        '................',
+        '................',
+        '................',
+    ], {'w': '#d9d6cc', 'W': '#f2f0ea', 'g': '#a8a49a'})
+
+
+def box(fr, to, tex, faces=('north', 'south', 'east', 'west', 'up', 'down'), top=None, rotation=None):
+    el = {'from': fr, 'to': to, 'faces': {f: {'texture': top if f == 'up' and top else tex} for f in faces}}
+    if rotation:
+        el['rotation'] = rotation
+    return el
+
+
+def block_model(name, elements, textures, render_type=None, parent='minecraft:block/block'):
+    model = {'parent': parent, 'textures': textures, 'elements': elements}
+    if render_type:
+        model['render_type'] = render_type
+    write_json(os.path.join(ASSETS, 'models', 'block', f'{name}.json'), model)
+
+
+def nest_models():
+    heights = [8, 10, 13, 16]
+    for stage in range(1, 5):
+        h = heights[stage - 1]
+        # Rat Warren: an earth mound riddled with burrow holes (one more per stage).
+        # stepped tiers so it reads as a heaped mound, not a cube
+        t1, t2 = round(h * 0.45), round(h * 0.75)
+        els = [box([0, 0, 0], [16, t1, 16], '#dirt', top='#top'), box([2, t1, 2], [14, t2, 14], '#dirt', top='#top'),
+               box([4, t2, 4], [12, h, 12], '#top')]
+        holes = [([6, 0.5, -0.01], [10, min(4, t1 - 0.5), -0.01], 'north'), ([16.01, 0.5, 6], [16.01, min(4, t1 - 0.5), 10], 'east'),
+                 ([6, 0.5, 16.01], [10, min(4, t1 - 0.5), 16.01], 'south'), ([-0.01, 0.5, 6], [-0.01, min(4, t1 - 0.5), 10], 'west')]
+        for fr, to, face in holes[:stage]:
+            els.append(box(fr, to, '#hole', faces=(face,)))
+        if stage >= 2:
+            els.append(box([1, t1, 10], [4, t1 + 2, 14], '#gravel'))
+        if stage >= 3:
+            els.append(box([11, t1, 1], [15, t1 + 1, 4], '#gravel'))
+        if stage >= 4:
+            els.append(box([7, h, 4], [8, h + 3, 5], '#bone', rotation={'origin': [7.5, h, 4.5], 'axis': 'x', 'angle': 22.5}))
+        block_model(f'rat_warren_stage{stage}', els, {'particle': 'minecraft:block/coarse_dirt', 'dirt': 'minecraft:block/coarse_dirt',
+                    'top': 'minecraft:block/rooted_dirt', 'gravel': 'minecraft:block/gravel', 'hole': 'minecraft:block/black_concrete',
+                    'bone': 'minecraft:block/bone_block_side'})
+
+        # Plague Pit: churned mud and soul soil with bones jutting out (more each stage).
+        els = [box([0, 0, 0], [16, 15, 16], '#mud', top='#soil')]
+        bones = [([3, 15, 4], 5, 22.5, 'x'), ([11, 15, 10], 4, -22.5, 'z'), ([7, 15, 11], 6, 22.5, 'z'),
+                 ([12, 15, 3], 3, -22.5, 'x'), ([4, 15, 12], 4, 45, 'x')]
+        for (x, y, z), length, angle, axis in bones[:1 + stage]:
+            els.append(box([x, y, z], [x + 1, y + length, z + 1], '#bone',
+                           rotation={'origin': [x + 0.5, y, z + 0.5], 'axis': axis, 'angle': angle}))
+        if stage >= 3:
+            els.append(box([5, 15, 5], [9, 18, 9], '#skull', top='#skull_top'))
+        block_model(f'plague_pit_stage{stage}', els, {'particle': 'minecraft:block/mud', 'mud': 'minecraft:block/mud',
+                    'soil': 'minecraft:block/soul_soil', 'bone': 'minecraft:block/bone_block_side',
+                    'skull': 'minecraft:block/bone_block_side', 'skull_top': 'minecraft:block/bone_block_top'})
+
+        # Miasma Well: a mossy stone ring brimming with green sludge; taller each stage.
+        els = [box([0, 0, 0], [16, h, 3], '#stone'), box([0, 0, 13], [16, h, 16], '#stone'),
+               box([0, 0, 3], [3, h, 13], '#stone'), box([13, 0, 3], [16, h, 13], '#stone'),
+               box([3, 0, 3], [13, h - 1, 13], '#sludge')]
+        if stage >= 3:
+            els.append(box([0, h, 0], [16, h + 0.5, 3], '#moss'))
+        block_model(f'miasma_well_stage{stage}', els, {'particle': 'minecraft:block/mossy_cobblestone',
+                    'stone': 'minecraft:block/mossy_cobblestone', 'sludge': 'minecraft:block/slime_block', 'moss': 'minecraft:block/moss_block'},
+                    render_type='minecraft:translucent')
+
+    # Herb Brazier: an iron bowl on four legs, smouldering herbs when lit.
+    legs = [box([x, 0, z], [x + 1, 6, z + 1], '#iron') for x, z in ((3, 3), (12, 3), (3, 12), (12, 12))]
+    bowl = [box([2, 6, 2], [14, 7, 14], '#iron'), box([2, 7, 2], [14, 11, 3], '#iron'), box([2, 7, 13], [14, 11, 14], '#iron'),
+            box([2, 7, 3], [3, 11, 13], '#iron'), box([13, 7, 3], [14, 11, 13], '#iron')]
+    tex = {'particle': 'minecraft:block/anvil', 'iron': 'minecraft:block/anvil', 'coal': 'minecraft:block/coal_block',
+           'herbs': 'minecraft:block/moss_block', 'embers': 'minecraft:block/magma', 'fire': 'minecraft:block/fire_0'}
+    block_model('herb_brazier', legs + bowl + [box([3, 7, 3], [13, 9, 13], '#coal', top='#herbs')], tex)
+    fire = [{'from': [3, 9, 8], 'to': [13, 19, 8], 'rotation': {'origin': [8, 8, 8], 'axis': 'y', 'angle': a}, 'shade': False,
+             'faces': {'north': {'texture': '#fire'}, 'south': {'texture': '#fire'}}} for a in (45, -45)]
+    block_model('herb_brazier_lit', legs + bowl + [box([3, 7, 3], [13, 9, 13], '#coal', top='#embers')] + fire, tex,
+                render_type='minecraft:cutout')
+
+
 if __name__ == '__main__':
     plague_doctor()
     plague_mask()
@@ -755,3 +887,5 @@ if __name__ == '__main__':
     afflicted_wolf()
     animations()
     icons()
+    block_textures()
+    nest_models()

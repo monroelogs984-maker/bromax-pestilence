@@ -1,0 +1,17 @@
+{
+  "name": "Cleansing",
+  "icon": "bromaxpestilence:quicklime",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(l)Quicklime$(), burned from calcite or bone blocks, is the physician's friend. Scattered on blighted ground it cleans a patch at once. It fills Plague Pits. It dissolves a corpse as surely as fire."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:herb_brazier",
+      "text": "A lit $(l)Herb Brazier$() fed with flowers keeps a wide circle clean: no Blight, no miasma, and nests inside it fall quiet. Its edge is marked by drifting ash."
+    }
+  ]
+}
