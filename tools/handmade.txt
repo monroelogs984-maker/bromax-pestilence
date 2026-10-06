@@ -5,3 +5,8 @@ textures/item/theriac.png
 textures/item/plague_mask.png
 textures/item/consecrated_cleaver.png
 textures/item/quicklime.png
+textures/item/garlic.png
+textures/item/rue.png
+textures/item/sage.png
+textures/item/wormwood.png
+textures/item/rosemary.png

@@ -55,7 +55,7 @@ def liquid(name, tones, details=()):
     return f'textures/item/{name}.png'
 
 
-def remaster():
+def round1():
     made = []
     # Four Thieves Vinegar: clear amber, a sprig of rosemary and a garlic clove steeping in it.
     made.append(liquid('four_thieves_vinegar', ('#e8b04a', '#c88a2a', '#9a6418', '#6e4410'),
@@ -135,11 +135,51 @@ def remaster():
     write_png(os.path.join(ITEMS, 'quicklime.png'), lime)
     made.append('textures/item/quicklime.png')
 
+    return made
+
+
+def item(name, rows, key):
+    write_png(os.path.join(ITEMS, f'{name}.png'), grid(rows, key))
+    return f'textures/item/{name}.png'
+
+
+def round2():
+    """The fresh herbs."""
+    made = [item('garlic', [
+        '................', '.......ss.......', '.......sS.......', '.......sS.......', '......oSSo......',
+        '.....oWLLWo.....', '....oWLLpLLo....', '...oWLLLpLLLo...', '..oWWLLLpLLLLo..', '..oWLLpLLLpLMo..',
+        '..oLLLpLLLpLMo..', '..oLLMpLLMpMMo..', '...oMMpMMMpMo...', '....oMMMMMMo....', '.....ooroo......', '....r..r..r.....'],
+        {'o': '#8e8270', 'W': '#fffaf0', 'L': '#ece4d4', 'M': '#cfc3ad', 'p': '#b8a0bc', 's': '#9c8c6c', 'S': '#c4b48c', 'r': '#c8b898'})]
+    made.append(item('rue', [
+        '...........yY...', '..........yYYy..', '...........yy...', '........lL.s.yy.', '.......lhLs.yYy.',
+        '....lL.lLs..yy..', '...lhLl.s.......', '...lLLLs.lL.....', '....ll.slhLl....', '.......sLLLl....',
+        '...lL.s..ll.....', '..lhLls.........', '..lLLs..........', '...ls...........', '...s............', '................'],
+        {'l': '#4a6e66', 'L': '#7fb0a0', 'h': '#a8d0c0', 's': '#5a7a4a', 'y': '#d8b830', 'Y': '#f8e070'}))
+    made.append(item('sage', [
+        '..........pP....', '.........pPp....', '..........pP....', '.........pPp....', '..........s.....',
+        '....oooo..s.....', '...oLLhLo.s.....', '..oLhLLLLos.....', '..oLLLvLLLo.....', '..oLLvLLLos.oo..',
+        '...oLvLLos.oLLo.', '....oooos.oLLhLo', '........soLLvLLo', '.......s.oLvLLo.', '......s...oooo..', '.....s..........'],
+        {'o': '#4e5c48', 'L': '#8fa085', 'h': '#b4c4a8', 'v': '#6d7d64', 's': '#6a6a4a', 'p': '#7a5aa0', 'P': '#a888c8'}))
+    made.append(item('wormwood', [
+        '......y..y......', '.....yYy.Yy.....', '......s..s......', '....h.s.ls.h....', '...lh.sls..lh...',
+        '..l.hss...lh.l..', '...lls.lhs.l....', '.h..s.lh.s.hl...', '.lhls.l..sll....', '..ls.lh..s..h...',
+        '...s.l..s.lhl...', '...s...s..l.....', '....s.s.........', '.....s..........', '.....s..........', '................'],
+        {'l': '#8e968a', 'h': '#c8d0c2', 's': '#6b7268', 'y': '#c8a830', 'Y': '#f0d860'}))
+    made.append(item('rosemary', [
+        '............bB..', '..........N.bb..', '.........N.sN.N.', '..........Ns.N..', '........N.snN.N.',
+        '.........NsN.N..', '.......N.sn.N...', '........Nsn.N...', '......N.snN.....', '.......Nsn.N....',
+        '.....N.snN......', '......Nsn.N.....', '....N.wn.N......', '.....ww.........', '....w...........', '................'],
+        {'n': '#2f5236', 'N': '#5c8a5e', 's': '#4a6a3a', 'w': '#6a4e32', 'b': '#8aa8d8', 'B': '#c0d4f0'}))
+    return made
+
+
+ROUNDS = [round1, round2]
+
+if __name__ == '__main__':
+    made = []
+    for r in ROUNDS:
+        made += r()
     with open(HANDMADE, 'w') as f:
         f.write('# Textures painted by hand (tools/remaster.py or Glenn); gen_assets.py must not overwrite these.\n')
         f.write('\n'.join(made) + '\n')
-    print('remastered:', ', '.join(m.split('/')[-1] for m in made))
-
-
-if __name__ == '__main__':
-    remaster()
+    print('hand-made:', len(made))
