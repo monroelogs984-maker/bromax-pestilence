@@ -74,3 +74,24 @@ Integrations: Curios (mask in head slot; charms in necklace/charm), Cold Sweat (
 temperature; overheating brings Sweating Sickness, cured by sleep), Lycanites (no plague hosts among
 its mobs; `naturalSpawnRate` config to thin our spawns). S202 has no Serene Seasons, so seasons
 were swapped for Cold Sweat. Rat-leather and bone tiers were cut as filler.
+
+## Backlog (Glenn, 2026-10-06, after 0.8.0)
+
+1. **Blackblight**: a secret phase 9 with its own boss and the deadliest infection: a Blackblight effect
+   with 10 stages that kills outright at stage 10. Keep it opt-in and heavily telegraphed.
+2. **Warnings and opt-outs**: at every phase change, offer a clickable prompt to stop the Pestilence
+   advancing (caps the phase). Supports a lighter, "vanilla+-ish" plague. Host/op only in multiplayer.
+   Pair with config presets: Vanilla+, Standard, Grim.
+3. **More weapons**: 3 more, spread through the progression, each with its own attack speed
+   (candidates: fast Bone Saw, slow smoke-clearing Censer Flail, long-reach Gravedigger's Spade).
+4. **Curios first**: render the mask and charms on the player (ICurioRenderer), add more charm-slot
+   items, and design gear around slots.
+5. **Farming feeds the plague**: growing and harvesting crops speeds the Pestilence up (granaries draw
+   rats), so farming carries a cost.
+6. **Texture pass**: the current art is placeholder quality and needs a real pass.
+
+Claude's additions:
+- A playtest before any of the above.
+- Custom sounds (cough, squeak, bell, Rider).
+- Advancements and S202 questbook hooks.
+- BMM/BHB weapon-profile integration for the new weapons.
