@@ -263,12 +263,13 @@ def plague_doctor():
         {'name': 'root', 'pivot': [0, 0, 0]},
         {'name': 'torso', 'parent': 'root', 'pivot': [0, 12, 0]},
         {'name': 'head', 'parent': 'torso', 'pivot': [0, 24, 0]},
+        {'name': 'skull', 'parent': 'head', 'pivot': [0, 24, 0]},
         {'name': 'right_arm', 'parent': 'torso', 'pivot': [-6, 22, 0]},
         {'name': 'left_arm', 'parent': 'torso', 'pivot': [6, 22, 0]},
         {'name': 'right_leg', 'parent': 'root', 'pivot': [-2, 12, 0]},
         {'name': 'left_leg', 'parent': 'root', 'pivot': [2, 12, 0]},
     ]
-    cubes = doctor_head('head', 0) + [
+    cubes = doctor_head('skull', 0) + [
         cube('torso', [-4, 12, -2], [8, 12, 4], 'coat', decor={'north': coat_front}),
         cube('torso', [-5, 20, -3], [10, 4, 6], 'cape'),                     # shoulder capelet
         cube('torso', [-4.5, 2, -3], [9, 10, 6], 'coat', decor={'north': skirt_front}),
@@ -306,6 +307,7 @@ def plague_rat():
         {'name': 'root', 'pivot': [0, 0, 0]},
         {'name': 'body', 'parent': 'root', 'pivot': [0, 4, 0]},
         {'name': 'head', 'parent': 'body', 'pivot': [0, 4, -4]},
+        {'name': 'skull', 'parent': 'head', 'pivot': [0, 4, -4]},
         {'name': 'tail', 'parent': 'body', 'pivot': [0, 3.5, 5]},
         {'name': 'tail_tip', 'parent': 'tail', 'pivot': [0, 3.5, 11]},
         {'name': 'leg_front_left', 'parent': 'root', 'pivot': [1.5, 2, -3]},
@@ -316,10 +318,10 @@ def plague_rat():
     cubes = [
         cube('body', [-2.5, 2, -4], [5, 4, 9], 'fur', noise=10, decor={'up': rat_back}),
         cube('body', [-3, 2, 0], [6, 5, 5], 'fur', noise=10, decor={'up': rat_back}),   # haunches
-        cube('head', [-2, 2.5, -8], [4, 3, 4], 'fur', noise=10, decor={'north': rat_face}),
-        cube('head', [-1, 2.5, -10], [2, 2, 2], 'skin', decor={'north': snout_face}, rim=False),
-        cube('head', [-2.5, 5.5, -6], [1, 2, 1], 'skin', rim=False),
-        cube('head', [1.5, 5.5, -6], [1, 2, 1], 'skin', rim=False),
+        cube('skull', [-2, 2.5, -8], [4, 3, 4], 'fur', noise=10, decor={'north': rat_face}),
+        cube('skull', [-1, 2.5, -10], [2, 2, 2], 'skin', decor={'north': snout_face}, rim=False),
+        cube('skull', [-2.5, 5.5, -6], [1, 2, 1], 'skin', rim=False),
+        cube('skull', [1.5, 5.5, -6], [1, 2, 1], 'skin', rim=False),
         cube('tail', [-0.5, 3, 5], [1, 1, 6], 'skin', rim=False),
         cube('tail_tip', [-0.5, 3, 11], [1, 1, 6], '#b07a75', rim=False),
         cube('leg_front_left', [1, 0, -3.5], [1, 2, 1], 'skin', rim=False),
@@ -414,134 +416,6 @@ def entity(name, bones, cubes, seed, bounds):
           f'geometry.{name}', bounds=bounds)
 
 
-def afflicted_cow():
-    legs = {'leg_fl': [3.5, 12, -5.5], 'leg_fr': [-3.5, 12, -5.5], 'leg_bl': [3.5, 12, 5.5], 'leg_br': [-3.5, 12, 5.5]}
-    cubes = [
-        cube('body', [-5, 12, -9], [10, 9, 18], 'cow', decor={'east': both(ribs, patches('cow_pale', 1)), 'west': both(ribs, patches('cow_pale', 2)),
-                                                              'up': sores(3)}),
-        cube('body', [-1, 21, -8], [2, 1, 16], '#46392f'),                       # spine showing through
-        cube('body', [-5.5, 18, 5], [11, 3, 4], 'cow'),                          # jutting hips
-        bubo('body', (5, 15, -4)), bubo('body', (-6, 16, 2)), bubo('body', (-1, 11, -6), (2, 1, 2)),
-        cube('head', [-4, 13, -15], [8, 8, 6], 'cow', decor={'north': glow_eyes('cow')}),
-        cube('head', [-3, 13, -16], [6, 3, 1], 'cow_pale', rim=False),
-        cube('head', [4, 19, -13], [2, 1, 1], 'horn', rim=False),
-        cube('head', [5, 20, -13], [1, 2, 1], 'horn', rim=False),
-        cube('head', [-6, 19, -13], [2, 1, 1], 'horn', rim=False),             # the other horn snapped off
-        bubo('head', (-4.5, 14, -12), (1, 2, 2)),
-    ]
-    for name, (x, z) in {'leg_fl': (2, -7), 'leg_fr': (-5, -7), 'leg_bl': (2, 4), 'leg_br': (-5, 4)}.items():
-        cubes += leg(name, x, z, 3, 12, 'cow', 'hoof')
-    entity('afflicted_cow', quad_bones([0, 12, 0], [0, 17, -9], legs), cubes, 11, (2, 2, 0.75))
-
-
-def afflicted_pig():
-    legs = {'leg_fl': [3.5, 6, -5.5], 'leg_fr': [-3.5, 6, -5.5], 'leg_bl': [3.5, 6, 5.5], 'leg_br': [-3.5, 6, 5.5]}
-    cubes = [
-        cube('body', [-5, 6, -8], [10, 8, 16], 'pig', decor={'east': patches('pig_dark', 4), 'west': patches('pig_dark', 5), 'up': sores(6, 5)}),
-        bubo('body', (5, 9, -2)), bubo('body', (-6, 10, 3)), bubo('body', (1, 14, 0), (2, 1, 2)),
-        cube('head', [-4, 6, -15], [8, 8, 7], 'pig', decor={'north': glow_eyes('pig')}),
-        cube('head', [-2, 7, -16], [4, 3, 1], 'snout', rim=False,
-             decor={'north': lambda put, w, h: (put(1, 1, '#4a2a28'), put(2, 1, '#4a2a28'))}),
-        cube('head', [-2.5, 6, -16], [1, 2, 1], 'bone', rim=False),             # tusks
-        cube('head', [1.5, 6, -16], [1, 2, 1], 'bone', rim=False),
-        cube('head', [-4.5, 12, -13], [2, 1, 3], 'pig_dark', rim=False),         # floppy ears
-        cube('head', [2.5, 12, -13], [2, 1, 3], 'pig_dark', rim=False),
-    ]
-    for name, (x, z) in {'leg_fl': (2, -7), 'leg_fr': (-5, -7), 'leg_bl': (2, 4), 'leg_br': (-5, 4)}.items():
-        cubes += leg(name, x, z, 3, 6, 'pig', 'hoof', 1)
-    entity('afflicted_pig', quad_bones([0, 6, 0], [0, 10, -8], legs), cubes, 12, (1.5, 1.2, 0.5))
-
-
-def afflicted_sheep():
-    legs = {'leg_fl': [2, 12, -4.5], 'leg_fr': [-2, 12, -4.5], 'leg_bl': [2, 12, 4.5], 'leg_br': [-2, 12, 4.5]}
-    cubes = [
-        cube('body', [-3.5, 12, -7], [7, 6, 14], 'sheep_skin', decor={'east': both(ribs, sores(7, 3)), 'west': both(ribs, sores(8, 3))}),
-        # what is left of the fleece: matted clumps on the shoulders and rump
-        cube('body', [-4.5, 13, -8], [9, 6, 6], 'wool', noise=9, decor={'all': patches('#7d7663', 9, 4)}),
-        cube('body', [-4.5, 13, 3], [9, 6, 5], 'wool', noise=9, decor={'all': patches('#7d7663', 10, 4)}),
-        cube('body', [-3, 18, -1], [4, 1, 3], 'wool', noise=9),
-        bubo('body', (3.5, 14, 0)), bubo('body', (-4.5, 15, 1), (1, 1, 1)),
-        cube('head', [-3, 14, -13], [6, 6, 6], 'sheep_face', decor={'north': glow_eyes('sheep_face')}),
-        cube('head', [-4, 18, -10], [1, 1, 2], 'sheep_face', rim=False),
-        cube('head', [3, 18, -10], [1, 1, 2], 'sheep_face', rim=False),
-    ]
-    for name, (x, z) in {'leg_fl': (0.5, -6), 'leg_fr': (-3.5, -6), 'leg_bl': (0.5, 3), 'leg_br': (-3.5, 3)}.items():
-        cubes += leg(name, x, z, 3, 12, 'sheep_face', 'hoof')
-    entity('afflicted_sheep', quad_bones([0, 12, 0], [0, 16, -7], legs), cubes, 13, (2, 2, 0.75))
-
-
-def afflicted_chicken():
-    bones = [{'name': 'root', 'pivot': [0, 0, 0]},
-             {'name': 'body', 'parent': 'root', 'pivot': [0, 4, 0]},
-             {'name': 'head', 'parent': 'body', 'pivot': [0, 9, -3]},
-             {'name': 'wing_l', 'parent': 'body', 'pivot': [3, 9, 0]},
-             {'name': 'wing_r', 'parent': 'body', 'pivot': [-3, 9, 0]},
-             {'name': 'leg_l', 'parent': 'root', 'pivot': [1.5, 4, 0.5]},
-             {'name': 'leg_r', 'parent': 'root', 'pivot': [-1.5, 4, 0.5]}]
-    cubes = [
-        cube('body', [-3, 4, -3], [6, 6, 7], 'feather', noise=8, decor={'all': patches('#c48b86', 14, 3)}),   # plucked raw patches
-        cube('body', [-2, 8, 4], [4, 3, 1], 'feather', noise=8),
-        bubo('body', (-1, 5, -4), (2, 2, 1)),
-        cube('head', [-2, 9, -6], [4, 6, 3], 'feather', decor={'north': glow_eyes('feather')}),
-        cube('head', [-2, 11, -8], [4, 2, 2], 'beak_y', rim=False),
-        cube('head', [-1, 9, -7], [2, 2, 1], 'comb', rim=False),
-        cube('head', [-0.5, 15, -6], [1, 2, 3], 'comb', rim=False),
-        cube('wing_l', [3, 5, -2], [1, 4, 6], 'feather', noise=8),
-        cube('wing_r', [-4, 5, -2], [1, 4, 6], 'feather', noise=8),
-        cube('leg_l', [1, 1, 0], [1, 3, 1], 'beak_y', rim=False),
-        cube('leg_l', [0.5, 0, -1], [2, 1, 2], 'beak_y', rim=False),
-        cube('leg_r', [-2, 1, 0], [1, 3, 1], 'beak_y', rim=False),
-        cube('leg_r', [-2.5, 0, -1], [2, 1, 2], 'beak_y', rim=False),
-    ]
-    entity('afflicted_chicken', bones, cubes, 14, (1, 1.2, 0.5))
-
-
-def afflicted_horse():
-    legs = {'leg_fl': [3.5, 12, -8.5], 'leg_fr': [-3.5, 12, -8.5], 'leg_bl': [3.5, 12, 8.5], 'leg_br': [-3.5, 12, 8.5]}
-    extra = [{'name': 'neck', 'parent': 'body', 'pivot': [0, 20, -10]},
-             {'name': 'tail', 'parent': 'body', 'pivot': [0, 20, 11]}]
-    bones = quad_bones([0, 14, 0], [0, 27, -16], legs, extra)
-    bones[2]['parent'] = 'neck'          # head hangs off the neck
-    cubes = [
-        cube('body', [-5, 12, -11], [10, 9, 22], 'horse', decor={'east': both(ribs, sores(15)), 'west': both(ribs, sores(16)), 'up': sores(17, 3)}),
-        cube('body', [-1, 21, -10], [2, 1, 20], '#3b322b'),
-        cube('body', [-5.5, 18, 7], [11, 3, 4], 'horse'),
-        bubo('body', (5, 15, -5)), bubo('body', (-6, 16, 3)),
-        cube('neck', [-2, 19, -14], [4, 6, 4], 'horse'),
-        cube('neck', [-2, 23, -16], [4, 5, 3], 'horse'),
-        cube('neck', [-1, 20, -11], [2, 9, 1], 'mane', noise=10, rim=False),
-        bubo('neck', (2, 21, -13)),
-        # long head angled down: forehead block, then the muzzle hanging below and forward of it
-        cube('head', [-2.5, 24, -20], [5, 6, 5], 'horse', decor={'north': glow_eyes('horse')}),
-        cube('head', [-2, 19, -21], [4, 6, 4], 'muzzle', decor={'north': teeth}),
-        cube('head', [-2, 30, -17], [1, 2, 1], 'horse', rim=False),
-        cube('head', [1, 30, -17], [1, 2, 1], 'horse', rim=False),
-        cube('tail', [-1, 12, 11], [2, 9, 2], 'mane', noise=10, rim=False),
-    ]
-    for name, (x, z) in {'leg_fl': (2, -10), 'leg_fr': (-5, -10), 'leg_bl': (2, 7), 'leg_br': (-5, 7)}.items():
-        cubes += leg(name, x, z, 3, 12, 'horse', 'hoof')
-    entity('afflicted_horse', bones, cubes, 15, (3, 2.5, 1))
-
-
-def afflicted_wolf():
-    legs = {'leg_fl': [2, 7, -4], 'leg_fr': [-2, 7, -4], 'leg_bl': [2, 7, 5], 'leg_br': [-2, 7, 5]}
-    extra = [{'name': 'tail', 'parent': 'body', 'pivot': [0, 12, 7]}]
-    cubes = [
-        cube('body', [-3, 7, -2], [6, 6, 9], 'wolf', decor={'east': both(ribs, sores(18, 3)), 'west': both(ribs, sores(19, 3))}),
-        cube('body', [-4, 7, -6], [8, 7, 5], 'wolf_dark', noise=10, decor={'all': patches('#7a5a52', 20, 3)}),   # mangy ruff
-        bubo('body', (3, 9, 1)), bubo('body', (-4, 10, 4), (1, 1, 1)),
-        cube('head', [-3, 9, -10], [6, 6, 4], 'wolf', decor={'north': glow_eyes('wolf')}),
-        cube('head', [-1.5, 9, -13], [3, 3, 3], 'wolf_dark', decor={'north': teeth}),
-        cube('head', [-3, 15, -8], [2, 2, 1], 'wolf_dark', rim=False),
-        cube('head', [1, 15, -8], [2, 2, 1], 'wolf_dark', rim=False),
-        cube('tail', [-1, 10, 7], [2, 2, 5], 'wolf_dark', noise=10),
-        cube('tail', [-1, 9, 11], [2, 2, 3], 'wolf_dark', noise=10),
-    ]
-    for name, (x, z) in {'leg_fl': (1, -5), 'leg_fr': (-3, -5), 'leg_bl': (1, 4), 'leg_br': (-3, 4)}.items():
-        cubes += leg(name, x, z, 2, 7, 'wolf')
-    entity('afflicted_wolf', quad_bones([0, 8, 0], [0, 11, -6], legs, extra), cubes, 16, (1.5, 1.2, 0.5))
-
-
 # ---------------------------------------------------------------------------------------------
 # Animations (Molang; math.sin takes degrees)
 # ---------------------------------------------------------------------------------------------
@@ -554,7 +428,7 @@ def animations():
     doctor = {
         'misc.idle': {'loop': True, 'animation_length': 4.0, 'bones': {
             'torso': {'scale': [1, f'1 + {swing(0.01, 90)}', 1]},
-            'head': {'rotation': [swing(3, 90, 90), swing(4, 45), 0]},
+            'skull': {'rotation': [swing(3, 90, 90), swing(4, 45), 0]},
             'right_arm': {'rotation': [swing(2, 90), 0, swing(1.5, 90)]},
         }},
         'move.walk': {'loop': True, 'animation_length': 1.2, 'bones': {
@@ -563,12 +437,12 @@ def animations():
             'right_arm': {'rotation': [swing(18, 300, 180), 0, 0]},
             'left_arm': {'rotation': [swing(8, 300), 0, 0]},
             'torso': {'position': [0, f'math.abs({swing(0.5, 300)})', 0]},
-            'head': {'rotation': [swing(2, 600), 0, 0]},
+            'skull': {'rotation': [swing(2, 600), 0, 0]},
         }},
     }
     rat = {
         'misc.idle': {'loop': True, 'animation_length': 2.0, 'bones': {
-            'head': {'rotation': [swing(4, 720), swing(6, 180), 0]},
+            'skull': {'rotation': [swing(4, 720), swing(6, 180), 0]},
             'tail': {'rotation': [0, swing(12, 180), 0]},
             'tail_tip': {'rotation': [0, swing(15, 180, 60), 0]},
         }},
@@ -582,55 +456,11 @@ def animations():
             'tail_tip': {'rotation': [0, swing(22, 900, 90), 0]},
         }},
         'attack.bite': {'loop': False, 'animation_length': 0.3, 'bones': {
-            'head': {'rotation': {'0.0': [0, 0, 0], '0.1': [-25, 0, 0], '0.2': [15, 0, 0], '0.3': [0, 0, 0]}},
+            'skull': {'rotation': {'0.0': [0, 0, 0], '0.1': [-25, 0, 0], '0.2': [15, 0, 0], '0.3': [0, 0, 0]}},
         }},
     }
 
-    def quad(stride, period, head_drop=0, limp='leg_br', extra_walk=None, extra_idle=None, bite=None):
-        speed = 360 / period
-        walk = {
-            'leg_fl': {'rotation': [swing(stride, speed), 0, 0]},
-            'leg_br': {'rotation': [swing(stride * 0.55, speed), 0, 0]} if limp == 'leg_br' else {'rotation': [swing(stride, speed), 0, 0]},
-            'leg_fr': {'rotation': [swing(stride, speed, 180), 0, 0]},
-            'leg_bl': {'rotation': [swing(stride, speed, 180), 0, 0]},
-            'body': {'position': [0, f'math.abs({swing(0.4, speed)})', 0]},
-            'head': {'rotation': [f'{head_drop} + {swing(4, speed * 2)}', 0, 0]},
-        }
-        walk.update(extra_walk or {})
-        idle = {'head': {'rotation': [f'{head_drop} + {swing(3, 90)}', swing(5, 40), swing(1.5, 400)]}}
-        idle.update(extra_idle or {})
-        return {
-            'misc.idle': {'loop': True, 'animation_length': 4.0, 'bones': idle},
-            'move.walk': {'loop': True, 'animation_length': period, 'bones': walk},
-            'attack.bite': {'loop': False, 'animation_length': 0.4, 'bones': bite or {
-                'head': {'rotation': {'0.0': [0, 0, 0], '0.12': [-20, 0, 0], '0.25': [18, 0, 0], '0.4': [0, 0, 0]}}}},
-        }
-
-    tail_sway = {'tail': {'rotation': [0, swing(10, 120), 0]}}
-    extra = {
-        'afflicted_cow': quad(22, 1.4, head_drop=8),
-        'afflicted_pig': quad(30, 0.8),
-        'afflicted_sheep': quad(24, 1.1, head_drop=6),
-        'afflicted_wolf': quad(35, 0.7, extra_walk={'tail': {'rotation': [0, swing(15, 514), 0]}}, extra_idle=tail_sway),
-        'afflicted_horse': quad(28, 1.2, extra_walk={'tail': {'rotation': [swing(8, 300), 0, 0]}}, extra_idle=tail_sway, bite={
-            'leg_fl': {'rotation': {'0.0': [0, 0, 0], '0.15': [-45, 0, 0], '0.3': [10, 0, 0], '0.4': [0, 0, 0]}},
-            'leg_fr': {'rotation': {'0.0': [0, 0, 0], '0.15': [-45, 0, 0], '0.3': [10, 0, 0], '0.4': [0, 0, 0]}},
-            'body': {'rotation': {'0.0': [0, 0, 0], '0.15': [-12, 0, 0], '0.3': [3, 0, 0], '0.4': [0, 0, 0]}},
-        }),
-        'afflicted_chicken': {
-            'misc.idle': {'loop': True, 'animation_length': 2.0, 'bones': {
-                'head': {'rotation': [swing(10, 360), swing(8, 90), 0]}}},
-            'move.walk': {'loop': True, 'animation_length': 0.4, 'bones': {
-                'leg_l': {'rotation': [swing(35, 900), 0, 0]},
-                'leg_r': {'rotation': [swing(35, 900, 180), 0, 0]},
-                'wing_l': {'rotation': [0, 0, f'-math.abs({swing(25, 900)})']},
-                'wing_r': {'rotation': [0, 0, f'math.abs({swing(25, 900)})']},
-                'head': {'position': [0, 0, swing(0.6, 900)]}}},
-            'attack.bite': {'loop': False, 'animation_length': 0.3, 'bones': {
-                'head': {'rotation': {'0.0': [0, 0, 0], '0.1': [35, 0, 0], '0.2': [-5, 0, 0], '0.3': [0, 0, 0]}}}},
-        },
-    }
-    for name, anims in [('plague_doctor', doctor), ('plague_rat', rat)] + list(extra.items()):
+    for name, anims in [('plague_doctor', doctor), ('plague_rat', rat)]:
         write_json(os.path.join(ASSETS, 'animations', 'entity', f'{name}.animation.json'),
                    {'format_version': '1.8.0', 'animations': anims, 'geckolib_format_version': 2})
 
@@ -879,13 +709,9 @@ if __name__ == '__main__':
     plague_doctor()
     plague_mask()
     plague_rat()
-    afflicted_cow()
-    afflicted_pig()
-    afflicted_sheep()
-    afflicted_chicken()
-    afflicted_horse()
-    afflicted_wolf()
     animations()
     icons()
     block_textures()
     nest_models()
+    import vanilla_afflicted
+    vanilla_afflicted.build_all()

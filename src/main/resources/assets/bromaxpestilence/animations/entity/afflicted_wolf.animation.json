@@ -5,18 +5,18 @@
       "loop": true,
       "animation_length": 4.0,
       "bones": {
-        "head": {
+        "skull": {
           "rotation": [
             "0 + math.sin(query.anim_time * 90 + 0) * 3",
             "math.sin(query.anim_time * 40 + 0) * 5",
             "math.sin(query.anim_time * 400 + 0) * 1.5"
           ]
         },
-        "tail": {
+        "real_tail": {
           "rotation": [
             0,
-            "math.sin(query.anim_time * 120 + 0) * 10",
-            0
+            0,
+            "math.sin(query.anim_time * 120 + 0) * 8"
           ]
         }
       }
@@ -25,28 +25,28 @@
       "loop": true,
       "animation_length": 0.7,
       "bones": {
-        "leg_fl": {
-          "rotation": [
-            "math.sin(query.anim_time * 514.2857142857143 + 0) * 35",
-            0,
-            0
-          ]
-        },
-        "leg_br": {
+        "right_hind_leg": {
           "rotation": [
             "math.sin(query.anim_time * 514.2857142857143 + 0) * 19.25",
             0,
             0
           ]
         },
-        "leg_fr": {
+        "left_front_leg": {
+          "rotation": [
+            "math.sin(query.anim_time * 514.2857142857143 + 0) * 35",
+            0,
+            0
+          ]
+        },
+        "left_hind_leg": {
           "rotation": [
             "math.sin(query.anim_time * 514.2857142857143 + 180) * 35",
             0,
             0
           ]
         },
-        "leg_bl": {
+        "right_front_leg": {
           "rotation": [
             "math.sin(query.anim_time * 514.2857142857143 + 180) * 35",
             0,
@@ -60,18 +60,18 @@
             0
           ]
         },
-        "head": {
+        "skull": {
           "rotation": [
             "0 + math.sin(query.anim_time * 1028.5714285714287 + 0) * 4",
             0,
             0
           ]
         },
-        "tail": {
+        "real_tail": {
           "rotation": [
             0,
-            "math.sin(query.anim_time * 514 + 0) * 15",
-            0
+            0,
+            "math.sin(query.anim_time * 514 + 0) * 15"
           ]
         }
       }
@@ -80,7 +80,7 @@
       "loop": false,
       "animation_length": 0.4,
       "bones": {
-        "head": {
+        "skull": {
           "rotation": {
             "0.0": [
               0,

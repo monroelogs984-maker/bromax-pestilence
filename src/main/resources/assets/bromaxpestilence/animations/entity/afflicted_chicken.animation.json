@@ -5,7 +5,7 @@
       "loop": true,
       "animation_length": 2.0,
       "bones": {
-        "head": {
+        "skull": {
           "rotation": [
             "math.sin(query.anim_time * 360 + 0) * 10",
             "math.sin(query.anim_time * 90 + 0) * 8",
@@ -18,35 +18,35 @@
       "loop": true,
       "animation_length": 0.4,
       "bones": {
-        "leg_l": {
+        "right_leg": {
           "rotation": [
             "math.sin(query.anim_time * 900 + 0) * 35",
             0,
             0
           ]
         },
-        "leg_r": {
+        "left_leg": {
           "rotation": [
             "math.sin(query.anim_time * 900 + 180) * 35",
             0,
             0
           ]
         },
-        "wing_l": {
-          "rotation": [
-            0,
-            0,
-            "-math.abs(math.sin(query.anim_time * 900 + 0) * 25)"
-          ]
-        },
-        "wing_r": {
+        "right_wing": {
           "rotation": [
             0,
             0,
             "math.abs(math.sin(query.anim_time * 900 + 0) * 25)"
           ]
         },
-        "head": {
+        "left_wing": {
+          "rotation": [
+            0,
+            0,
+            "-math.abs(math.sin(query.anim_time * 900 + 0) * 25)"
+          ]
+        },
+        "skull": {
           "position": [
             0,
             0,
@@ -59,7 +59,7 @@
       "loop": false,
       "animation_length": 0.3,
       "bones": {
-        "head": {
+        "skull": {
           "rotation": {
             "0.0": [
               0,

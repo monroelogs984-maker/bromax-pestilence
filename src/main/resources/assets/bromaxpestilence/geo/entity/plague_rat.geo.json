@@ -189,7 +189,16 @@
             4,
             -4
           ],
-          "parent": "body",
+          "parent": "body"
+        },
+        {
+          "name": "skull",
+          "pivot": [
+            0,
+            4,
+            -4
+          ],
+          "parent": "head",
           "cubes": [
             {
               "origin": [

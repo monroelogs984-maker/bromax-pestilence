@@ -97,6 +97,56 @@ def faces_of(cube):
     }
 
 
+def face_uvs(cube):
+    """Per-face (u, v, w, h) for either per-face UV dicts or Bedrock box UV."""
+    uv = cube['uv']
+    if isinstance(uv, dict):
+        return {f: (*uv[f]['uv'], *uv[f]['uv_size']) for f in uv}
+    u, v = uv
+    w, h, d = (int(math.floor(x + 0.5)) if x >= 1 else max(1, int(math.ceil(x))) for x in cube['size'])
+    rects = {'up': (u + d, v, w, d), 'down': (u + d + w, v, w, d), 'east': (u, v + d, d, h),
+             'north': (u + d, v + d, w, h), 'west': (u + d + w, v + d, d, h), 'south': (u + 2 * d + w, v + d, w, h)}
+    if cube.get('mirror'):
+        rects['east'], rects['west'] = rects['west'], rects['east']
+    return rects
+
+
+def mat_mul(a, b):
+    return [[sum(a[i][k] * b[k][j] for k in range(4)) for j in range(4)] for i in range(4)]
+
+
+def rot(axis, deg):
+    c, s = math.cos(math.radians(deg)), math.sin(math.radians(deg))
+    m = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+    i, j = {'x': (1, 2), 'y': (2, 0), 'z': (0, 1)}[axis]
+    m[i][i], m[i][j], m[j][i], m[j][j] = c, -s, s, c
+    return m
+
+
+def trans(x, y, z):
+    return [[1, 0, 0, x], [0, 1, 0, y], [0, 0, 1, z], [0, 0, 0, 1]]
+
+
+def bone_transforms(bones):
+    """World transform per bone in GeckoLib render space (x mirrored; rot X/Y negated, Z kept; Z*Y*X order)."""
+    by_name = {b['name']: b for b in bones}
+    cache = {}
+
+    def get(name):
+        if name in cache:
+            return cache[name]
+        b = by_name[name]
+        parent = get(b['parent']) if b.get('parent') in by_name else [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        px, py, pz = b.get('pivot', [0, 0, 0])
+        rx, ry, rz = b.get('rotation', [0, 0, 0])
+        m = mat_mul(parent, trans(-px, py, pz))
+        m = mat_mul(m, mat_mul(rot('z', rz), mat_mul(rot('y', -ry), rot('x', -rx))))
+        m = mat_mul(m, trans(px, -py, -pz))
+        cache[name] = m
+        return m
+    return {b['name']: get(b['name']) for b in bones}
+
+
 def render(geo, tex, yaw, pitch, scale, size):
     w, h = size
     img = [[(0, 0, 0, 0)] * w for _ in range(h)]
@@ -104,9 +154,14 @@ def render(geo, tex, yaw, pitch, scale, size):
     cy, sy_ = math.cos(math.radians(yaw)), math.sin(math.radians(yaw))
     cp, sp = math.cos(math.radians(pitch)), math.sin(math.radians(pitch))
     bones = geo['minecraft:geometry'][0]['bones']
-    allc = [c for b in bones for c in b.get('cubes', [])]
-    ys = [c['origin'][1] for c in allc] + [c['origin'][1] + c['size'][1] for c in allc]
+    xforms = bone_transforms(bones)
+    items = [(b['name'], c) for b in bones for c in b.get('cubes', [])]
+    ys = [c['origin'][1] for _, c in items] + [c['origin'][1] + c['size'][1] for _, c in items]
     mid = (min(ys) + max(ys)) / 2
+
+    def to_render(m, p):
+        x, y, z = -p[0], p[1], p[2]      # Bedrock -> GeckoLib render space
+        return tuple(m[i][0] * x + m[i][1] * y + m[i][2] * z + m[i][3] for i in range(3))
 
     def proj(p):
         x, y, z = p[0], p[1] - mid, p[2]
@@ -114,22 +169,28 @@ def render(geo, tex, yaw, pitch, scale, size):
         y, z = y * cp - z * sp, y * sp + z * cp
         return (w / 2 - x * scale, h / 2 - y * scale, z)
 
-    for c in allc:
+    for bone, c in items:
+        uvs = face_uvs(c)
         for face, quad in faces_of(c).items():
-            u0, v0 = c['uv'][face]['uv']
-            uw, vh = c['uv'][face]['uv_size']
-            pts = [proj(p) for p in quad]
+            if face not in uvs:
+                continue
+            u0, v0, uw, vh = uvs[face]
+            if uw <= 0 or vh <= 0:
+                continue
+            pts = [proj(to_render(xforms[bone], p)) for p in quad]
             for tv in range(vh):
                 for tu in range(uw):
+                    if v0 + tv >= len(tex) or u0 + tu >= len(tex[0]):
+                        continue
                     col = tex[v0 + tv][u0 + tu]
                     if col[3] == 0:
                         continue
+
                     def lerp(a, b, t):
                         return tuple(a[k] + (b[k] - a[k]) * t for k in range(3))
+
                     def at(s, t):
-                        top = lerp(pts[0], pts[1], s)
-                        bot = lerp(pts[3], pts[2], s)
-                        return lerp(top, bot, t)
+                        return lerp(lerp(pts[0], pts[1], s), lerp(pts[3], pts[2], s), t)
                     q = [at(tu / uw, tv / vh), at((tu + 1) / uw, tv / vh),
                          at((tu + 1) / uw, (tv + 1) / vh), at(tu / uw, (tv + 1) / vh)]
                     fill_quad(img, zbuf, q, col)

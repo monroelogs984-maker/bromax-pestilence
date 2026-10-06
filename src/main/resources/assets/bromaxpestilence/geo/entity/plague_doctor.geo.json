@@ -338,7 +338,16 @@
             24,
             0
           ],
-          "parent": "torso",
+          "parent": "torso"
+        },
+        {
+          "name": "skull",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "parent": "head",
           "cubes": [
             {
               "origin": [
