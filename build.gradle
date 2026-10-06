@@ -41,17 +41,17 @@ jar {
     }
 }
 
-// Copies the built jar into S202. Only run with the game closed.
+// Copies the built jar into the "plague testing 2" instance (switch to S202Neoforge when it ships). Only run with the game closed.
 tasks.register('deploy') {
     dependsOn build
     doLast {
-        def modsDir = '/home/glenn/Documents/curseforge/minecraft/Instances/S202Neoforge/mods'
+        def modsDir = '/home/glenn/Documents/curseforge/minecraft/Instances/plague testing 2/mods'
         // Remove older versions first so the instance never loads two copies.
         delete fileTree(dir: modsDir, include: 'bromaxpestilence-*.jar')
         copy {
             from layout.buildDirectory.file("libs/bromaxpestilence-${version}.jar")
             into modsDir
         }
-        println '[DEPLOY] bromaxpestilence -> S202Neoforge'
+        println '[DEPLOY] bromaxpestilence -> plague testing 2'
     }
 }
