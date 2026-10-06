@@ -1131,23 +1131,43 @@ def herald(name, robe, hood, extras, skirt=True, torso=None, sleeves=None, legs=
         {'name': 'right_leg', 'parent': 'root', 'pivot': [-2, 12, 0]},
         {'name': 'left_leg', 'parent': 'root', 'pivot': [2, 12, 0]},
     ]
+    bare = torso is not None and sleeves == torso
     cubes = [
         cube('skull', [-4, 24, -4], [8, 8, 8], hood, decor={'north': face or hooded_face(hood)}),
+        cube('torso', [-5, 21, -3], [10, 3, 6], hood),                                   # mantle over the shoulders
         cube('torso', [-4, 12, -2], [8, 12, 4], torso or robe, decor={'north': welts} if torso else {}),
         cube('torso', [-4, 11, -2], [8, 1, 4], belt, inflate=0.3),
         cube('right_arm', [-8, 12, -2], [4, 12, 4], sleeves or robe),
         cube('left_arm', [4, 12, -2], [4, 12, 4], sleeves or robe),
-        cube('right_arm', [-7.5, 10, -1.5], [3, 2, 3], '#8a7a6a'),
-        cube('left_arm', [4.5, 10, -1.5], [3, 2, 3], '#8a7a6a'),
+        cube('right_arm', [-7.5, 10, -1.5], [3, 2, 3], '#8a7a6a', decor={'all': fingers}),
+        cube('left_arm', [4.5, 10, -1.5], [3, 2, 3], '#8a7a6a', decor={'all': fingers}),
         cube('right_leg', [-4, 0, -2], [4, 12, 4], legs),
         cube('left_leg', [0, 0, -2], [4, 12, 4], legs),
     ]
+    if face is None:                                                                      # a deep hood: the brow juts out
+        cubes.append(cube('skull', [-4.5, 30, -5], [9, 2, 1], hood))
+    if not bare:                                                                          # turned-back sleeve cuffs
+        cubes += [cube('right_arm', [-8.5, 12, -2.5], [5, 2, 5], sleeves or robe),
+                  cube('left_arm', [3.5, 12, -2.5], [5, 2, 5], sleeves or robe)]
     if skirt:
-        cubes.append(cube('torso', [-4.5, 2, -3], [9, 10, 6], robe, decor={'north': skirt_front}))
+        cubes += [cube('torso', [-4.5, 6, -3], [9, 6, 6], robe, decor={'north': skirt_front}),
+                  cube('torso', [-5, 2, -3.5], [10, 4, 7], robe, decor={'north': skirt_front})]   # hem flares
+    mats = dict(HERALD_MATS)
+    mats.update({robe: 'cloth', hood: 'cloth', legs: 'cloth', belt: 'leather'})
+    if torso:
+        mats[torso] = 'flesh'
+    if sleeves:
+        mats[sleeves] = 'flesh' if bare else 'cloth'
     build(name, bones, cubes + extras, seed,
           os.path.join(ASSETS, 'geo', 'entity', f'{name}.geo.json'),
           os.path.join(ASSETS, 'textures', 'entity', f'{name}.png'),
-          f'geometry.{name}', bounds=(3, 3.5, 1.5))
+          f'geometry.{name}', bounds=(3, 3.5, 1.5), mats=mats)
+
+
+HERALD_MATS = {'#7a6a4a': 'cloth', 'bone': 'bone', 'brass': 'metal', 'cane': 'wood', '#8f9ba3': 'metal', '#6e6e6e': 'metal',
+               '#5a3d22': 'leather', '#3a2a1a': 'leather', '#3a3028': 'cloth', '#3a2e22': 'cloth', 'fur': 'fur', 'skin': 'flesh',
+               '#7a5f22': 'metal', '#8a7a6a': 'leather', '#5a5a62': 'metal', '#4a4a50': 'metal', '#9a948e': 'flesh',
+               '#1d181b@235': 'cloth', '#2a2a30': 'metal'}
 
 
 def heralds():
@@ -1159,7 +1179,7 @@ def heralds():
         cube('right_arm', [-7, 7, -1], [2, 3, 2], 'brass'),                                    # handbell
         cube('right_arm', [-6.5, 10, -0.5], [1, 1, 1], 'cane', rim=False),
     ], seed=501)
-    herald('gravedigger', '#3a3028', '#4a3a2c', [
+    herald('gravedigger', '#4a3e34', '#4a3a2c', [
         cube('torso', [-4, 7, -2.6], [8, 15, 1], '#5a3d22'),                                        # leather apron
         cube('skull', [-5, 32, -5], [10, 1, 10], '#3a3028'),                                         # flat cap brim
         cube('right_arm', [-6.5, 2, -0.5], [1, 11, 1], 'cane', rim=False),                           # shovel
