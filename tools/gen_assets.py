@@ -1231,16 +1231,23 @@ def miasma_wraith():
             put(x, y, '#e8f080')
         for x in range(2, w - 2):
             put(x, h - 2, '#2a3010@200')
+    def claws(put, w, h):
+        for x in range(w):
+            put(x, h - 1, '#2a3010@220')
     cubes = [
-        cube('skull', [-3, 20, -3], [6, 6, 6], '#a8b070@170', noise=12, decor={'north': hollow}),
-        cube('body', [-3.5, 10, -2.5], [7, 10, 5], '#6b7330@150', noise=14),
-        cube('tail', [-2.5, 5, -2], [5, 5, 4], '#6b7330@120', noise=14),
-        cube('tail', [-1.5, 1, -1], [3, 4, 3], '#6b7330@90', noise=14),
-        cube('wisp_left', [3.5, 10, -1], [2, 9, 2], '#7a8240@140', noise=14),
-        cube('wisp_right', [-5.5, 10, -1], [2, 9, 2], '#7a8240@140', noise=14),
+        cube('skull', [-3, 20, -3], [6, 6, 6], '#a8b070@170', decor={'north': hollow}),
+        cube('skull', [-3.5, 22, -3.5], [7, 5, 7], '#7a8240@110'),                         # a shroud of fog over the head
+        cube('body', [-3.5, 10, -2.5], [7, 10, 5], '#6b7330@150'),
+        cube('body', [-4.5, 15, -3], [9, 4, 6], '#7a8240@100'),                            # drifting shoulders
+        cube('tail', [-2.5, 5, -2], [5, 5, 4], '#6b7330@120'),
+        cube('tail', [-1.5, 1, -1], [3, 4, 3], '#6b7330@90'),
+        cube('tail', [-3.5, 3, 1], [2, 4, 2], '#6b7330@70'), cube('tail', [1.5, 2, 0], [2, 4, 2], '#6b7330@70'),   # trailing tendrils
+        cube('wisp_left', [3.5, 8, -1], [2, 11, 2], '#7a8240@140', decor={'all': claws}),
+        cube('wisp_right', [-5.5, 8, -1], [2, 11, 2], '#7a8240@140', decor={'all': claws}),
     ]
     build('miasma_wraith', bones, cubes, 601, os.path.join(ASSETS, 'geo', 'entity', 'miasma_wraith.geo.json'),
-          os.path.join(ASSETS, 'textures', 'entity', 'miasma_wraith.png'), 'geometry.miasma_wraith', bounds=(2, 2.5, 1))
+          os.path.join(ASSETS, 'textures', 'entity', 'miasma_wraith.png'), 'geometry.miasma_wraith', bounds=(2, 2.5, 1),
+          mats={k: 'stone' for k in ('#a8b070@170', '#7a8240@110', '#6b7330@150', '#7a8240@100', '#6b7330@120', '#6b7330@90', '#6b7330@70', '#7a8240@140')})
 
 
 def pustule():
@@ -1251,15 +1258,24 @@ def pustule():
             put(x % w, y % h, '#8a4a44'); x += 1; y += rng.choice((-1, 0, 1))
         put(rng.randrange(w), rng.randrange(h), '#d4d94a')
     bones = [{'name': 'root', 'pivot': [0, 0, 0]}, {'name': 'sac', 'parent': 'root', 'pivot': [0, 0, 0]}]
+    def mouth(put, w, h):
+        for y in range(1, h - 1):
+            for x in range(1, w - 1):
+                put(x, y, '#3a1a14' if (x, y) != (w // 2, h // 2) else '#d4d94a')
     cubes = [
-        cube('sac', [-6, 0, -6], [12, 6, 12], '#a89a5a', noise=10, decor={'all': veins}),
-        cube('sac', [-5, 6, -5], [10, 5, 10], '#b8a86a', noise=10, decor={'all': veins}),
-        cube('sac', [-3, 11, -3], [6, 3, 6], '#c8b87a', noise=10, decor={'up': veins}),
+        cube('sac', [-6, 0, -6], [12, 6, 12], '#a89a5a', decor={'all': veins}),
+        cube('sac', [-5, 6, -5], [10, 5, 10], '#b8a86a', decor={'all': veins}),
+        cube('sac', [-3, 11, -3], [6, 3, 6], '#c8b87a', decor={'up': mouth}),                  # the weeping opening
         cube('sac', [-7, 2, -2], [1, 3, 3], '#8a7a4a'), cube('sac', [5, 3, 1], [1, 2, 2], '#8a7a4a'),
-        cube('sac', [-2, 4, -7], [3, 3, 1], '#d4c88a'),
+        cube('sac', [-2, 4, -7], [3, 3, 1], '#d4c88a'), cube('sac', [2, 7, -6], [2, 2, 1], '#d4c88a'),
+        cube('sac', [-6, 8, 1], [1, 2, 2], '#d4c88a'), cube('sac', [1, 12, 2], [2, 1, 2], '#d4c88a'),
+        # roots spreading over the ground
+        cube('sac', [-11, 0, -1], [5, 1, 2], '#7a5a3a'), cube('sac', [6, 0, 2], [5, 1, 2], '#7a5a3a'),
+        cube('sac', [-1, 0, -10], [2, 1, 4], '#7a5a3a'), cube('sac', [1, 0, 6], [2, 1, 4], '#7a5a3a'),
     ]
     build('pustule', bones, cubes, 602, os.path.join(ASSETS, 'geo', 'entity', 'pustule.geo.json'),
-          os.path.join(ASSETS, 'textures', 'entity', 'pustule.png'), 'geometry.pustule', bounds=(1.5, 1.2, 0.5))
+          os.path.join(ASSETS, 'textures', 'entity', 'pustule.png'), 'geometry.pustule', bounds=(1.5, 1.2, 0.5),
+          mats={'#a89a5a': 'flesh', '#b8a86a': 'flesh', '#c8b87a': 'flesh', '#8a7a4a': 'flesh', '#d4c88a': 'flesh', '#7a5a3a': 'wood'})
 
 
 def rat_like(name, fur, fur_dark, skin, extra=(), belly=None, seed=66):
