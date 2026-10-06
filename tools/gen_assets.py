@@ -1547,7 +1547,8 @@ def rat_crown():
              cube('armorHead', [-0.5, 33, -4.5], [1, 4, 1], 'bone', rim=False),
              cube('armorHead', [-1, 31, -5.5], [2, 2, 2], 'bone', decor={'north': sockets})]
     build('rat_crown', bones, cubes, 803, os.path.join(ASSETS, 'geo', 'item', 'armor', 'rat_crown.geo.json'),
-          os.path.join(ASSETS, 'textures', 'item', 'armor', 'rat_crown.png'), 'geometry.rat_crown', bounds=(2, 2.5, 1.5))
+          os.path.join(ASSETS, 'textures', 'item', 'armor', 'rat_crown.png'), 'geometry.rat_crown', bounds=(2, 2.5, 1.5),
+          mats={'bone': 'bone'})
 
 
 def system6_textures():

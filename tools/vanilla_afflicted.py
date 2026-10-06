@@ -514,15 +514,19 @@ def pale_rider():
         cursor[2] = max(cursor[2], bh)
         return u, v
 
-    def paint(u, v, w, h, d, colour, noise=10, front=None, open_front=False):
+    def paint(u, v, w, h, d, colour, noise=10, front=None, open_front=False, mat='cloth'):
+        """Shaded like the remastered models: materials, top-lit faces, cool shadows and warm lights."""
+        from gen_assets import tone, material_t
+        import zlib as _z
         for f, (x0, y0, fw, fh) in faces(u, v, w, h, d).items():
+            salt = _z.crc32(f'rider{u}{v}{f}'.encode())
+            cell = lambda a, b, salt=salt: _z.crc32(f'{salt},{a},{b}'.encode()) % 997
             for y in range(y0, y0 + fh):
                 for x in range(x0, x0 + fw):
-                    c = colour if not (open_front and f == 'north') else (0, 0, 0, 0)
-                    if c[3]:
-                        k = 1 + rng.uniform(-noise, noise) / 100
-                        c = tuple(max(0, min(255, int(ch * k))) for ch in c[:3]) + (c[3],)
-                    img[y][x] = c
+                    if open_front and f == 'north':
+                        img[y][x] = (0, 0, 0, 0)
+                        continue
+                    img[y][x] = tone(colour, material_t(mat, x - x0, y - y0, fw, fh, f, rng, cell))
             if front and f == 'north':
                 front(img, x0, y0, fw, fh)
 
@@ -540,23 +544,23 @@ def pale_rider():
     def add(bone_name, origin, size, colour, **kw):
         w, h, d = size
         u, v = alloc(w, h, d)
-        paint(u, v, w, h, d, colour, **kw)
+        paint(u, v, w, h, d, colour, **{k: v_ for k, v_ in kw.items() if k in ('front', 'mat', 'open_front')})
         rider_cubes.setdefault(bone_name, []).append({'origin': origin, 'size': size, 'uv': [u, v], **({'inflate': kw.get('inflate_')} if kw.get('inflate_') else {})})
 
     add('rider', [-4, 24, -4], [8, 12, 4], robe)
     add('rider', [-6, 18, -6], [12, 6, 8], robe_dark)
     add('rider', [-7, 12, -4], [2, 9, 4], robe_dark)
     add('rider', [5, 12, -4], [2, 9, 4], robe_dark)
-    add('rider_head', [-4, 36, -6], [8, 8, 8], bone, front=skull_face)
+    add('rider_head', [-4, 36, -6], [8, 8, 8], bone, front=skull_face, mat='bone')
     hu, hv = alloc(8, 8, 8)
     paint(hu, hv, 8, 8, 8, robe, open_front=True)
     rider_cubes['rider_head'].append({'origin': [-4, 36, -6], 'size': [8, 8, 8], 'uv': [hu, hv], 'inflate': 0.45})
-    add('rider_head', [-4.5, 44.45, -6.5], [9, 2, 9], gold, noise=6)
+    add('rider_head', [-4.5, 44.45, -6.5], [9, 2, 9], gold, mat='metal')
     for x, z in ((-4.5, -6.5), (3.5, -6.5), (-4.5, 1.5), (3.5, 1.5), (-0.5, -6.5)):
-        add('rider_head', [x, 46.45, z], [1, 2, 1], gold, noise=6)
+        add('rider_head', [x, 46.45, z], [1, 2, 1], gold, mat='metal')
     add('rider_arm_right', [-8, 24, -4], [4, 10, 4], robe)
     add('rider_arm_left', [4, 24, -4], [4, 10, 4], robe)
-    add('rider_arm_left', [5.5, 23.5, -8], [1, 1, 12], wood, noise=6)     # the bow, held upright once the arm is raised
+    add('rider_arm_left', [5.5, 23.5, -8], [1, 1, 12], wood, mat='wood')     # the bow, held upright once the arm is raised
 
     bones += [
         {'name': 'rider', 'parent': 'body', 'pivot': [0, 22, -2], 'cubes': rider_cubes['rider']},
