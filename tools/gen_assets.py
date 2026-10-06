@@ -734,7 +734,7 @@ STAGE_HEIGHT = [5, 8, 11, 15]
 
 def herb_sprite(name, stage):
     stem, leaves, accent, shape = HERB_STYLE[name]
-    rng = random.Random(hash((name, stage)) & 0xffff)
+    rng = random.Random(zlib.crc32(f"{name}{stage}".encode()))  # stable across runs (hash() is salted)
     img = [[(0, 0, 0, 0)] * 16 for _ in range(16)]
 
     def put(x, y, c):
