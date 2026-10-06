@@ -203,7 +203,46 @@ public final class PlagueEvents {
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
         PestilenceData.get(event.getServer()).tickDay(event.getServer());
-        if (event.getServer().getTickCount() % 1200 == 0) VillageOutbreaks.get(event.getServer()).tick(event.getServer().overworld());
+        if (event.getServer().getTickCount() % 1200 == 0) {
+            VillageOutbreaks.get(event.getServer()).tick(event.getServer().overworld());
+            summonThePaleRider(event.getServer().overworld());
+        }
+    }
+
+    /** In the last phase, at nightfall, the Pale Rider comes for a player in the Overworld (one at a time). */
+    private static void summonThePaleRider(ServerLevel level) {
+        PestilenceData data = PestilenceData.get(level.getServer());
+        if (data.phase() < Phase.MAX || !level.isNight() || level.players().isEmpty()) return;
+        if (data.rider(level.getGameTime()) != null) return;
+        ServerPlayer prey = level.players().get(level.random.nextInt(level.players().size()));
+        for (int attempt = 0; attempt < 10; attempt++) {
+            float angle = level.random.nextFloat() * Mth.TWO_PI;
+            int x = Mth.floor(prey.getX() + Mth.cos(angle) * 40), z = Mth.floor(prey.getZ() + Mth.sin(angle) * 40);
+            BlockPos pos = new BlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z), z);
+            if (!level.isLoaded(pos) || !level.getBlockState(pos.below()).isSolid()) continue;
+            var rider = ModRegistry.PALE_RIDER.get().create(level);
+            if (rider == null) return;
+            rider.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0f, 0f);
+            rider.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null);
+            rider.setTarget(prey);
+            level.addFreshEntity(rider);
+            data.setRider(rider.getUUID(), level.getGameTime());
+            Component msg = Component.translatable("message." + Pestilence.MODID + ".pale_rider").withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD);
+            for (ServerPlayer p : level.players()) {
+                p.sendSystemMessage(msg);
+                p.playNotifySound(SoundEvents.BELL_BLOCK, SoundSource.HOSTILE, 1f, 0.3f);
+            }
+            return;
+        }
+    }
+
+    /** The Pale Rider's arrows carry the Rot (the Doctor's Garb turns them as it does any contact). */
+    @SubscribeEvent
+    public static void onDamaged(net.neoforged.neoforge.event.entity.living.LivingDamageEvent.Post event) {
+        if (event.getSource().getDirectEntity() instanceof net.minecraft.world.entity.projectile.AbstractArrow arrow
+                && arrow.getPersistentData().getBoolean(com.bromax.pestilence.entity.boss.PaleRider.ROT_ARROW)) {
+            Plague.tryContactInfect(event.getEntity(), 0.6, Disease.ROT);
+        }
     }
 
     /** Villagers too sick to stand behind a counter won't trade. */

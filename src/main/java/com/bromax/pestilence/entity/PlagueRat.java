@@ -61,7 +61,8 @@ public class PlagueRat extends Monster implements GeoEntity, PhaseGated {
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6f));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false,
+                p -> !com.bromax.pestilence.item.RatCrownItem.wears(p)));
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Chicken.class, 10, true, false, this::murrain));
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Rabbit.class, 10, true, false, this::murrain));
     }

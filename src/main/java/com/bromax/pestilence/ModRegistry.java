@@ -43,6 +43,11 @@ import com.bromax.pestilence.entity.vermin.RatSwarm;
 import com.bromax.pestilence.entity.vermin.VerminCloud;
 import com.bromax.pestilence.entity.vermin.CarrionCrow;
 import com.bromax.pestilence.effect.AfflictionEffect;
+import com.bromax.pestilence.entity.boss.Gravewarden;
+import com.bromax.pestilence.entity.boss.PaleRider;
+import com.bromax.pestilence.entity.boss.RatKing;
+import com.bromax.pestilence.block.CryptSealBlock;
+import com.bromax.pestilence.item.RatCrownItem;
 import com.bromax.pestilence.block.PlagueCrossBlock;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
@@ -176,6 +181,10 @@ public final class ModRegistry {
             (type, level) -> new VerminCloud(type, level, VerminCloud.Kind.FLEAS), MobCategory.MISC, 0.6f, 0.6f);
     public static final DeferredHolder<EntityType<?>, EntityType<VerminCloud>> FLY_SWARM = mob("fly_swarm",
             (type, level) -> new VerminCloud(type, level, VerminCloud.Kind.FLIES), MobCategory.MISC, 1f, 1f);
+    // Bosses
+    public static final DeferredHolder<EntityType<?>, EntityType<RatKing>> RAT_KING = mob("rat_king", RatKing::new, MobCategory.MONSTER, 1.8f, 1.0f);
+    public static final DeferredHolder<EntityType<?>, EntityType<Gravewarden>> GRAVEWARDEN = mob("gravewarden", Gravewarden::new, MobCategory.MONSTER, 0.9f, 3.0f);
+    public static final DeferredHolder<EntityType<?>, EntityType<PaleRider>> PALE_RIDER = mob("pale_rider", PaleRider::new, MobCategory.MONSTER, 1.4f, 3.2f);
     public static final DeferredHolder<EntityType<?>, EntityType<AfflictedWolf>> AFFLICTED_WOLF = mob("afflicted_wolf", AfflictedWolf::new, MobCategory.MONSTER, 0.6f, 0.85f);
     public static final DeferredHolder<EntityType<?>, EntityType<Corpse>> CORPSE = ENTITIES.register("corpse",
             () -> EntityType.Builder.<Corpse>of(Corpse::new, MobCategory.MISC).sized(0.9f, 0.5f).clientTrackingRange(8).updateInterval(10).build(MODID + ":corpse"));
@@ -214,6 +223,9 @@ public final class ModRegistry {
 
     public static final DeferredBlock<PlagueCrossBlock> PLAGUE_CROSS = BLOCKS.register("plague_cross", () -> new PlagueCrossBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(0.5f).sound(SoundType.WOOD).noCollission().ignitedByLava()));
+
+    public static final DeferredBlock<CryptSealBlock> CRYPT_SEAL = BLOCKS.register("crypt_seal", () -> new CryptSealBlock(
+            BlockBehaviour.Properties.ofFullCopy(Blocks.REINFORCED_DEEPSLATE).lightLevel(state -> state.getValue(CryptSealBlock.BROKEN) ? 0 : 7)));
 
     public static final TagKey<Item> BRAZIER_FUEL = TagKey.create(Registries.ITEM, Pestilence.id("brazier_fuel"));
     public static final TagKey<Item> CENSER_FUEL = TagKey.create(Registries.ITEM, Pestilence.id("censer_fuel"));
@@ -297,6 +309,15 @@ public final class ModRegistry {
     public static final DeferredItem<?> DRYING_RACK_ITEM = ITEMS.registerSimpleBlockItem(DRYING_RACK);
     public static final DeferredItem<?> PLAGUE_CROSS_ITEM = ITEMS.registerSimpleBlockItem(PLAGUE_CROSS);
     public static final DeferredItem<Item> PESTILENT_ICHOR = ITEMS.registerSimpleItem("pestilent_ichor");
+    public static final DeferredItem<Item> SURGEONS_STEEL = ITEMS.register("surgeons_steel", () -> new Item(new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+    public static final DeferredItem<Item> HEART_OF_PESTILENCE = ITEMS.register("heart_of_pestilence", () -> new Item(new Item.Properties()
+            .rarity(net.minecraft.world.item.Rarity.EPIC).stacksTo(1).fireResistant()));
+    public static final DeferredItem<Item> RAT_CROWN = ITEMS.register("rat_crown", () -> new RatCrownItem(PLAGUE_MASK_MATERIAL,
+            new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(25)).rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final DeferredItem<?> CRYPT_SEAL_ITEM = ITEMS.registerSimpleBlockItem(CRYPT_SEAL);
+    public static final DeferredItem<Item> RAT_KING_SPAWN_EGG = egg("rat_king", RAT_KING, 0x3a302a, 0xd8cfb8);
+    public static final DeferredItem<Item> GRAVEWARDEN_SPAWN_EGG = egg("gravewarden", GRAVEWARDEN, 0x2a2420, 0x8f9ba3);
+    public static final DeferredItem<Item> PALE_RIDER_SPAWN_EGG = egg("pale_rider", PALE_RIDER, 0xd8d4c8, 0x6b7330);
     public static final DeferredItem<Item> PLAGUE_BEARER_SPAWN_EGG = egg("plague_bearer", PLAGUE_BEARER, 0x4a3c2c, 0x7a6a4a);
     public static final DeferredItem<Item> GRAVEDIGGER_SPAWN_EGG = egg("gravedigger", GRAVEDIGGER, 0x3a3028, 0x6b6b6b);
     public static final DeferredItem<Item> FLAGELLANT_SPAWN_EGG = egg("flagellant", FLAGELLANT, 0xb08870, 0x7a1c14);
@@ -405,6 +426,9 @@ public final class ModRegistry {
         event.put(CARRION_CROW.get(), CarrionCrow.createAttributes().build());
         event.put(FLEA_CLOUD.get(), VerminCloud.createAttributes().build());
         event.put(FLY_SWARM.get(), VerminCloud.createAttributes().build());
+        event.put(RAT_KING.get(), RatKing.createAttributes().build());
+        event.put(GRAVEWARDEN.get(), Gravewarden.createAttributes().build());
+        event.put(PALE_RIDER.get(), PaleRider.createAttributes().build());
     }
 
     private static void onSpawnPlacements(RegisterSpawnPlacementsEvent event) {

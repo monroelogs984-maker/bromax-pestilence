@@ -54,6 +54,9 @@ public final class ClientSetup {
         geo(event, ModRegistry.BLOATED_RAT.get(), "bloated_rat", 1f);
         geo(event, ModRegistry.RAT_SWARM.get(), "rat_swarm", 1f);
         geo(event, ModRegistry.CARRION_CROW.get(), "carrion_crow", 1f);
+        geo(event, ModRegistry.RAT_KING.get(), "rat_king", 1f);
+        geo(event, ModRegistry.GRAVEWARDEN.get(), "gravewarden", 1.3f);
+        geo(event, ModRegistry.PALE_RIDER.get(), "pale_rider", 1.1f);
         event.registerEntityRenderer(ModRegistry.MIASMA_WRAITH.get(), PlagueRenderers.Wraith::new);
         event.registerEntityRenderer(ModRegistry.BURROWER_RAT.get(), PlagueRenderers.Burrower::new);
         event.registerEntityRenderer(ModRegistry.FLEA_CLOUD.get(), NoopRenderer::new);
@@ -86,6 +89,16 @@ public final class ClientSetup {
                 return renderer;
             }
         }, ModRegistry.PLAGUE_MASK.get());
+        event.registerItem(new IClientItemExtensions() {
+            private GeoArmorRenderer<com.bromax.pestilence.item.RatCrownItem> renderer;
+
+            @Override
+            public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> original) {
+                if (renderer == null) renderer = new GeoArmorRenderer<>(new DefaultedItemGeoModel<>(Pestilence.id("armor/rat_crown")));
+                renderer.prepForRender(entity, stack, slot, original);
+                return renderer;
+            }
+        }, ModRegistry.RAT_CROWN.get());
         // The coat, trousers and boots share one model; GeckoLib shows the bones for the slot being drawn.
         for (var garb : java.util.List.of(ModRegistry.DOCTORS_COAT, ModRegistry.DOCTORS_TROUSERS, ModRegistry.DOCTORS_BOOTS)) {
             event.registerItem(new IClientItemExtensions() {

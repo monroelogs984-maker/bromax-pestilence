@@ -56,6 +56,7 @@ public class NestBlockEntity extends BlockEntity {
             if (stage < 4) {
                 server.setBlock(pos, state.setValue(NestBlock.STAGE, stage + 1), Block.UPDATE_ALL);
                 server.playSound(null, pos, SoundEvents.SCULK_BLOCK_SPREAD, SoundSource.BLOCKS, 1f, 0.6f);
+                if (stage + 1 == 4 && block.kind() == NestKind.WARREN) crownTheKing(server, pos);
             } else if (PestConfig.NEST_SPREADS.get()) {
                 NestSeeding.seedNear(server, pos, block.kind());
             }
@@ -101,6 +102,17 @@ public class NestBlockEntity extends BlockEntity {
             int attempts = block.kind() == NestKind.WELL ? 2 * stage : stage;
             Blight.spread(server, pos, PestConfig.BLIGHT_RADIUS_PER_STAGE.get() * stage + (block.kind() == NestKind.WELL ? 2 : 0), attempts);
         }
+    }
+
+    /** A warren that reaches stage IV (from Rat Season) gives up its Rat King, if none reigns nearby. */
+    private static void crownTheKing(ServerLevel level, BlockPos pos) {
+        if (PestilenceData.phase(level) < com.bromax.pestilence.entity.boss.RatKing.minimumPhase()
+                || !level.getEntitiesOfClass(com.bromax.pestilence.entity.boss.RatKing.class, new AABB(pos).inflate(64)).isEmpty()) return;
+        summon(level, pos, ModRegistry.RAT_KING.get());
+        net.minecraft.network.chat.Component msg = net.minecraft.network.chat.Component.translatable("message.bromaxpestilence.rat_king")
+                .withStyle(net.minecraft.ChatFormatting.DARK_RED);
+        level.players().stream().filter(p -> p.blockPosition().distSqr(pos) < 96 * 96).forEach(p -> p.sendSystemMessage(msg));
+        level.playSound(null, pos, SoundEvents.SILVERFISH_DEATH, SoundSource.HOSTILE, 3f, 0.4f);
     }
 
     /** Mature warrens breed worse rats: sewer, bloated and burrowing (and from stage IV, swarms). */

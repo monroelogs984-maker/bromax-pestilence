@@ -1,0 +1,190 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "misc.idle": {
+      "loop": true,
+      "animation_length": 4.0,
+      "bones": {
+        "skull": {
+          "rotation": [
+            "0 + math.sin(query.anim_time * 90 + 0) * 3",
+            "math.sin(query.anim_time * 40 + 0) * 5",
+            "math.sin(query.anim_time * 400 + 0) * 1.5"
+          ]
+        },
+        "rider_head": {
+          "rotation": [
+            "math.sin(query.anim_time * 60 + 0) * 4",
+            "math.sin(query.anim_time * 30 + 0) * 10",
+            0
+          ]
+        }
+      }
+    },
+    "move.walk": {
+      "loop": true,
+      "animation_length": 0.8,
+      "bones": {
+        "right_hind_leg": {
+          "rotation": [
+            "math.sin(query.anim_time * 450.0 + 0) * 19.8",
+            0,
+            0
+          ]
+        },
+        "left_front_leg": {
+          "rotation": [
+            "math.sin(query.anim_time * 450.0 + 0) * 36",
+            0,
+            0
+          ]
+        },
+        "left_hind_leg": {
+          "rotation": [
+            "math.sin(query.anim_time * 450.0 + 180) * 36",
+            0,
+            0
+          ]
+        },
+        "right_front_leg": {
+          "rotation": [
+            "math.sin(query.anim_time * 450.0 + 180) * 36",
+            0,
+            0
+          ]
+        },
+        "body": {
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 450.0 + 0) * 0.4)",
+            0
+          ]
+        },
+        "skull": {
+          "rotation": [
+            "0 + math.sin(query.anim_time * 900.0 + 0) * 4",
+            0,
+            0
+          ]
+        },
+        "tail": {
+          "rotation": [
+            "math.sin(query.anim_time * 450 + 0) * 10",
+            0,
+            0
+          ]
+        },
+        "rider": {
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 450 + 0) * 1)",
+            0
+          ]
+        }
+      }
+    },
+    "attack.bite": {
+      "loop": false,
+      "animation_length": 0.4,
+      "bones": {
+        "left_front_leg": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.15": [
+              -45,
+              0,
+              0
+            ],
+            "0.3": [
+              10,
+              0,
+              0
+            ],
+            "0.4": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "right_front_leg": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.15": [
+              -45,
+              0,
+              0
+            ],
+            "0.3": [
+              10,
+              0,
+              0
+            ],
+            "0.4": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.15": [
+              -15,
+              0,
+              0
+            ],
+            "0.3": [
+              3,
+              0,
+              0
+            ],
+            "0.4": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "rider_arm_right": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.15": [
+              -60,
+              0,
+              0
+            ],
+            "0.3": [
+              40,
+              0,
+              0
+            ],
+            "0.4": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  },
+  "geckolib_format_version": 2
+}

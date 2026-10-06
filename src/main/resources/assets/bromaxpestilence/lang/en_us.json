@@ -184,5 +184,20 @@
   "effect.bromaxpestilence.rotting": "Rotting",
   "disease.bromaxpestilence.rot": "The Rot",
   "disease.bromaxpestilence.rot.treat": "Only Theriac cures the Rot. Beasts and villagers that reach its worst turn Afflicted.",
-  "message.bromaxpestilence.rotting": "Your meat is turning. Flies..."
+  "message.bromaxpestilence.rotting": "Your meat is turning. Flies...",
+  "entity.bromaxpestilence.rat_king": "The Rat King",
+  "entity.bromaxpestilence.gravewarden": "The Gravewarden",
+  "entity.bromaxpestilence.pale_rider": "The Pale Rider",
+  "item.bromaxpestilence.rat_king_spawn_egg": "Rat King Spawn Egg",
+  "item.bromaxpestilence.gravewarden_spawn_egg": "Gravewarden Spawn Egg",
+  "item.bromaxpestilence.pale_rider_spawn_egg": "Pale Rider Spawn Egg",
+  "item.bromaxpestilence.rat_crown": "Rat King's Crown",
+  "item.bromaxpestilence.rat_crown.desc": "Rats will not set upon whoever wears it.",
+  "item.bromaxpestilence.surgeons_steel": "Surgeon's Steel",
+  "item.bromaxpestilence.heart_of_pestilence": "Heart of the Pestilence",
+  "block.bromaxpestilence.crypt_seal": "Crypt Seal",
+  "message.bromaxpestilence.boss_slain": "%s has fallen. The Pestilence weakens.",
+  "message.bromaxpestilence.rat_king": "Something huge and many-legged tears loose from the warren. The Rat King has come.",
+  "message.bromaxpestilence.seal_broken": "The seal cracks. Below, something enormous gets to its feet.",
+  "message.bromaxpestilence.pale_rider": "A pale horse, and he that sat on him... The Pale Rider has come."
 }

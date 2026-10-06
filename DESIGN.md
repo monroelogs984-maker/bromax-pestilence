@@ -35,7 +35,7 @@ first-person friendly (no screen effects that hide combat).
 
 ## Systems (build order)
 
-Status: 1 done (0.2.0), 2 done (0.3.0), 3 done (0.4.0), 4 done (0.5.0), 5 done (0.6.0). System 3 changes: no separate alembic (heated recipes need a fire, campfire or lit brazier within 2 blocks of the table); Sweating Sickness moves to 7 (seasons); The Rot moves to 5. System 4 change: plague villages are real villages converted the first time a player finds them (phase 5+), not a separate worldgen structure.
+Status: 1 done (0.2.0), 2 done (0.3.0), 3 done (0.4.0), 4 done (0.5.0), 5 done (0.6.0), 6 done (0.7.0). System 6 change: the Lazaretto is the one built structure (tools/lazaretto.py writes its NBT); ossuary dropped, warrens/pits/plague villages are dynamic. System 3 changes: no separate alembic (heated recipes need a fire, campfire or lit brazier within 2 blocks of the table); Sweating Sickness moves to 7 (seasons); The Rot moves to 5. System 4 change: plague villages are real villages converted the first time a player finds them (phase 5+), not a separate worldgen structure.
 
 1. **Phases, corpses and pyres, Afflicted animals**: world Plague Points, announcements, `/pestilence`;
    corpse entity (flies, rises after a delay; burn it, haul it, or keep it near a lit pyre);

@@ -1318,6 +1318,131 @@ def system5_icons():
     effect('dread', eye); effect('delirium', swirl); effect('rotting', meat)
 
 
+# ---------------------------------------------------------------------------------------------
+# System 6: bosses, crown, crypt seal
+# ---------------------------------------------------------------------------------------------
+
+def rat_king():
+    # eight big rats on the spokes of a knot of tails, alternately facing along x and z
+    spokes = [(0, -9, 'z-'), (0, 9, 'z+'), (-9, 0, 'x-'), (9, 0, 'x+'), (-7, -7, 'z-'), (7, 7, 'z+'), (-7, 7, 'x-'), (7, -7, 'x+')]
+    bones = [{'name': 'root', 'pivot': [0, 0, 0]}, {'name': 'knot', 'parent': 'root', 'pivot': [0, 3, 0]},
+             {'name': 'head', 'parent': 'root', 'pivot': [0, 8, 0]}, {'name': 'skull', 'parent': 'head', 'pivot': [0, 8, 0]}]
+    def face(put, w, h):
+        for y in range(h):
+            for x in range(w):
+                put(x, y, '#2f2b26')
+        put(0, 0, 'eye'); put(w - 1, 0, 'eye')
+    cubes = [cube('knot', [-3, 0, -3], [6, 5, 6], '#b07a75', noise=12),           # the tangle of tails
+             cube('knot', [-4, 1, -2], [8, 2, 4], '#c48b86', noise=12),
+             cube('knot', [-2, 1, -4], [4, 3, 8], '#9c6763', noise=12),
+             cube('skull', [-3, 5, -3], [6, 1, 6], 'bone'),                       # crown of bone
+             cube('skull', [-3, 6, -3], [1, 3, 1], 'bone', rim=False), cube('skull', [2, 6, -3], [1, 3, 1], 'bone', rim=False),
+             cube('skull', [-3, 6, 2], [1, 3, 1], 'bone', rim=False), cube('skull', [2, 6, 2], [1, 3, 1], 'bone', rim=False),
+             cube('skull', [-0.5, 6, -3.5], [1, 4, 1], 'bone', rim=False)]
+    for i, (x, z, d) in enumerate(spokes):
+        b = f'rat{i}'
+        bones.append({'name': b, 'parent': 'root', 'pivot': [x, 2, z]})
+        if d[0] == 'z':
+            sgn = -1 if d == 'z-' else 1
+            cubes += [cube(b, [x - 2, 0, z - 3 if sgn < 0 else z - 3], [4, 4, 7], '#3a302a', noise=12, decor={'up': rat_back}),
+                      cube(b, [x - 1.5, 1, z - 6 if sgn < 0 else z + 4], [3, 3, 3], '#3a302a', decor={'north' if sgn < 0 else 'south': face}),
+                      cube(b, [x - 0.5, 1, z - 7 if sgn < 0 else z + 7], [1, 1, 1], 'skin', rim=False)]
+        else:
+            sgn = -1 if d == 'x-' else 1
+            cubes += [cube(b, [x - 3, 0, z - 2], [7, 4, 4], '#3a302a', noise=12, decor={'up': rat_back}),
+                      cube(b, [x - 6 if sgn < 0 else x + 4, 1, z - 1.5], [3, 3, 3], '#3a302a', decor={'east' if sgn < 0 else 'west': face}),
+                      cube(b, [x - 7 if sgn < 0 else x + 7, 1, z - 0.5], [1, 1, 1], 'skin', rim=False)]
+    build('rat_king', bones, cubes, 801, os.path.join(ASSETS, 'geo', 'entity', 'rat_king.geo.json'),
+          os.path.join(ASSETS, 'textures', 'entity', 'rat_king.png'), 'geometry.rat_king', bounds=(3, 1.5, 0.5))
+
+
+def gravewarden():
+    def iron_mask(put, w, h):
+        for y in range(h):
+            for x in range(w):
+                put(x, y, '#4a4a50')
+        for ex in (1, w - 3):
+            put(ex, 2, '#b8c84a'); put(ex + 1, 2, '#b8c84a')
+            put(ex, 3, '#2a2a30'); put(ex + 1, 3, '#2a2a30')
+    herald('gravewarden', '#2a2420', '#3a2e28', [
+        cube('skull', [-1.5, 25, -9], [3, 3, 5], '#5a5a62', decor={'up': beak_top}),       # iron beak
+        cube('skull', [-1, 24.5, -12], [2, 2, 3], '#5a5a62'),
+        cube('skull', [-4, 24, -4], [8, 8, 8], '#3a2e28', inflate=0.4, decor={'north': iron_mask}),
+        cube('torso', [-4, 4, -2.7], [8, 19, 1], '#5a3d22', decor={'north': lambda put, w, h: [put(x, y, '#3a2010') for y in range(h) for x in range(w) if (x * 3 + y * 7) % 11 == 0]}),  # bloodied apron
+        cube('right_arm', [-6.5, 2, -0.5], [1, 9, 1], 'cane', rim=False),                   # the cleaver
+        cube('right_arm', [-8, -6, -3], [4, 9, 1], '#8f9ba3', decor={'north': lambda put, w, h: [put(x, h - 1 - x, '#5a2a20') for x in range(min(w, h))]}),
+        cube('left_arm', [5.5, 6, -0.5], [1, 4, 1], '#6e6e6e', rim=False),                  # the lantern
+        cube('left_arm', [4.5, 2, -1.5], [3, 4, 3], '#2a2a30', decor={'all': lambda put, w, h: [put(x, y, '#c8d070') for y in range(1, h - 1) for x in range(1, w - 1)]}),
+    ], seed=802)
+
+
+def rat_crown():
+    names = ['armorHead', 'armorBody', 'armorRightArm', 'armorLeftArm', 'armorRightLeg', 'armorLeftLeg', 'armorRightBoot', 'armorLeftBoot']
+    pivots = {'armorHead': [0, 24, 0], 'armorBody': [0, 24, 0], 'armorRightArm': [-5, 22, 0], 'armorLeftArm': [5, 22, 0],
+              'armorRightLeg': [-1.9, 12, 0], 'armorLeftLeg': [1.9, 12, 0], 'armorRightBoot': [-1.9, 12, 0], 'armorLeftBoot': [1.9, 12, 0]}
+    bones = [{'name': n, 'pivot': pivots[n]} for n in names]
+    cubes = [cube('armorHead', [-4, 32, -4], [8, 1, 8], 'bone', inflate=0.5),
+             cube('armorHead', [-4.5, 33, -4.5], [1, 3, 1], 'bone', rim=False), cube('armorHead', [3.5, 33, -4.5], [1, 3, 1], 'bone', rim=False),
+             cube('armorHead', [-4.5, 33, 3.5], [1, 3, 1], 'bone', rim=False), cube('armorHead', [3.5, 33, 3.5], [1, 3, 1], 'bone', rim=False),
+             cube('armorHead', [-0.5, 33, -4.5], [1, 4, 1], 'bone', rim=False),
+             cube('armorHead', [-1, 31, -5.5], [2, 2, 2], 'bone', decor={'north': sockets})]
+    build('rat_crown', bones, cubes, 803, os.path.join(ASSETS, 'geo', 'item', 'armor', 'rat_crown.geo.json'),
+          os.path.join(ASSETS, 'textures', 'item', 'armor', 'rat_crown.png'), 'geometry.rat_crown', bounds=(2, 2.5, 1.5))
+
+
+def system6_textures():
+    items = os.path.join(ASSETS, 'textures', 'item')
+    sprite(os.path.join(items, 'rat_crown.png'), [
+        '................', '................', '................', '..b....b....b...', '..b....b....b...', '..bb..bbb..bb...',
+        '..bbbbbbbbbbb...', '..bBBBBBBBBBb...', '..bBkBBBBkBBb...', '..bBBBBBBBBBb...', '..bbbbbbbbbbb...', '................',
+        '................', '................', '................', '................'], {'b': '#b8ae98', 'B': '#d8cfb8', 'k': '#1a1612'})
+    sprite(os.path.join(items, 'surgeons_steel.png'), [
+        '................', '................', '................', '................', '.....ssssssss...', '....sSSSSSSSs...',
+        '...sSSSrSSSSs...', '..sSSSSSrSSs....', '..sSSSSSSSs.....', '..ssssssss......', '................', '................',
+        '................', '................', '................', '................'], {'s': '#5a6068', 'S': '#a8b4bc', 'r': '#7a2a20'})
+    sprite(os.path.join(items, 'heart_of_pestilence.png'), [
+        '................', '................', '...ggg...ggg....', '..gGGGg.gGGGg...', '.gGhGGGgGGGGGg..', '.gGGGGGGGGkGGg..',
+        '.gGGkGGGGGGGGg..', '.gGGGGGGGGGGGg..', '..gGGGGkGGGGg...', '...gGGGGGGGg....', '....gGGGGGg.....', '.....gGGGg......',
+        '......gGg.......', '.......g........', '................', '................'], {'g': '#2a3010', 'G': '#5a6a20', 'h': '#c8d870', 'k': '#1a1a10'})
+    tex = os.path.join(ASSETS, 'textures', 'block')
+    for name, broken in (('crypt_seal_top', False), ('crypt_seal_broken', True)):
+        rng = random.Random(9 if broken else 8)
+        img = [[scale(rgba('#3a3a42'), 1 + rng.uniform(-0.1, 0.1)) for _ in range(16)] for _ in range(16)]
+        for i in range(16):                                         # iron bands
+            img[i][3] = img[i][12] = img[3][i] = img[12][i] = rgba('#5a5a62')
+        for y in range(5, 11):
+            for x in range(5, 11):
+                if (x - 7.5) ** 2 + (y - 7.5) ** 2 <= 9:
+                    img[y][x] = rgba('#7a1c14' if not broken else '#2a1a18')
+        if not broken:
+            img[7][7] = img[8][8] = img[7][8] = img[8][7] = rgba('#b8c84a')
+        else:
+            for k in range(16):
+                img[k][(k * 7) % 16] = rgba('#141418')
+        write_png(os.path.join(tex, f'{name}.png'), img)
+
+
+def system6_animations():
+    def write(name, anims):
+        write_json(os.path.join(ASSETS, 'animations', 'entity', f'{name}.animation.json'),
+                   {'format_version': '1.8.0', 'animations': anims, 'geckolib_format_version': 2})
+    writhe = {f'rat{i}': {'rotation': [0, swing(8, 200, i * 45), 0], 'position': [0, f'math.abs({swing(0.3, 400, i * 60)})', 0]} for i in range(8)}
+    writhe['knot'] = {'scale': [f'1 + {swing(0.06, 180)}', f'1 + {swing(0.08, 180)}', f'1 + {swing(0.06, 180)}']}
+    scurry = {f'rat{i}': {'rotation': [0, swing(14, 700, i * 45), 0], 'position': [0, f'math.abs({swing(0.6, 900, i * 60)})', 0]} for i in range(8)}
+    scurry['knot'] = writhe['knot']
+    write('rat_king', {'misc.idle': {'loop': True, 'animation_length': 2.0, 'bones': writhe},
+                       'move.walk': {'loop': True, 'animation_length': 0.4, 'bones': scurry},
+                       'attack.bite': {'loop': False, 'animation_length': 0.4, 'bones': {
+                           'knot': {'scale': {'0.0': [1, 1, 1], '0.15': [1.25, 1.3, 1.25], '0.4': [1, 1, 1]}},
+                           'skull': {'position': {'0.0': [0, 0, 0], '0.15': [0, 1.5, 0], '0.4': [0, 0, 0]}}}}})
+    heavy = json.load(open(os.path.join(ASSETS, 'animations', 'entity', 'gravedigger.animation.json')))['animations']
+    heavy['move.walk']['animation_length'] = 1.6
+    heavy['attack.bite'] = {'loop': False, 'animation_length': 0.8, 'bones': {
+        'right_arm': {'rotation': {'0.0': [0, 0, 0], '0.35': [-160, 0, 15], '0.5': [30, 0, -5], '0.8': [0, 0, 0]}},
+        'torso': {'rotation': {'0.0': [0, 0, 0], '0.35': [-10, -15, 0], '0.5': [12, 20, 0], '0.8': [0, 0, 0]}}}}
+    write('gravewarden', heavy)
+
+
 if __name__ == '__main__':
     plague_doctor()
     plague_mask()
@@ -1336,6 +1461,11 @@ if __name__ == '__main__':
     pustule()
     vermin()
     system5_icons()
+    rat_king()
+    gravewarden()
+    rat_crown()
+    system6_textures()
     import vanilla_afflicted
     vanilla_afflicted.build_all()
     system5_animations()
+    system6_animations()

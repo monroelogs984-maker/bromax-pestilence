@@ -20,6 +20,8 @@ public class PestilenceData extends SavedData {
     private double points;
     private int phase;
     private long lastDay = -1;
+    private java.util.UUID rider;
+    private long riderSince;
 
     public static PestilenceData get(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(FACTORY, NAME);
@@ -36,6 +38,8 @@ public class PestilenceData extends SavedData {
         data.points = tag.getDouble("points");
         data.phase = tag.getInt("phase");
         data.lastDay = tag.contains("lastDay") ? tag.getLong("lastDay") : -1;
+        if (tag.hasUUID("rider")) data.rider = tag.getUUID("rider");
+        data.riderSince = tag.getLong("riderSince");
         return data;
     }
 
@@ -44,6 +48,8 @@ public class PestilenceData extends SavedData {
         tag.putDouble("points", points);
         tag.putInt("phase", phase);
         tag.putLong("lastDay", lastDay);
+        if (rider != null) tag.putUUID("rider", rider);
+        tag.putLong("riderSince", riderSince);
         return tag;
     }
 
@@ -80,6 +86,25 @@ public class PestilenceData extends SavedData {
             lastDay = day;
             add(server, PestConfig.DAILY_GROWTH.get());
         }
+    }
+
+    /** A boss has fallen: the Pestilence drops `phases` phases (to the start of the lower one). */
+    public void fall(MinecraftServer server, int phases) {
+        set(server, threshold(Math.max(0, phase - phases)));
+        if (phase == 0) rider = null;
+    }
+
+    /** The Pale Rider currently abroad, remembered for three days so it is not summoned twice while out of sight. */
+    @org.jetbrains.annotations.Nullable
+    public java.util.UUID rider(long gameTime) {
+        if (rider != null && gameTime - riderSince > 72000) rider = null;
+        return rider;
+    }
+
+    public void setRider(java.util.UUID id, long gameTime) {
+        rider = id;
+        riderSince = gameTime;
+        setDirty();
     }
 
     public static double threshold(int phase) {

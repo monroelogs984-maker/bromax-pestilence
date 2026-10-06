@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "bromaxpestilence:block/crypt_seal_top",
+    "side": "minecraft:block/reinforced_deepslate_side",
+    "bottom": "minecraft:block/reinforced_deepslate_bottom"
+  }
+}

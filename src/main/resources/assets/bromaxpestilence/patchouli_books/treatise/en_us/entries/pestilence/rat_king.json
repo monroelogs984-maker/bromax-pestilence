@@ -1,0 +1,18 @@
+{
+  "name": "The Rat King",
+  "icon": "bromaxpestilence:rat_crown",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 23,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "When a Rat Warren grows to its fourth stage, from Rat Season on, a $(l)Rat King$() may tear loose from it: rats knotted by their tails, crowned in bone.$(br2)It squeals up rats and rams its prey, and as it weakens it sheds whole swarms. Fire hurts it more than most. Its crown keeps the rats off whoever wears it."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:rat_king",
+      "name": "The Rat King",
+      "scale": 0.6
+    }
+  ]
+}

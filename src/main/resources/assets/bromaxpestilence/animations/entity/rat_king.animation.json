@@ -1,0 +1,268 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "misc.idle": {
+      "loop": true,
+      "animation_length": 2.0,
+      "bones": {
+        "rat0": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 200 + 0) * 8",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 400 + 0) * 0.3)",
+            0
+          ]
+        },
+        "rat1": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 200 + 45) * 8",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 400 + 60) * 0.3)",
+            0
+          ]
+        },
+        "rat2": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 200 + 90) * 8",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 400 + 120) * 0.3)",
+            0
+          ]
+        },
+        "rat3": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 200 + 135) * 8",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 400 + 180) * 0.3)",
+            0
+          ]
+        },
+        "rat4": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 200 + 180) * 8",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 400 + 240) * 0.3)",
+            0
+          ]
+        },
+        "rat5": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 200 + 225) * 8",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 400 + 300) * 0.3)",
+            0
+          ]
+        },
+        "rat6": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 200 + 270) * 8",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 400 + 360) * 0.3)",
+            0
+          ]
+        },
+        "rat7": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 200 + 315) * 8",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 400 + 420) * 0.3)",
+            0
+          ]
+        },
+        "knot": {
+          "scale": [
+            "1 + math.sin(query.anim_time * 180 + 0) * 0.06",
+            "1 + math.sin(query.anim_time * 180 + 0) * 0.08",
+            "1 + math.sin(query.anim_time * 180 + 0) * 0.06"
+          ]
+        }
+      }
+    },
+    "move.walk": {
+      "loop": true,
+      "animation_length": 0.4,
+      "bones": {
+        "rat0": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 700 + 0) * 14",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 900 + 0) * 0.6)",
+            0
+          ]
+        },
+        "rat1": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 700 + 45) * 14",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 900 + 60) * 0.6)",
+            0
+          ]
+        },
+        "rat2": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 700 + 90) * 14",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 900 + 120) * 0.6)",
+            0
+          ]
+        },
+        "rat3": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 700 + 135) * 14",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 900 + 180) * 0.6)",
+            0
+          ]
+        },
+        "rat4": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 700 + 180) * 14",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 900 + 240) * 0.6)",
+            0
+          ]
+        },
+        "rat5": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 700 + 225) * 14",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 900 + 300) * 0.6)",
+            0
+          ]
+        },
+        "rat6": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 700 + 270) * 14",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 900 + 360) * 0.6)",
+            0
+          ]
+        },
+        "rat7": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 700 + 315) * 14",
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 900 + 420) * 0.6)",
+            0
+          ]
+        },
+        "knot": {
+          "scale": [
+            "1 + math.sin(query.anim_time * 180 + 0) * 0.06",
+            "1 + math.sin(query.anim_time * 180 + 0) * 0.08",
+            "1 + math.sin(query.anim_time * 180 + 0) * 0.06"
+          ]
+        }
+      }
+    },
+    "attack.bite": {
+      "loop": false,
+      "animation_length": 0.4,
+      "bones": {
+        "knot": {
+          "scale": {
+            "0.0": [
+              1,
+              1,
+              1
+            ],
+            "0.15": [
+              1.25,
+              1.3,
+              1.25
+            ],
+            "0.4": [
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        "skull": {
+          "position": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.15": [
+              0,
+              1.5,
+              0
+            ],
+            "0.4": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  },
+  "geckolib_format_version": 2
+}

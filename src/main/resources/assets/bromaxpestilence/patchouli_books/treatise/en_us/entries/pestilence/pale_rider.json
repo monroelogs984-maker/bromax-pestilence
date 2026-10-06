@@ -1,0 +1,18 @@
+{
+  "name": "The Pale Rider",
+  "icon": "bromaxpestilence:heart_of_pestilence",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 25,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "When the Pestilence reaches its last phase, at nightfall, $(4)the Pale Rider$() comes. Its bell fills all who hear it with Dread; its arrows carry the Rot; it rides down those who stand close and calls up its Heralds as it weakens.$(br2)Bring the full garb. Bring Theriac. Bring friends.$(br2)Kill it, and the Pestilence breaks entirely."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:pale_rider",
+      "name": "The Pale Rider",
+      "scale": 0.4
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "The Lazaretto",
+  "icon": "bromaxpestilence:crypt_seal",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 24,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Old plague hospitals stand in the plains, forests and taiga: crossed doors, a ward of beds whose occupants do not all stay down, and a dispensary worth looting.$(br2)Beneath, a stair leads to a sealed crypt. $(4)Break the seal$() only when you are ready: its keeper comes when you do."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:gravewarden",
+      "name": "The Gravewarden",
+      "scale": 0.45,
+      "text": "Its cleaver catches everyone near its target; it leaps on those who hang back; it makes the dead rise all at once. A lit brazier in the crypt halves its strength."
+    }
+  ]
+}

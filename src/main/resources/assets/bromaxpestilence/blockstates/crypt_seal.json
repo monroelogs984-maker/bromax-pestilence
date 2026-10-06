@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "broken=false": {
+      "model": "bromaxpestilence:block/crypt_seal"
+    },
+    "broken=true": {
+      "model": "bromaxpestilence:block/crypt_seal_broken"
+    }
+  }
+}

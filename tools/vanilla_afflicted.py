@@ -473,6 +473,100 @@ def physician_overlays():
     print('physician overlays written')
 
 
+def pale_rider():
+    """Pestilence on a pale horse: vanilla's white horse made sick, and a robed, crowned, skull-faced rider."""
+    rng = random.Random(11)
+    img = sicken(jar_png('entity/horse/horse_white'), rng, 1.2)
+    body = faces(0, 32, 10, 10, 22)
+    ribs(img, body['east'], along='cols'); ribs(img, body['west'], along='cols')
+    face = faces(0, 13, 6, 5, 7)
+    glow_eyes(img, face['east'], upper=0.7, per_half=False, count=2); glow_eyes(img, face['west'], upper=0.7, per_half=False, count=2)
+    img = extend(img, rng)
+    base = 64
+    parts = [
+        part('body', (0, 11, 5), [(0, 32, -5, -8, -17, 10, 10, 22, 0.05)]),
+        part('tail', (0, -5, 2), [(42, 36, -1.5, 0, 0, 3, 14, 4)], rot=(math.pi / 6, 0, 0), parent='body'),
+        part('head', (0, 4, -12)),
+        part('skull', (0, 0, 0), [(0, 35, -2.05, -6, -2, 4, 12, 7)], rot=(math.pi / 6, 0, 0), parent='head'),
+        part('face', (0, 0, 0), [(0, 13, -3, -11, -2, 6, 5, 7)], parent='skull'),
+        part('mane', (0, 0, 0), [(56, 36, -1, -11, 5.01, 2, 16, 2)], parent='skull'),
+        part('upper_mouth', (0, 0, 0), [(0, 25, -2, -11, -7, 4, 5, 5)], parent='skull'),
+        part('left_ear', (0, 0, 0), [(19, 16, 0.55, -13, 4, 2, 3, 1, -0.001)], parent='face'),
+        part('right_ear', (0, 0, 0), [(19, 16, -2.55, -13, 4, 2, 3, 1, -0.001)], parent='face'),
+        part('left_hind_leg', (4, 14, 7), [(48, 21, -3, -1.01, -1, 4, 11, 4, 0, True)]),
+        part('right_hind_leg', (-4, 14, 7), [(48, 21, -1, -1.01, -1, 4, 11, 4)]),
+        part('left_front_leg', (4, 14, -12), [(48, 21, -3, -1.01, -1.9, 4, 11, 4, 0, True)]),
+        part('right_front_leg', (-4, 14, -12), [(48, 21, -1, -1.01, -1.9, 4, 11, 4)]),
+    ]
+    bones = convert(parts, {'body': [((5, 15, -5), (1, 2, 2), (0, base)), ((-6, 16, 3), (1, 2, 2), (0, base))]})
+
+    # The rider: box-UV cubes laid out on 96 extra texture rows and painted flat.
+    top = len(img)
+    img += [[(0, 0, 0, 0)] * 64 for _ in range(96)]
+    cursor = [0, top, 0]   # x, y, shelf height
+
+    def alloc(w, h, d):
+        bw, bh = 2 * (d + w), d + h
+        if cursor[0] + bw > 64:
+            cursor[0], cursor[1], cursor[2] = 0, cursor[1] + cursor[2], 0
+        u, v = cursor[0], cursor[1]
+        cursor[0] += bw
+        cursor[2] = max(cursor[2], bh)
+        return u, v
+
+    def paint(u, v, w, h, d, colour, noise=10, front=None, open_front=False):
+        for f, (x0, y0, fw, fh) in faces(u, v, w, h, d).items():
+            for y in range(y0, y0 + fh):
+                for x in range(x0, x0 + fw):
+                    c = colour if not (open_front and f == 'north') else (0, 0, 0, 0)
+                    if c[3]:
+                        k = 1 + rng.uniform(-noise, noise) / 100
+                        c = tuple(max(0, min(255, int(ch * k))) for ch in c[:3]) + (c[3],)
+                    img[y][x] = c
+            if front and f == 'north':
+                front(img, x0, y0, fw, fh)
+
+    def skull_face(im, x0, y0, w, h):
+        for dx in (1, 2):
+            im[y0 + 3][x0 + dx] = im[y0 + 3][x0 + w - 1 - dx] = (26, 22, 18, 255)
+        im[y0 + 3][x0 + 2] = im[y0 + 3][x0 + w - 3] = (200, 216, 90, 255)
+        im[y0 + 5][x0 + w // 2] = (26, 22, 18, 255)
+        for x in range(x0 + 2, x0 + w - 2):
+            im[y0 + 6][x] = (26, 22, 18, 255) if x % 2 else (190, 182, 160, 255)
+
+    robe, robe_dark, bone, gold, wood = (200, 196, 176, 255), (168, 164, 146, 255), (224, 220, 204, 255), (200, 160, 64, 255), (90, 70, 50, 255)
+    rider_cubes = {}
+
+    def add(bone_name, origin, size, colour, **kw):
+        w, h, d = size
+        u, v = alloc(w, h, d)
+        paint(u, v, w, h, d, colour, **kw)
+        rider_cubes.setdefault(bone_name, []).append({'origin': origin, 'size': size, 'uv': [u, v], **({'inflate': kw.get('inflate_')} if kw.get('inflate_') else {})})
+
+    add('rider', [-4, 24, -4], [8, 12, 4], robe)
+    add('rider', [-6, 18, -6], [12, 6, 8], robe_dark)
+    add('rider', [-7, 12, -4], [2, 9, 4], robe_dark)
+    add('rider', [5, 12, -4], [2, 9, 4], robe_dark)
+    add('rider_head', [-4, 36, -6], [8, 8, 8], bone, front=skull_face)
+    hu, hv = alloc(8, 8, 8)
+    paint(hu, hv, 8, 8, 8, robe, open_front=True)
+    rider_cubes['rider_head'].append({'origin': [-4, 36, -6], 'size': [8, 8, 8], 'uv': [hu, hv], 'inflate': 0.45})
+    add('rider_head', [-4.5, 44.45, -6.5], [9, 2, 9], gold, noise=6)
+    for x, z in ((-4.5, -6.5), (3.5, -6.5), (-4.5, 1.5), (3.5, 1.5), (-0.5, -6.5)):
+        add('rider_head', [x, 46.45, z], [1, 2, 1], gold, noise=6)
+    add('rider_arm_right', [-8, 24, -4], [4, 10, 4], robe)
+    add('rider_arm_left', [4, 24, -4], [4, 10, 4], robe)
+    add('rider_arm_left', [5.5, 23.5, -8], [1, 1, 12], wood, noise=6)     # the bow, held upright once the arm is raised
+
+    bones += [
+        {'name': 'rider', 'parent': 'body', 'pivot': [0, 22, -2], 'cubes': rider_cubes['rider']},
+        {'name': 'rider_head', 'parent': 'rider', 'pivot': [0, 36, -2], 'cubes': rider_cubes['rider_head']},
+        {'name': 'rider_arm_right', 'parent': 'rider', 'pivot': [-6, 34, -2], 'rotation': [-75, 0, 0], 'cubes': rider_cubes['rider_arm_right']},
+        {'name': 'rider_arm_left', 'parent': 'rider', 'pivot': [6, 34, -2], 'rotation': [-90, 0, 0], 'cubes': rider_cubes['rider_arm_left']},
+    ]
+    write('pale_rider', bones, img)
+
+
 # ------------------------------------------------------------------------------------------------
 # Animations (vanilla bone names; head look-turning is GeckoLib's, so motion goes on 'skull')
 # ------------------------------------------------------------------------------------------------
@@ -526,6 +620,13 @@ def animations():
                 'skull': {'rotation': {'0.0': [0, 0, 0], '0.1': [35, 0, 0], '0.2': [-5, 0, 0], '0.3': [0, 0, 0]}}}},
         },
     }
+    gallop = quad(36, 0.8, extra_walk={'tail': {'rotation': [swing(10, 450), 0, 0]},
+                                       'rider': {'position': [0, f'math.abs({swing(1, 450)})', 0]}},
+                  extra_idle={'rider_head': {'rotation': [swing(4, 60), swing(10, 30), 0]}},
+                  bite={'left_front_leg': {'rotation': kick}, 'right_front_leg': {'rotation': kick},
+                        'body': {'rotation': {'0.0': [0, 0, 0], '0.15': [-15, 0, 0], '0.3': [3, 0, 0], '0.4': [0, 0, 0]}},
+                        'rider_arm_right': {'rotation': {'0.0': [0, 0, 0], '0.15': [-60, 0, 0], '0.3': [40, 0, 0], '0.4': [0, 0, 0]}}})
+    anims['pale_rider'] = gallop
     anims['afflicted_villager'] = {
         'misc.idle': {'loop': True, 'animation_length': 3.0, 'bones': {
             'skull': {'rotation': [f'12 + {swing(3, 120)}', swing(6, 60), swing(2, 240)]},
@@ -554,6 +655,7 @@ def build_all():
     horse()
     villager()
     physician_overlays()
+    pale_rider()
     animations()
 
 
