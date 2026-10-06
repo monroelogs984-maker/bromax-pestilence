@@ -312,7 +312,7 @@ def rat_back(put, w, h):
 
 DOCTOR_MATS = {'bone': 'bone', 'hood': 'leather', 'brass': 'metal', 'beak': 'leather', '#b39f76': 'leather', '#9c8a64': 'leather', 'hat': 'cloth', 'band': 'leather', 'belt': 'leather', 'coat': 'leather', 'cape': 'leather', 'glove': 'leather', 'boot': 'leather', 'cane': 'wood', '#2a2522': 'cloth'}
 RAT_MATS = {'fur': 'fur', 'skin': 'flesh', '#b07a75': 'flesh', '#8a7a70': 'fur'}
-CROW_MATS = {'#2a2c38': 'fur', '#24242c': 'fur', '#1a1a22': 'fur', '#33333a': 'metal', '#3a3a40': 'leather'}
+CROW_MATS = {'#2a2c38': 'fur', '#30323e': 'fur', '#22242e': 'fur', '#33333a': 'metal', '#3a3a40': 'leather'}
 
 
 def rimmed_lens(put, w, h):
