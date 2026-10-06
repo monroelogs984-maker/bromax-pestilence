@@ -29,8 +29,8 @@ def hexc(s):
     return (int(s[0:2], 16), int(s[2:4], 16), int(s[4:6], 16), 255)
 
 
-def grid(rows, key):
-    assert len(rows) == 16 and all(len(r) == 16 for r in rows), [len(r) for r in rows]
+def grid(rows, key, size=16):
+    assert len(rows) == size and all(len(r) == size for r in rows), [len(r) for r in rows]
     return [[hexc(key[c]) if c != '.' else (0, 0, 0, 0) for c in row] for row in rows]
 
 
@@ -353,7 +353,68 @@ def round7():
     ]
 
 
-ROUNDS = [round1, round2, round3, round4, round5, round6, round7]
+def effect(name, rows, key):
+    write_png(os.path.join(ASSETS, 'textures', 'mob_effect', f'{name}.png'), grid(rows, key, 18))
+    return f'textures/mob_effect/{name}.png'
+
+
+def delirium():
+    """A sickly spiral winding in to a bright eye: the world swimming."""
+    import math
+    img = [[(0, 0, 0, 0)] * 18 for _ in range(18)]
+    t = 0.0
+    while t < 4.3 * math.pi:
+        r = 0.9 + 0.62 * t
+        x, y = 8.5 + math.cos(t) * r, 8.5 + math.sin(t) * r
+        k = t / (4.3 * math.pi)
+        col = (int(60 + 120 * k), int(80 + 110 * k), int(24 + 30 * k), 255)
+        for dx, dy in ((0, 0), (0.6, 0), (0, 0.6)):
+            px, py = int(x + dx), int(y + dy)
+            if 0 <= px < 18 and 0 <= py < 18:
+                img[py][px] = col
+        t += 0.05
+    for y in range(18):                         # dark outline around the coil
+        for x in range(18):
+            if img[y][x][3] == 0 and any(0 <= x + a < 18 and 0 <= y + b < 18 and img[y + b][x + a][3] == 255 and img[y + b][x + a] != (26, 32, 8, 255)
+                                         for a, b in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                img[y][x] = (26, 32, 8, 200)
+    for x, y in ((8, 8), (9, 8), (8, 9), (9, 9)):
+        img[y][x] = hexc('#f0ff90')
+    write_png(os.path.join(ASSETS, 'textures', 'mob_effect', 'delirium.png'), img)
+    return 'textures/mob_effect/delirium.png'
+
+
+def round8():
+    """The boots, and the first effect icons (18x18)."""
+    E, F = '................', '..................'
+    return [
+        item('doctors_boots', [
+            E, E, E, E, '....oooo..oooo..',
+            '....oHBo..oHBo..', '....oHBo..oHBo..', '....oHBo..oHBo..', '..ooHHBo.oHHBo..', '.oHHBBBooHHBBBo.',
+            '.oSSSSSooSSSSSo.', '..ooooo...ooooo.', E, E, E, E],
+            {'o': '#0e0c0c', 'H': '#3a3430', 'B': '#1f1b18', 'S': '#3a2a1a'}),
+        effect('plague', [
+            F, F, '......oooo........', '.....oBBBBo.......', '....oBhBBBBo......', '....oBBBBBBo.oo...',
+            '....oBBBBBdo.oBBo.', '.....oBBBddooBhBBo', '..oo..oddddo.oBBdo', '.oBBo..oooo..oBddo',
+            'oBhBBo........oo..', 'oBBBdo...ooo......', 'oBBddo..oBhBo.....', '.oddo...oBBdo.....', '..oo....oBddo.....',
+            '.........ooo......', F, F],
+            {'o': '#1a1014', 'B': '#4a2a3a', 'h': '#9a6a7a', 'd': '#2e1a24'}),
+        effect('plague_immunity', [
+            F, '...oooooooooooo...', '..oWWWWWWWWWWWWo..', '..oWLLLLLLLLLLWo..', '..oWLLLLLLLLnLWo..',
+            '..oWLLLLLLLnsLWo..', '..oWLLLLLLnsnLWo..', '..oWLLLLLnsnLLWo..', '..oWLLLLnsnLLLWo..', '...oWLLnsnLLLWo...',
+            '...oWLnsnLLLLWo...', '....oWsnLLLLWo....', '....oWLLLLLLWo....', '.....oWLLLLWo.....', '......oWLLWo......',
+            '.......oWWo.......', '........oo........', F],
+            {'o': '#3a4a3a', 'W': '#f0f4ec', 'L': '#d0dccc', 'n': '#4d7d52', 's': '#2f5236'}),
+        effect('dread', [
+            F, F, F, '.....oooooooo.....', '...ooVVVVVVVVoo...', '..oVVWWWWWWWWVVo..',
+            '.oVWWWWkkkkWWWWVo.', 'oVWWWWkkPPkkWWWWVo', 'oVWWWWkkPPkkWWWWVo', '.oVWWWWkkkkWWWWVo.', '..oVVWWWWWWWWVVo..',
+            '...ooVVVVVVVVoo...', '.....oooooooo.....', '........T.........', '.......TWT........', '.......TTT........', '........T.........', F],
+            {'o': '#0e0a10', 'V': '#2a2430', 'W': '#d8d0c8', 'k': '#3a2a4a', 'P': '#0a060c', 'T': '#7aa0c8'}),
+        delirium(),
+    ]
+
+
+ROUNDS = [round1, round2, round3, round4, round5, round6, round7, round8]
 
 if __name__ == '__main__':
     made = []

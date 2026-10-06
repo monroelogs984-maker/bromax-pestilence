@@ -35,3 +35,8 @@ textures/item/rat_crown.png
 textures/item/shrouded_corpse.png
 textures/item/doctors_coat.png
 textures/item/doctors_trousers.png
+textures/item/doctors_boots.png
+textures/mob_effect/plague.png
+textures/mob_effect/plague_immunity.png
+textures/mob_effect/dread.png
+textures/mob_effect/delirium.png
