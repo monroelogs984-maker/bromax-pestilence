@@ -15,3 +15,8 @@ textures/item/dried_rue.png
 textures/item/dried_sage.png
 textures/item/dried_wormwood.png
 textures/item/dried_rosemary.png
+textures/item/herbal_broth.png
+textures/item/plague_poultice.png
+textures/item/mortar_and_pestle.png
+textures/item/physicians_kit.png
+textures/item/lancet.png

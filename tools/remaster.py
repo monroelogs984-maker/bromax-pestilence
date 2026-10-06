@@ -30,6 +30,7 @@ def hexc(s):
 
 
 def grid(rows, key):
+    assert len(rows) == 16 and all(len(r) == 16 for r in rows), [len(r) for r in rows]
     return [[hexc(key[c]) if c != '.' else (0, 0, 0, 0) for c in row] for row in rows]
 
 
@@ -208,7 +209,38 @@ def round3():
             dry('rosemary', [(5, 11), (6, 11), (7, 11)])]
 
 
-ROUNDS = [round1, round2, round3]
+def round4():
+    """Remedies and tools."""
+    return [
+        item('herbal_broth', [
+            '................', '................', '................', '......s...s.....', '.......s.s......',
+            '......s...s.....', '................', '...oyyYYgYYyo...', '..oyYgYYYwYYyo..', '.oBbyyyyyyyybBo.',
+            '.oBBbbbbbbbbBBo.', '..oBBbbbbbbBBo..', '...oBBBBBBBBo...', '....oooooooo....', '................', '................'],
+            {'o': '#4a3018', 'B': '#9a6a3a', 'b': '#7a5028', 'y': '#c8a040', 'Y': '#e8c868', 'g': '#5c8538', 'w': '#f2ede2', 's': '#d0d0d4'}),
+        item('plague_poultice', [
+            '................', '................', '...oooooooooo...', '..oCCCCtCCCCco..', '..oCCgCtCCCcco..',
+            '..oCGgGtCCccco..', '..otttttttttto..', '..oCCCgtCCgcco..', '..oCCCCtCGgcco..', '..ocCCCtCCccco..',
+            '..occcctcccco...', '...oooooooooo...', '................', '................', '................', '................'],
+            {'o': '#8a7e60', 'C': '#e8dfc4', 'c': '#c8bc9c', 't': '#a07848', 'g': '#5c8538', 'G': '#7aa850'}),
+        item('mortar_and_pestle', [
+            '................', '............wo..', '...........wWo..', '..........wWo...', '.........wWo....',
+            '........wWo.....', '...oooowWoooo...', '..oLLgwWgggLLo..', '.oLSSggggggSSLo.', '.oSSSSSSSSSSSSo.',
+            '.oSSSSSSSSSSSDo.', '..oSSSSSSSSSDo..', '...oSSSSSSSDo...', '....oDDDDDDo....', '.....oooooo.....', '................'],
+            {'o': '#3e3e44', 'L': '#c8c8cc', 'S': '#8a8a90', 'D': '#5e5e66', 'g': '#6a8a3a', 'w': '#6b4a2b', 'W': '#9a7048'}),
+        item('physicians_kit', [
+            '................', '................', '.....hhhhhh.....', '....hh....hh....', '..oooooooooooo..',
+            '.oFFFFFFFFFFFFo.', '.oFFFFFFFFFFFFo.', '.ofFFFFbbFFFFfo.', '.oLLLLLbBLLLLLo.', '.oLLLLLLLLLLLDo.',
+            '.oLLLLLLLLLLLDo.', '.oDDDDDDDDDDDDo.', '..oooooooooooo..', '................', '................', '................'],
+            {'o': '#2a1c12', 'F': '#8a5e3a', 'f': '#6a442a', 'L': '#7a5034', 'D': '#5a3a22', 'b': '#b08d3c', 'B': '#f0c860', 'h': '#4a3424'}),
+        item('lancet', [
+            '................', '................', '.............oW.', '............oWs.', '...........oWso.',
+            '..........oWso..', '.........oWso...', '........oWso....', '.......oWso.....', '......ggso......',
+            '.....gGg........', '....hHg.........', '...hHh..........', '..hHh...........', '..hh............', '................'],
+            {'o': '#4a525a', 'W': '#f0f4f8', 's': '#a8b4bc', 'g': '#8a6a22', 'G': '#e0b848', 'h': '#b8ae98', 'H': '#e8e0cc'}),
+    ]
+
+
+ROUNDS = [round1, round2, round3, round4]
 
 if __name__ == '__main__':
     made = []
