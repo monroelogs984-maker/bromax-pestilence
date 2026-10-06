@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bromaxpestilence:item/theriac"
+    "layer0": "bromaxpestilence:item/theriac",
+    "layer1": "minecraft:item/potion"
   }
 }

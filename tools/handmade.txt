@@ -1,0 +1,7 @@
+# Textures painted by hand (tools/remaster.py or Glenn); gen_assets.py must not overwrite these.
+textures/item/four_thieves_vinegar.png
+textures/item/wormwood_tincture.png
+textures/item/theriac.png
+textures/item/plague_mask.png
+textures/item/consecrated_cleaver.png
+textures/item/quicklime.png

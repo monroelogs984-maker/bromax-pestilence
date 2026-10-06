@@ -1,4 +1,7 @@
 {
   "parent": "minecraft:item/generated",
-  "textures": { "layer0": "bromaxpestilence:item/four_thieves_vinegar" }
+  "textures": {
+    "layer0": "bromaxpestilence:item/four_thieves_vinegar",
+    "layer1": "minecraft:item/potion"
+  }
 }

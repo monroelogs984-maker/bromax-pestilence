@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "bromaxpestilence:item/wormwood_tincture"
+    "layer0": "bromaxpestilence:item/wormwood_tincture",
+    "layer1": "minecraft:item/potion"
   }
 }

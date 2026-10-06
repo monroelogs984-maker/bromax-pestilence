@@ -44,7 +44,17 @@ def scale(c, f):
     return tuple(max(0, min(255, int(round(v * f)))) for v in c[:3]) + (c[3],)
 
 
-def write_png(path, img):
+def _handmade():
+    path = os.path.join(HERE, 'handmade.txt')
+    if not os.path.exists(path):
+        return set()
+    return {os.path.normpath(os.path.join(ASSETS, l.strip())) for l in open(path) if l.strip() and not l.startswith('#')}
+
+
+def write_png(path, img, force=False):
+    """Write an RGBA PNG. Files listed in tools/handmade.txt are hand-painted and left alone unless forced."""
+    if not force and os.path.normpath(path) in _handmade() and os.path.exists(path):
+        return
     h, w = len(img), len(img[0])
     raw = b''.join(b'\x00' + bytes(v for px in row for v in px) for row in img)
 
