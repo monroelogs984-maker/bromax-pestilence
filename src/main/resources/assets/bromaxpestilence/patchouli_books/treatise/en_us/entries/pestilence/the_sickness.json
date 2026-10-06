@@ -1,0 +1,10 @@
+{
+  "name": "The Sickness",
+  "icon": "minecraft:rotten_flesh",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 0,
+  "pages": [
+    { "type": "patchouli:text", "text": "The Pestilence moves through three stages. It $(l)will not kill you$(), but it will make you weak, slow and miserable, and it costs one $(c)heart$() per stage.$(br2)Milk does nothing for it." },
+    { "type": "patchouli:text", "title": "The Three Stages", "text": "$(l)Incubation$() (about 5 minutes): a chill, nothing more. You are not yet contagious.$(br)$(l)Fever$() (about 7 minutes): hunger and coughing. $(4)You now spread it.$()$(br)$(l)Buboes$() (about 10 minutes): weakness, heavy limbs and dizzy spells.$(br2)Then the fever breaks, and you are immune for a time." }
+  ]
+}

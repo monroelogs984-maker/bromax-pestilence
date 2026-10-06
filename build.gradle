@@ -1,0 +1,57 @@
+plugins {
+    id 'net.neoforged.gradle.userdev' version '7.1.38'
+}
+
+version = '0.2.0-1.21.1'
+group = 'com.bromax.pestilence'
+
+base {
+    archivesName = 'bromaxpestilence'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+runs {
+    configureEach {
+        systemProperty 'neoforge.logging.console.level', 'info'
+        modSource project.sourceSets.main
+    }
+    client {}
+    server {}
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:21.1.233"
+    // Compiled against the exact GeckoLib jar S202 ships (copied into libs/).
+    implementation files('libs/geckolib-neoforge-1.21.1-4.9.3.jar')
+}
+
+jar {
+    manifest {
+        attributes([
+            'Specification-Title'   : 'bromaxpestilence',
+            'Specification-Vendor'  : 'BROMAX',
+            'Specification-Version' : '1',
+            'Implementation-Title'  : project.name,
+            'Implementation-Version': "${version}",
+            'Implementation-Vendor' : 'BROMAX',
+        ])
+    }
+}
+
+// Copies the built jar into S202. Only run with the game closed.
+tasks.register('deploy') {
+    dependsOn build
+    doLast {
+        def modsDir = '/home/glenn/Documents/curseforge/minecraft/Instances/S202Neoforge/mods'
+        // Remove older versions first so the instance never loads two copies.
+        delete fileTree(dir: modsDir, include: 'bromaxpestilence-*.jar')
+        copy {
+            from layout.buildDirectory.file("libs/bromaxpestilence-${version}.jar")
+            into modsDir
+        }
+        println '[DEPLOY] bromaxpestilence -> S202Neoforge'
+    }
+}

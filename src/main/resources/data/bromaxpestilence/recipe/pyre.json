@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [ " H ", "LCL", "LLL" ],
+  "key": {
+    "H": { "item": "minecraft:wheat" },
+    "L": { "tag": "minecraft:logs_that_burn" },
+    "C": { "tag": "minecraft:coals" }
+  },
+  "result": { "id": "bromaxpestilence:pyre" }
+}

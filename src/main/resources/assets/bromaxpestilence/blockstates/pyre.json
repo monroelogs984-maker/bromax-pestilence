@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": { "model": "bromaxpestilence:block/pyre" },
+    "lit=true": { "model": "bromaxpestilence:block/pyre_lit" }
+  }
+}

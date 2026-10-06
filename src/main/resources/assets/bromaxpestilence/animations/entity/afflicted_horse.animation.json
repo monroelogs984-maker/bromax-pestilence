@@ -1,0 +1,159 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "misc.idle": {
+      "loop": true,
+      "animation_length": 4.0,
+      "bones": {
+        "head": {
+          "rotation": [
+            "0 + math.sin(query.anim_time * 90 + 0) * 3",
+            "math.sin(query.anim_time * 40 + 0) * 5",
+            "math.sin(query.anim_time * 400 + 0) * 1.5"
+          ]
+        },
+        "tail": {
+          "rotation": [
+            0,
+            "math.sin(query.anim_time * 120 + 0) * 10",
+            0
+          ]
+        }
+      }
+    },
+    "move.walk": {
+      "loop": true,
+      "animation_length": 1.2,
+      "bones": {
+        "leg_fl": {
+          "rotation": [
+            "math.sin(query.anim_time * 300.0 + 0) * 28",
+            0,
+            0
+          ]
+        },
+        "leg_br": {
+          "rotation": [
+            "math.sin(query.anim_time * 300.0 + 0) * 15.400000000000002",
+            0,
+            0
+          ]
+        },
+        "leg_fr": {
+          "rotation": [
+            "math.sin(query.anim_time * 300.0 + 180) * 28",
+            0,
+            0
+          ]
+        },
+        "leg_bl": {
+          "rotation": [
+            "math.sin(query.anim_time * 300.0 + 180) * 28",
+            0,
+            0
+          ]
+        },
+        "body": {
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 300.0 + 0) * 0.4)",
+            0
+          ]
+        },
+        "head": {
+          "rotation": [
+            "0 + math.sin(query.anim_time * 600.0 + 0) * 4",
+            0,
+            0
+          ]
+        },
+        "tail": {
+          "rotation": [
+            "math.sin(query.anim_time * 300 + 0) * 8",
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "attack.bite": {
+      "loop": false,
+      "animation_length": 0.4,
+      "bones": {
+        "leg_fl": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.15": [
+              -45,
+              0,
+              0
+            ],
+            "0.3": [
+              10,
+              0,
+              0
+            ],
+            "0.4": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "leg_fr": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.15": [
+              -45,
+              0,
+              0
+            ],
+            "0.3": [
+              10,
+              0,
+              0
+            ],
+            "0.4": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.15": [
+              -12,
+              0,
+              0
+            ],
+            "0.3": [
+              3,
+              0,
+              0
+            ],
+            "0.4": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  },
+  "geckolib_format_version": 2
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Corpses and Pyres",
+  "icon": "bromaxpestilence:pyre",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "An animal that dies with the plague in it leaves a $(l)corpse$(), crawling with flies. A few minutes later it $(4)rises as one of the Afflicted$(). It twitches and groans just before it does.$(br2)Killing a sick animal does not save you this: the body still rises."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Fire",
+      "text": "Fire is the only answer. Set a corpse alight with $(l)flint and steel$() or a $(l)fire charge$(), drop it in lava, or shoot it with a flaming arrow.$(br2)With an empty hand you can $(l)wrap a corpse$() to carry it. It is heavy, it keeps rotting, and handling it without a mask is a risk."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:pyre",
+      "text": "A lit $(l)pyre$() burns every corpse laid within a few blocks of it. Light it with flint and steel; a shovel puts it out."
+    }
+  ]
+}

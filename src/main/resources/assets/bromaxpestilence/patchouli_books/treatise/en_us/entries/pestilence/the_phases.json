@@ -1,0 +1,22 @@
+{
+  "name": "The Phases",
+  "icon": "minecraft:bell",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Pestilence is not one sickness but a tide. Every infection, every plague death and every corpse that rises feeds it; it also creeps up a little each day on its own. As it grows it passes through $(4)nine phases$(), each announced by a tolling bell.$(br2)Type $(l)/pestilence$() to see where it stands."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Pushing it back",
+      "text": "The tide also ebbs. Each $(2)cure$(), each $(2)corpse burned$() and each $(2)Afflicted slain$() lowers it, and a phase can fall back as easily as it rose.$(br2)Ignore it, and it will only climb."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "The early phases",
+      "text": "$(l)0 Dormant$(): few rats.$(br)$(l)1 Whispers$(): rats in earnest.$(br)$(l)2 Murrain$(): animals catch it and die of it, and their corpses rise.$(br)$(l)3 Rat Season$(): the Afflicted walk at night, even where nothing died.$(br)$(l)4 Outbreak$() and beyond: worse."
+    }
+  ]
+}

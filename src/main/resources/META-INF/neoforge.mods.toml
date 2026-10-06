@@ -1,0 +1,41 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+    modId = "bromaxpestilence"
+    version = "${file.jarVersion}"
+    displayName = "BROMAX's Pestilence"
+    authors = "BROMAX"
+    description = '''
+A plague that grows. Rats and rotten flesh carry it, the sick cough it onto others, and every death feeds it: the Pestilence climbs through nine phases, corpses rise as the Afflicted, and the land itself sickens. Fight it back down with masks, cures, pyres and fire.
+'''
+
+[[dependencies.bromaxpestilence]]
+    modId = "neoforge"
+    type = "required"
+    versionRange = "[21.1,)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.bromaxpestilence]]
+    modId = "minecraft"
+    type = "required"
+    versionRange = "[1.21.1,1.22)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.bromaxpestilence]]
+    modId = "geckolib"
+    type = "required"
+    versionRange = "[4.7,)"
+    ordering = "AFTER"
+    side = "BOTH"
+
+# Optional: A Physician's Treatise is only available with Patchouli installed.
+[[dependencies.bromaxpestilence]]
+    modId = "patchouli"
+    type = "optional"
+    versionRange = "*"
+    ordering = "NONE"
+    side = "BOTH"

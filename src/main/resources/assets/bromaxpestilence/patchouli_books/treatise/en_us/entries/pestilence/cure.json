@@ -1,0 +1,16 @@
+{
+  "name": "Four Thieves Vinegar",
+  "icon": "bromaxpestilence:four_thieves_vinegar",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Thieves who robbed the dead swore by it. Drink it and the Pestilence leaves you at once, and you are $(2)immune$() for a while after.$(br2)Use it on a sick villager or animal to cure them too. Every cure pushes the Pestilence back a little."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:four_thieves_vinegar"
+    }
+  ]
+}

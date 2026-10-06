@@ -1,0 +1,97 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "misc.idle": {
+      "loop": true,
+      "animation_length": 4.0,
+      "bones": {
+        "head": {
+          "rotation": [
+            "0 + math.sin(query.anim_time * 90 + 0) * 3",
+            "math.sin(query.anim_time * 40 + 0) * 5",
+            "math.sin(query.anim_time * 400 + 0) * 1.5"
+          ]
+        }
+      }
+    },
+    "move.walk": {
+      "loop": true,
+      "animation_length": 0.8,
+      "bones": {
+        "leg_fl": {
+          "rotation": [
+            "math.sin(query.anim_time * 450.0 + 0) * 30",
+            0,
+            0
+          ]
+        },
+        "leg_br": {
+          "rotation": [
+            "math.sin(query.anim_time * 450.0 + 0) * 16.5",
+            0,
+            0
+          ]
+        },
+        "leg_fr": {
+          "rotation": [
+            "math.sin(query.anim_time * 450.0 + 180) * 30",
+            0,
+            0
+          ]
+        },
+        "leg_bl": {
+          "rotation": [
+            "math.sin(query.anim_time * 450.0 + 180) * 30",
+            0,
+            0
+          ]
+        },
+        "body": {
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 450.0 + 0) * 0.4)",
+            0
+          ]
+        },
+        "head": {
+          "rotation": [
+            "0 + math.sin(query.anim_time * 900.0 + 0) * 4",
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "attack.bite": {
+      "loop": false,
+      "animation_length": 0.4,
+      "bones": {
+        "head": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.12": [
+              -20,
+              0,
+              0
+            ],
+            "0.25": [
+              18,
+              0,
+              0
+            ],
+            "0.4": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  },
+  "geckolib_format_version": 2
+}

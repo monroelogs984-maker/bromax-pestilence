@@ -1,0 +1,757 @@
+#!/usr/bin/env python3
+"""Generates BROMAX's Pestilence models, animations and textures.
+
+Each model is a list of cubes (bone, origin, size, colour, optional face decor). The script packs
+every cube face into its own UV rect, paints the rect (base colour, per-face light, noise, darker
+rim, then decor), and writes GeckoLib geo.json + texture. Edit PALETTE or the cube lists and rerun:
+
+    python3 tools/gen_assets.py
+
+Coordinates are Blockbench/Bedrock pixels: feet at y=0, model faces north (-Z), 16px = 1 block.
+"""
+import json
+import os
+import random
+import struct
+import zlib
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ASSETS = os.path.join(HERE, '..', 'src', 'main', 'resources', 'assets', 'bromaxpestilence')
+
+PALETTE = {
+    'hood': '#2b2420', 'lens': '#9fc7c0', 'brass': '#b08d3c', 'beak': '#c9b48a',
+    'hat': '#1c1a1a', 'band': '#4a3526', 'coat': '#2e2a28', 'cape': '#232020',
+    'belt': '#5a3d22', 'glove': '#3b2a1c', 'boot': '#1f1b18', 'cane': '#6b4a2b',
+    'fur': '#4a3f38', 'fur_dark': '#382f2a', 'skin': '#c48b86', 'eye': '#a01818',
+    'sore': '#8c8a3a',
+    # Afflicted
+    'bubo': '#2a1c22', 'glow': '#d4d94a', 'hoof': '#2e2620', 'horn': '#c9bfa5', 'bone': '#d8cfb8',
+    'cow': '#5a4b3f', 'cow_pale': '#a99f8a', 'pig': '#b48580', 'pig_dark': '#8a5f5a', 'snout': '#9c6a66',
+    'wool': '#9c957f', 'sheep_skin': '#8f7f78', 'sheep_face': '#4a423c', 'feather': '#a59e8f',
+    'comb': '#6e2a2a', 'beak_y': '#a8863a', 'horse': '#51463d', 'mane': '#2a2420', 'muzzle': '#3d342d',
+    'wolf': '#625e58', 'wolf_dark': '#46423d',
+}
+
+
+def rgba(name_or_hex, a=255):
+    s = PALETTE.get(name_or_hex, name_or_hex).lstrip('#')
+    return (int(s[0:2], 16), int(s[2:4], 16), int(s[4:6], 16), a)
+
+
+def scale(c, f):
+    return tuple(max(0, min(255, int(round(v * f)))) for v in c[:3]) + (c[3],)
+
+
+def write_png(path, img):
+    h, w = len(img), len(img[0])
+    raw = b''.join(b'\x00' + bytes(v for px in row for v in px) for row in img)
+
+    def chunk(tag, data):
+        return struct.pack('>I', len(data)) + tag + data + struct.pack('>I', zlib.crc32(tag + data) & 0xffffffff)
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'wb') as f:
+        f.write(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 6, 0, 0, 0))
+                + chunk(b'IDAT', zlib.compress(raw, 9)) + chunk(b'IEND', b''))
+
+
+def write_json(path, data):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w') as f:
+        json.dump(data, f, indent=2)
+        f.write('\n')
+
+
+# ---------------------------------------------------------------------------------------------
+# Model building
+# ---------------------------------------------------------------------------------------------
+
+FACE_LIGHT = {'up': 1.15, 'down': 0.7, 'north': 1.0, 'south': 0.92, 'east': 0.85, 'west': 0.85}
+
+
+def cube(bone, origin, size, color, decor=None, inflate=0.0, noise=5, rim=True):
+    return dict(bone=bone, origin=origin, size=size, color=color, decor=decor or {}, inflate=inflate,
+                noise=noise, rim=rim)
+
+
+def face_dims(size):
+    sx, sy, sz = size
+    return {'north': (sx, sy), 'south': (sx, sy), 'east': (sz, sy), 'west': (sz, sy),
+            'up': (sx, sz), 'down': (sx, sz)}
+
+
+def pack(rects, width):
+    """Shelf-pack (key, w, h) rects; returns {key: (u, v)} and used height."""
+    placed, x, y, shelf = {}, 0, 0, 0
+    for key, w, h in sorted(rects, key=lambda r: (-r[2], -r[1])):
+        if x + w > width:
+            x, y, shelf = 0, y + shelf, 0
+        placed[key] = (x, y)
+        x += w
+        shelf = max(shelf, h)
+    return placed, y + shelf
+
+
+def build(name, bones, cubes, seed, out_geo, out_tex, identifier, bounds=(2, 3, 1.25)):
+    rects = []
+    for i, c in enumerate(cubes):
+        for face, (w, h) in face_dims(c['size']).items():
+            rects.append(((i, face), int(w), int(h)))
+    width = 32
+    while True:
+        placed, used = pack(rects, width)
+        height = 16
+        while height < used:
+            height *= 2
+        if height <= width * 2:
+            break
+        width *= 2
+    img = [[(0, 0, 0, 0)] * width for _ in range(height)]
+    rng = random.Random(seed)
+
+    for i, c in enumerate(cubes):
+        base = rgba(c['color'])
+        for face, (w, h) in face_dims(c['size']).items():
+            u, v = placed[(i, face)]
+            w, h = int(w), int(h)
+            for yy in range(h):
+                for xx in range(w):
+                    col = scale(base, FACE_LIGHT[face] * (1 + rng.uniform(-c['noise'], c['noise']) / 100))
+                    if c['rim'] and w >= 3 and h >= 3 and (xx in (0, w - 1) or yy in (0, h - 1)):
+                        col = scale(col, 0.85)
+                    img[v + yy][u + xx] = col
+            decor = c['decor'].get(face) or c['decor'].get('all')
+            if decor:
+                def put(x, y, color, f=FACE_LIGHT[face], u=u, v=v, w=w, h=h):
+                    if 0 <= x < w and 0 <= y < h:
+                        img[v + y][u + x] = scale(rgba(color), f)
+                decor(put, w, h)
+
+    geo_bones = []
+    for b in bones:
+        entry = {'name': b['name'], 'pivot': b['pivot']}
+        if b.get('parent'):
+            entry['parent'] = b['parent']
+        cs = []
+        for i, c in enumerate(cubes):
+            if c['bone'] != b['name']:
+                continue
+            uv = {}
+            for face, (w, h) in face_dims(c['size']).items():
+                u, v = placed[(i, face)]
+                uv[face] = {'uv': [u, v], 'uv_size': [int(w), int(h)]}
+            cj = {'origin': c['origin'], 'size': c['size'], 'uv': uv}
+            if c['inflate']:
+                cj['inflate'] = c['inflate']
+            cs.append(cj)
+        if cs:
+            entry['cubes'] = cs
+        geo_bones.append(entry)
+
+    write_json(out_geo, {
+        'format_version': '1.12.0',
+        'minecraft:geometry': [{
+            'description': {
+                'identifier': identifier, 'texture_width': width, 'texture_height': height,
+                'visible_bounds_width': bounds[0], 'visible_bounds_height': bounds[1],
+                'visible_bounds_offset': [0, bounds[2], 0],
+            },
+            'bones': geo_bones,
+        }],
+    })
+    write_png(out_tex, img)
+    print(f'{name}: {len(cubes)} cubes, texture {width}x{height}')
+
+
+# ---------------------------------------------------------------------------------------------
+# Decor helpers (face-local pixel coords, y=0 is the top of the face)
+# ---------------------------------------------------------------------------------------------
+
+def fill(color):
+    def d(put, w, h):
+        for y in range(h):
+            for x in range(w):
+                put(x, y, color)
+    return d
+
+
+def lens_face(put, w, h):
+    for y in range(h):
+        for x in range(w):
+            put(x, y, 'lens')
+    put(0, 0, '#d8ece8')
+
+
+def beak_top(put, w, h):
+    # A stitched seam running down the length of the beak.
+    for y in range(0, h, 2):
+        put(w // 2, y, '#8f7d58')
+
+
+def coat_front(put, w, h):
+    for y in range(h):
+        put(w // 2 - 1, y, '#1d1a19')        # overlap seam
+    for y in (2, 5, 8):
+        put(1, y, 'brass')
+        put(w - 2, y, 'brass')
+
+
+def skirt_front(put, w, h):
+    for y in range(h):
+        put(w // 2, y, '#161413')            # coat split
+    for x in range(w):
+        if x % 3 == 0:
+            put(x, h - 1, '#161413')         # ragged hem
+
+
+def belt_front(put, w, h):
+    for x in range(w // 2 - 1, w // 2 + 2):
+        for y in range(h):
+            put(x, y, 'brass')
+    put(w // 2, h // 2, 'belt')
+
+
+def rat_face(put, w, h):
+    for y in range(h):
+        for x in range(w):
+            put(x, y, 'fur')
+    put(0, 0, 'eye')
+    put(w - 1, 0, 'eye')
+
+
+def snout_face(put, w, h):
+    for y in range(h):
+        for x in range(w):
+            put(x, y, 'skin')
+    put(w // 2, 0, '#7a4a48')
+
+
+def rat_back(put, w, h):
+    rng = random.Random(66)
+    for _ in range(4):
+        x, y = rng.randrange(w), rng.randrange(h)
+        put(x, y, 'sore')
+        put(min(w - 1, x + 1), y, '#6e2a24')
+    for y in range(h):
+        put(w // 2, y, 'fur_dark')           # darker spine stripe
+
+
+# ---------------------------------------------------------------------------------------------
+# Plague doctor head (shared by the mob and the mask armour)
+# ---------------------------------------------------------------------------------------------
+
+def doctor_head(bone, inflate):
+    t = inflate  # cubes in front of / above the head move out with the inflated hood
+    return [
+        cube(bone, [-4, 24, -4], [8, 8, 8], 'hood', inflate=inflate),
+        cube(bone, [-4, 26, -4], [8, 1, 8], 'belt', inflate=inflate + 0.15),   # strap holding the beak
+        cube(bone, [-3, 28.5, -4.6 - t], [2, 2, 1], 'brass', decor={'north': lens_face}),
+        cube(bone, [1, 28.5, -4.6 - t], [2, 2, 1], 'brass', decor={'north': lens_face}),
+        # The beak curves downward in steps rather than by rotation.
+        cube(bone, [-2, 24, -10 - t], [4, 4, 6], 'beak', decor={'up': beak_top}),
+        cube(bone, [-1.5, 23.5, -13 - t], [3, 3, 3], 'beak', decor={'up': beak_top}),
+        cube(bone, [-1, 23, -15 - t], [2, 2, 2], '#b39f76'),
+        cube(bone, [-0.5, 22.5, -16 - t], [1, 1, 1], '#9c8a64', rim=False),
+        cube(bone, [-7, 32 + t, -7], [14, 1, 14], 'hat'),
+        cube(bone, [-4.5, 33 + t, -4.5], [9, 1, 9], 'band', inflate=0.1),
+        cube(bone, [-4.5, 34 + t, -4.5], [9, 3, 9], 'hat'),
+    ]
+
+
+def plague_doctor():
+    bones = [
+        {'name': 'root', 'pivot': [0, 0, 0]},
+        {'name': 'torso', 'parent': 'root', 'pivot': [0, 12, 0]},
+        {'name': 'head', 'parent': 'torso', 'pivot': [0, 24, 0]},
+        {'name': 'right_arm', 'parent': 'torso', 'pivot': [-6, 22, 0]},
+        {'name': 'left_arm', 'parent': 'torso', 'pivot': [6, 22, 0]},
+        {'name': 'right_leg', 'parent': 'root', 'pivot': [-2, 12, 0]},
+        {'name': 'left_leg', 'parent': 'root', 'pivot': [2, 12, 0]},
+    ]
+    cubes = doctor_head('head', 0) + [
+        cube('torso', [-4, 12, -2], [8, 12, 4], 'coat', decor={'north': coat_front}),
+        cube('torso', [-5, 20, -3], [10, 4, 6], 'cape'),                     # shoulder capelet
+        cube('torso', [-4.5, 2, -3], [9, 10, 6], 'coat', decor={'north': skirt_front}),
+        cube('torso', [-4.5, 11, -3], [9, 2, 6], 'belt', inflate=0.1, decor={'north': belt_front}),
+        cube('right_arm', [-8, 14, -2], [4, 10, 4], 'coat'),
+        cube('right_arm', [-7.5, 11, -1.5], [3, 3, 3], 'glove'),
+        cube('left_arm', [4, 14, -2], [4, 10, 4], 'coat'),
+        cube('left_arm', [4.5, 11, -1.5], [3, 3, 3], 'glove'),
+        cube('left_arm', [5.5, 0, -3], [1, 14, 1], 'cane', noise=8),        # cane hangs from the left hand
+        cube('left_arm', [5, 13.5, -3.5], [2, 1, 2], 'brass'),
+        cube('right_leg', [-4, 0, -2], [4, 12, 4], 'boot'),
+        cube('left_leg', [0, 0, -2], [4, 12, 4], 'boot'),
+    ]
+    build('plague_doctor', bones, cubes, 202,
+          os.path.join(ASSETS, 'geo', 'entity', 'plague_doctor.geo.json'),
+          os.path.join(ASSETS, 'textures', 'entity', 'plague_doctor.png'),
+          'geometry.plague_doctor', bounds=(3, 3.5, 1.5))
+
+
+def plague_mask():
+    names = ['armorHead', 'armorBody', 'armorRightArm', 'armorLeftArm',
+             'armorRightLeg', 'armorLeftLeg', 'armorRightBoot', 'armorLeftBoot']
+    pivots = {'armorHead': [0, 24, 0], 'armorBody': [0, 24, 0], 'armorRightArm': [-5, 22, 0],
+              'armorLeftArm': [5, 22, 0], 'armorRightLeg': [-1.9, 12, 0], 'armorLeftLeg': [1.9, 12, 0],
+              'armorRightBoot': [-1.9, 12, 0], 'armorLeftBoot': [1.9, 12, 0]}
+    bones = [{'name': n, 'pivot': pivots[n]} for n in names]
+    build('plague_mask', bones, doctor_head('armorHead', 0.6), 202,
+          os.path.join(ASSETS, 'geo', 'item', 'armor', 'plague_mask.geo.json'),
+          os.path.join(ASSETS, 'textures', 'item', 'armor', 'plague_mask.png'),
+          'geometry.plague_mask', bounds=(2, 2.5, 1.5))
+
+
+def plague_rat():
+    bones = [
+        {'name': 'root', 'pivot': [0, 0, 0]},
+        {'name': 'body', 'parent': 'root', 'pivot': [0, 4, 0]},
+        {'name': 'head', 'parent': 'body', 'pivot': [0, 4, -4]},
+        {'name': 'tail', 'parent': 'body', 'pivot': [0, 3.5, 5]},
+        {'name': 'tail_tip', 'parent': 'tail', 'pivot': [0, 3.5, 11]},
+        {'name': 'leg_front_left', 'parent': 'root', 'pivot': [1.5, 2, -3]},
+        {'name': 'leg_front_right', 'parent': 'root', 'pivot': [-1.5, 2, -3]},
+        {'name': 'leg_back_left', 'parent': 'root', 'pivot': [1.5, 2, 3.5]},
+        {'name': 'leg_back_right', 'parent': 'root', 'pivot': [-1.5, 2, 3.5]},
+    ]
+    cubes = [
+        cube('body', [-2.5, 2, -4], [5, 4, 9], 'fur', noise=10, decor={'up': rat_back}),
+        cube('body', [-3, 2, 0], [6, 5, 5], 'fur', noise=10, decor={'up': rat_back}),   # haunches
+        cube('head', [-2, 2.5, -8], [4, 3, 4], 'fur', noise=10, decor={'north': rat_face}),
+        cube('head', [-1, 2.5, -10], [2, 2, 2], 'skin', decor={'north': snout_face}, rim=False),
+        cube('head', [-2.5, 5.5, -6], [1, 2, 1], 'skin', rim=False),
+        cube('head', [1.5, 5.5, -6], [1, 2, 1], 'skin', rim=False),
+        cube('tail', [-0.5, 3, 5], [1, 1, 6], 'skin', rim=False),
+        cube('tail_tip', [-0.5, 3, 11], [1, 1, 6], '#b07a75', rim=False),
+        cube('leg_front_left', [1, 0, -3.5], [1, 2, 1], 'skin', rim=False),
+        cube('leg_front_right', [-2, 0, -3.5], [1, 2, 1], 'skin', rim=False),
+        cube('leg_back_left', [1, 0, 3], [1, 2, 1], 'skin', rim=False),
+        cube('leg_back_right', [-2, 0, 3], [1, 2, 1], 'skin', rim=False),
+    ]
+    build('plague_rat', bones, cubes, 66,
+          os.path.join(ASSETS, 'geo', 'entity', 'plague_rat.geo.json'),
+          os.path.join(ASSETS, 'textures', 'entity', 'plague_rat.png'),
+          'geometry.plague_rat', bounds=(2, 1, 0.25))
+
+
+
+def ribs(put, w, h):
+    """Exposed ribs: dark vertical lines across the middle of a flank."""
+    for x in range(2, w - 2, 2):
+        for y in range(max(1, h // 5), h - max(1, h // 4)):
+            put(x, y, '#2b221d')
+
+
+def sores(seed, n=4):
+    def d(put, w, h):
+        rng = random.Random(seed)
+        for _ in range(n):
+            x, y = rng.randrange(w), rng.randrange(h)
+            put(x, y, 'sore')
+            put(min(w - 1, x + 1), y, '#6e2a24')
+    return d
+
+
+def both(*decors):
+    def d(put, w, h):
+        for f in decors:
+            f(put, w, h)
+    return d
+
+
+def glow_eyes(base):
+    """Head front: base colour with two sick yellow-green eyes in the upper corners."""
+    def d(put, w, h):
+        for y in range(h):
+            for x in range(w):
+                put(x, y, base)
+        ey = max(1, h // 3)
+        put(1, ey, 'glow')
+        put(w - 2, ey, 'glow')
+    return d
+
+
+def patches(color, seed, n=6):
+    def d(put, w, h):
+        rng = random.Random(seed)
+        for _ in range(n):
+            x, y = rng.randrange(w), rng.randrange(h)
+            for dx in range(2):
+                for dy in range(2):
+                    put(x + dx, y + dy, color)
+    return d
+
+
+def teeth(put, w, h):
+    for x in range(w):
+        put(x, h - 1, 'bone' if x % 2 == 0 else 'muzzle')
+
+
+def bubo(bone, origin, size=(1, 2, 2)):
+    return cube(bone, list(origin), list(size), 'bubo', noise=8, rim=False)
+
+
+def quad_bones(body_pivot, head_pivot, legs, extra=()):
+    bones = [{'name': 'root', 'pivot': [0, 0, 0]},
+             {'name': 'body', 'parent': 'root', 'pivot': body_pivot},
+             {'name': 'head', 'parent': 'body', 'pivot': head_pivot}]
+    for name, pivot in legs.items():
+        bones.append({'name': name, 'parent': 'root', 'pivot': pivot})
+    bones.extend(extra)
+    return bones
+
+
+def leg(name, x, z, w, h, color, hoof=None, hoof_h=2):
+    cs = [cube(name, [x, hoof_h if hoof else 0, z], [w, h - (hoof_h if hoof else 0), w], color)]
+    if hoof:
+        cs.append(cube(name, [x, 0, z], [w, hoof_h, w], hoof, rim=False))
+    return cs
+
+
+def entity(name, bones, cubes, seed, bounds):
+    build(name, bones, cubes, seed,
+          os.path.join(ASSETS, 'geo', 'entity', f'{name}.geo.json'),
+          os.path.join(ASSETS, 'textures', 'entity', f'{name}.png'),
+          f'geometry.{name}', bounds=bounds)
+
+
+def afflicted_cow():
+    legs = {'leg_fl': [3.5, 12, -5.5], 'leg_fr': [-3.5, 12, -5.5], 'leg_bl': [3.5, 12, 5.5], 'leg_br': [-3.5, 12, 5.5]}
+    cubes = [
+        cube('body', [-5, 12, -9], [10, 9, 18], 'cow', decor={'east': both(ribs, patches('cow_pale', 1)), 'west': both(ribs, patches('cow_pale', 2)),
+                                                              'up': sores(3)}),
+        cube('body', [-1, 21, -8], [2, 1, 16], '#46392f'),                       # spine showing through
+        cube('body', [-5.5, 18, 5], [11, 3, 4], 'cow'),                          # jutting hips
+        bubo('body', (5, 15, -4)), bubo('body', (-6, 16, 2)), bubo('body', (-1, 11, -6), (2, 1, 2)),
+        cube('head', [-4, 13, -15], [8, 8, 6], 'cow', decor={'north': glow_eyes('cow')}),
+        cube('head', [-3, 13, -16], [6, 3, 1], 'cow_pale', rim=False),
+        cube('head', [4, 19, -13], [2, 1, 1], 'horn', rim=False),
+        cube('head', [5, 20, -13], [1, 2, 1], 'horn', rim=False),
+        cube('head', [-6, 19, -13], [2, 1, 1], 'horn', rim=False),             # the other horn snapped off
+        bubo('head', (-4.5, 14, -12), (1, 2, 2)),
+    ]
+    for name, (x, z) in {'leg_fl': (2, -7), 'leg_fr': (-5, -7), 'leg_bl': (2, 4), 'leg_br': (-5, 4)}.items():
+        cubes += leg(name, x, z, 3, 12, 'cow', 'hoof')
+    entity('afflicted_cow', quad_bones([0, 12, 0], [0, 17, -9], legs), cubes, 11, (2, 2, 0.75))
+
+
+def afflicted_pig():
+    legs = {'leg_fl': [3.5, 6, -5.5], 'leg_fr': [-3.5, 6, -5.5], 'leg_bl': [3.5, 6, 5.5], 'leg_br': [-3.5, 6, 5.5]}
+    cubes = [
+        cube('body', [-5, 6, -8], [10, 8, 16], 'pig', decor={'east': patches('pig_dark', 4), 'west': patches('pig_dark', 5), 'up': sores(6, 5)}),
+        bubo('body', (5, 9, -2)), bubo('body', (-6, 10, 3)), bubo('body', (1, 14, 0), (2, 1, 2)),
+        cube('head', [-4, 6, -15], [8, 8, 7], 'pig', decor={'north': glow_eyes('pig')}),
+        cube('head', [-2, 7, -16], [4, 3, 1], 'snout', rim=False,
+             decor={'north': lambda put, w, h: (put(1, 1, '#4a2a28'), put(2, 1, '#4a2a28'))}),
+        cube('head', [-2.5, 6, -16], [1, 2, 1], 'bone', rim=False),             # tusks
+        cube('head', [1.5, 6, -16], [1, 2, 1], 'bone', rim=False),
+        cube('head', [-4.5, 12, -13], [2, 1, 3], 'pig_dark', rim=False),         # floppy ears
+        cube('head', [2.5, 12, -13], [2, 1, 3], 'pig_dark', rim=False),
+    ]
+    for name, (x, z) in {'leg_fl': (2, -7), 'leg_fr': (-5, -7), 'leg_bl': (2, 4), 'leg_br': (-5, 4)}.items():
+        cubes += leg(name, x, z, 3, 6, 'pig', 'hoof', 1)
+    entity('afflicted_pig', quad_bones([0, 6, 0], [0, 10, -8], legs), cubes, 12, (1.5, 1.2, 0.5))
+
+
+def afflicted_sheep():
+    legs = {'leg_fl': [2, 12, -4.5], 'leg_fr': [-2, 12, -4.5], 'leg_bl': [2, 12, 4.5], 'leg_br': [-2, 12, 4.5]}
+    cubes = [
+        cube('body', [-3.5, 12, -7], [7, 6, 14], 'sheep_skin', decor={'east': both(ribs, sores(7, 3)), 'west': both(ribs, sores(8, 3))}),
+        # what is left of the fleece: matted clumps on the shoulders and rump
+        cube('body', [-4.5, 13, -8], [9, 6, 6], 'wool', noise=9, decor={'all': patches('#7d7663', 9, 4)}),
+        cube('body', [-4.5, 13, 3], [9, 6, 5], 'wool', noise=9, decor={'all': patches('#7d7663', 10, 4)}),
+        cube('body', [-3, 18, -1], [4, 1, 3], 'wool', noise=9),
+        bubo('body', (3.5, 14, 0)), bubo('body', (-4.5, 15, 1), (1, 1, 1)),
+        cube('head', [-3, 14, -13], [6, 6, 6], 'sheep_face', decor={'north': glow_eyes('sheep_face')}),
+        cube('head', [-4, 18, -10], [1, 1, 2], 'sheep_face', rim=False),
+        cube('head', [3, 18, -10], [1, 1, 2], 'sheep_face', rim=False),
+    ]
+    for name, (x, z) in {'leg_fl': (0.5, -6), 'leg_fr': (-3.5, -6), 'leg_bl': (0.5, 3), 'leg_br': (-3.5, 3)}.items():
+        cubes += leg(name, x, z, 3, 12, 'sheep_face', 'hoof')
+    entity('afflicted_sheep', quad_bones([0, 12, 0], [0, 16, -7], legs), cubes, 13, (2, 2, 0.75))
+
+
+def afflicted_chicken():
+    bones = [{'name': 'root', 'pivot': [0, 0, 0]},
+             {'name': 'body', 'parent': 'root', 'pivot': [0, 4, 0]},
+             {'name': 'head', 'parent': 'body', 'pivot': [0, 9, -3]},
+             {'name': 'wing_l', 'parent': 'body', 'pivot': [3, 9, 0]},
+             {'name': 'wing_r', 'parent': 'body', 'pivot': [-3, 9, 0]},
+             {'name': 'leg_l', 'parent': 'root', 'pivot': [1.5, 4, 0.5]},
+             {'name': 'leg_r', 'parent': 'root', 'pivot': [-1.5, 4, 0.5]}]
+    cubes = [
+        cube('body', [-3, 4, -3], [6, 6, 7], 'feather', noise=8, decor={'all': patches('#c48b86', 14, 3)}),   # plucked raw patches
+        cube('body', [-2, 8, 4], [4, 3, 1], 'feather', noise=8),
+        bubo('body', (-1, 5, -4), (2, 2, 1)),
+        cube('head', [-2, 9, -6], [4, 6, 3], 'feather', decor={'north': glow_eyes('feather')}),
+        cube('head', [-2, 11, -8], [4, 2, 2], 'beak_y', rim=False),
+        cube('head', [-1, 9, -7], [2, 2, 1], 'comb', rim=False),
+        cube('head', [-0.5, 15, -6], [1, 2, 3], 'comb', rim=False),
+        cube('wing_l', [3, 5, -2], [1, 4, 6], 'feather', noise=8),
+        cube('wing_r', [-4, 5, -2], [1, 4, 6], 'feather', noise=8),
+        cube('leg_l', [1, 1, 0], [1, 3, 1], 'beak_y', rim=False),
+        cube('leg_l', [0.5, 0, -1], [2, 1, 2], 'beak_y', rim=False),
+        cube('leg_r', [-2, 1, 0], [1, 3, 1], 'beak_y', rim=False),
+        cube('leg_r', [-2.5, 0, -1], [2, 1, 2], 'beak_y', rim=False),
+    ]
+    entity('afflicted_chicken', bones, cubes, 14, (1, 1.2, 0.5))
+
+
+def afflicted_horse():
+    legs = {'leg_fl': [3.5, 12, -8.5], 'leg_fr': [-3.5, 12, -8.5], 'leg_bl': [3.5, 12, 8.5], 'leg_br': [-3.5, 12, 8.5]}
+    extra = [{'name': 'neck', 'parent': 'body', 'pivot': [0, 20, -10]},
+             {'name': 'tail', 'parent': 'body', 'pivot': [0, 20, 11]}]
+    bones = quad_bones([0, 14, 0], [0, 27, -16], legs, extra)
+    bones[2]['parent'] = 'neck'          # head hangs off the neck
+    cubes = [
+        cube('body', [-5, 12, -11], [10, 9, 22], 'horse', decor={'east': both(ribs, sores(15)), 'west': both(ribs, sores(16)), 'up': sores(17, 3)}),
+        cube('body', [-1, 21, -10], [2, 1, 20], '#3b322b'),
+        cube('body', [-5.5, 18, 7], [11, 3, 4], 'horse'),
+        bubo('body', (5, 15, -5)), bubo('body', (-6, 16, 3)),
+        cube('neck', [-2, 19, -14], [4, 6, 4], 'horse'),
+        cube('neck', [-2, 23, -16], [4, 5, 3], 'horse'),
+        cube('neck', [-1, 20, -11], [2, 9, 1], 'mane', noise=10, rim=False),
+        bubo('neck', (2, 21, -13)),
+        # long head angled down: forehead block, then the muzzle hanging below and forward of it
+        cube('head', [-2.5, 24, -20], [5, 6, 5], 'horse', decor={'north': glow_eyes('horse')}),
+        cube('head', [-2, 19, -21], [4, 6, 4], 'muzzle', decor={'north': teeth}),
+        cube('head', [-2, 30, -17], [1, 2, 1], 'horse', rim=False),
+        cube('head', [1, 30, -17], [1, 2, 1], 'horse', rim=False),
+        cube('tail', [-1, 12, 11], [2, 9, 2], 'mane', noise=10, rim=False),
+    ]
+    for name, (x, z) in {'leg_fl': (2, -10), 'leg_fr': (-5, -10), 'leg_bl': (2, 7), 'leg_br': (-5, 7)}.items():
+        cubes += leg(name, x, z, 3, 12, 'horse', 'hoof')
+    entity('afflicted_horse', bones, cubes, 15, (3, 2.5, 1))
+
+
+def afflicted_wolf():
+    legs = {'leg_fl': [2, 7, -4], 'leg_fr': [-2, 7, -4], 'leg_bl': [2, 7, 5], 'leg_br': [-2, 7, 5]}
+    extra = [{'name': 'tail', 'parent': 'body', 'pivot': [0, 12, 7]}]
+    cubes = [
+        cube('body', [-3, 7, -2], [6, 6, 9], 'wolf', decor={'east': both(ribs, sores(18, 3)), 'west': both(ribs, sores(19, 3))}),
+        cube('body', [-4, 7, -6], [8, 7, 5], 'wolf_dark', noise=10, decor={'all': patches('#7a5a52', 20, 3)}),   # mangy ruff
+        bubo('body', (3, 9, 1)), bubo('body', (-4, 10, 4), (1, 1, 1)),
+        cube('head', [-3, 9, -10], [6, 6, 4], 'wolf', decor={'north': glow_eyes('wolf')}),
+        cube('head', [-1.5, 9, -13], [3, 3, 3], 'wolf_dark', decor={'north': teeth}),
+        cube('head', [-3, 15, -8], [2, 2, 1], 'wolf_dark', rim=False),
+        cube('head', [1, 15, -8], [2, 2, 1], 'wolf_dark', rim=False),
+        cube('tail', [-1, 10, 7], [2, 2, 5], 'wolf_dark', noise=10),
+        cube('tail', [-1, 9, 11], [2, 2, 3], 'wolf_dark', noise=10),
+    ]
+    for name, (x, z) in {'leg_fl': (1, -5), 'leg_fr': (-3, -5), 'leg_bl': (1, 4), 'leg_br': (-3, 4)}.items():
+        cubes += leg(name, x, z, 2, 7, 'wolf')
+    entity('afflicted_wolf', quad_bones([0, 8, 0], [0, 11, -6], legs, extra), cubes, 16, (1.5, 1.2, 0.5))
+
+
+# ---------------------------------------------------------------------------------------------
+# Animations (Molang; math.sin takes degrees)
+# ---------------------------------------------------------------------------------------------
+
+def swing(amount, speed, phase=0):
+    return f'math.sin(query.anim_time * {speed} + {phase}) * {amount}'
+
+
+def animations():
+    doctor = {
+        'misc.idle': {'loop': True, 'animation_length': 4.0, 'bones': {
+            'torso': {'scale': [1, f'1 + {swing(0.01, 90)}', 1]},
+            'head': {'rotation': [swing(3, 90, 90), swing(4, 45), 0]},
+            'right_arm': {'rotation': [swing(2, 90), 0, swing(1.5, 90)]},
+        }},
+        'move.walk': {'loop': True, 'animation_length': 1.2, 'bones': {
+            'right_leg': {'rotation': [swing(22, 300), 0, 0]},
+            'left_leg': {'rotation': [swing(22, 300, 180), 0, 0]},
+            'right_arm': {'rotation': [swing(18, 300, 180), 0, 0]},
+            'left_arm': {'rotation': [swing(8, 300), 0, 0]},
+            'torso': {'position': [0, f'math.abs({swing(0.5, 300)})', 0]},
+            'head': {'rotation': [swing(2, 600), 0, 0]},
+        }},
+    }
+    rat = {
+        'misc.idle': {'loop': True, 'animation_length': 2.0, 'bones': {
+            'head': {'rotation': [swing(4, 720), swing(6, 180), 0]},
+            'tail': {'rotation': [0, swing(12, 180), 0]},
+            'tail_tip': {'rotation': [0, swing(15, 180, 60), 0]},
+        }},
+        'move.walk': {'loop': True, 'animation_length': 0.4, 'bones': {
+            'leg_front_left': {'rotation': [swing(35, 900), 0, 0]},
+            'leg_back_right': {'rotation': [swing(35, 900), 0, 0]},
+            'leg_front_right': {'rotation': [swing(35, 900, 180), 0, 0]},
+            'leg_back_left': {'rotation': [swing(35, 900, 180), 0, 0]},
+            'body': {'position': [0, f'math.abs({swing(0.4, 900)})', 0]},
+            'tail': {'rotation': [0, swing(18, 900), 0]},
+            'tail_tip': {'rotation': [0, swing(22, 900, 90), 0]},
+        }},
+        'attack.bite': {'loop': False, 'animation_length': 0.3, 'bones': {
+            'head': {'rotation': {'0.0': [0, 0, 0], '0.1': [-25, 0, 0], '0.2': [15, 0, 0], '0.3': [0, 0, 0]}},
+        }},
+    }
+
+    def quad(stride, period, head_drop=0, limp='leg_br', extra_walk=None, extra_idle=None, bite=None):
+        speed = 360 / period
+        walk = {
+            'leg_fl': {'rotation': [swing(stride, speed), 0, 0]},
+            'leg_br': {'rotation': [swing(stride * 0.55, speed), 0, 0]} if limp == 'leg_br' else {'rotation': [swing(stride, speed), 0, 0]},
+            'leg_fr': {'rotation': [swing(stride, speed, 180), 0, 0]},
+            'leg_bl': {'rotation': [swing(stride, speed, 180), 0, 0]},
+            'body': {'position': [0, f'math.abs({swing(0.4, speed)})', 0]},
+            'head': {'rotation': [f'{head_drop} + {swing(4, speed * 2)}', 0, 0]},
+        }
+        walk.update(extra_walk or {})
+        idle = {'head': {'rotation': [f'{head_drop} + {swing(3, 90)}', swing(5, 40), swing(1.5, 400)]}}
+        idle.update(extra_idle or {})
+        return {
+            'misc.idle': {'loop': True, 'animation_length': 4.0, 'bones': idle},
+            'move.walk': {'loop': True, 'animation_length': period, 'bones': walk},
+            'attack.bite': {'loop': False, 'animation_length': 0.4, 'bones': bite or {
+                'head': {'rotation': {'0.0': [0, 0, 0], '0.12': [-20, 0, 0], '0.25': [18, 0, 0], '0.4': [0, 0, 0]}}}},
+        }
+
+    tail_sway = {'tail': {'rotation': [0, swing(10, 120), 0]}}
+    extra = {
+        'afflicted_cow': quad(22, 1.4, head_drop=8),
+        'afflicted_pig': quad(30, 0.8),
+        'afflicted_sheep': quad(24, 1.1, head_drop=6),
+        'afflicted_wolf': quad(35, 0.7, extra_walk={'tail': {'rotation': [0, swing(15, 514), 0]}}, extra_idle=tail_sway),
+        'afflicted_horse': quad(28, 1.2, extra_walk={'tail': {'rotation': [swing(8, 300), 0, 0]}}, extra_idle=tail_sway, bite={
+            'leg_fl': {'rotation': {'0.0': [0, 0, 0], '0.15': [-45, 0, 0], '0.3': [10, 0, 0], '0.4': [0, 0, 0]}},
+            'leg_fr': {'rotation': {'0.0': [0, 0, 0], '0.15': [-45, 0, 0], '0.3': [10, 0, 0], '0.4': [0, 0, 0]}},
+            'body': {'rotation': {'0.0': [0, 0, 0], '0.15': [-12, 0, 0], '0.3': [3, 0, 0], '0.4': [0, 0, 0]}},
+        }),
+        'afflicted_chicken': {
+            'misc.idle': {'loop': True, 'animation_length': 2.0, 'bones': {
+                'head': {'rotation': [swing(10, 360), swing(8, 90), 0]}}},
+            'move.walk': {'loop': True, 'animation_length': 0.4, 'bones': {
+                'leg_l': {'rotation': [swing(35, 900), 0, 0]},
+                'leg_r': {'rotation': [swing(35, 900, 180), 0, 0]},
+                'wing_l': {'rotation': [0, 0, f'-math.abs({swing(25, 900)})']},
+                'wing_r': {'rotation': [0, 0, f'math.abs({swing(25, 900)})']},
+                'head': {'position': [0, 0, swing(0.6, 900)]}}},
+            'attack.bite': {'loop': False, 'animation_length': 0.3, 'bones': {
+                'head': {'rotation': {'0.0': [0, 0, 0], '0.1': [35, 0, 0], '0.2': [-5, 0, 0], '0.3': [0, 0, 0]}}}},
+        },
+    }
+    for name, anims in [('plague_doctor', doctor), ('plague_rat', rat)] + list(extra.items()):
+        write_json(os.path.join(ASSETS, 'animations', 'entity', f'{name}.animation.json'),
+                   {'format_version': '1.8.0', 'animations': anims, 'geckolib_format_version': 2})
+
+
+# ---------------------------------------------------------------------------------------------
+# 16x16 item icons and 18x18 effect icons (hand pixel art)
+# ---------------------------------------------------------------------------------------------
+
+def sprite(path, rows, key):
+    img = [[rgba(key[ch]) if ch != '.' else (0, 0, 0, 0) for ch in row] for row in rows]
+    write_png(path, img)
+
+
+def icons():
+    sprite(os.path.join(ASSETS, 'textures', 'item', 'plague_mask.png'), [
+        '................',
+        '.....kkkkkk.....',
+        '.....kkkkkk.....',
+        '.....bbbbbb.....',
+        '..kkkkkkkkkkkk..',
+        '.....hhhhhhh....',
+        '....hrlrhhhhh...',
+        '....hrrrhhhhh...',
+        '..wwwhhhhhhhh...',
+        'wwwwwwhhhhhhh...',
+        '.WWwwwhhhhhhh...',
+        '...WWwhhhhhh....',
+        '.....hhhhhhh....',
+        '.....hhhhhh.....',
+        '......hhhh......',
+        '................',
+    ], {'k': 'hat', 'b': 'band', 'h': 'hood', 'r': 'brass', 'l': 'lens', 'w': 'beak', 'W': '#9c8a64'})
+    sprite(os.path.join(ASSETS, 'textures', 'item', 'four_thieves_vinegar.png'), [
+        '................',
+        '.......cc.......',
+        '.......cc.......',
+        '......gnng..e...',
+        '.......gg..ee...',
+        '......gvvg.e....',
+        '.....gvvvvg.....',
+        '....gvvVvvvg....',
+        '....gvVvvvvg....',
+        '....gLLLLLLg....',
+        '....gLLLLLLg....',
+        '....gvvvvvDg....',
+        '....gvvvvDDg....',
+        '.....gDDDDg.....',
+        '......gggg......',
+        '................',
+    ], {'c': '#8a6a43', 'g': '#c8dfe0', 'n': '#a9c4c6', 'v': '#9a6b24', 'V': '#c99a4b', 'D': '#6e4a17',
+        'L': '#d9c9a0', 'e': '#5f7f3a'})
+    sprite(os.path.join(ASSETS, 'textures', 'item', 'rat_tail.png'), [
+        '................',
+        '................',
+        '...........fff..',
+        '..........ffff..',
+        '..........fff...',
+        '.........pP.....',
+        '........pP......',
+        '.......pP.......',
+        '......pP........',
+        '.....pP.........',
+        '....pP..........',
+        '...pP...........',
+        '...p............',
+        '..pP............',
+        '..p.............',
+        '................',
+    ], {'f': 'fur', 'p': 'skin', 'P': '#9c6763'})
+
+    sprite(os.path.join(ASSETS, 'textures', 'item', 'shrouded_corpse.png'), [
+        '................',
+        '................',
+        '................',
+        '.....llll.......',
+        '...llLLLLll.....',
+        '..lLLLLrLLLll...',
+        '.lLLLLLrLLLLLl..',
+        '.lLLLLLrLLLLLLl.',
+        '.lddLLLrLLLLddl.',
+        '.lLLddLrLLddLLl.',
+        '..lLLLdrddLLLl..',
+        '...llLLrLLLll...',
+        '.....lllll......',
+        '................',
+        '................',
+        '................',
+    ], {'l': '#6e6656', 'L': '#cfc6ad', 'd': '#9c937c', 'r': '#7a5a3a'})
+    write_png(os.path.join(ASSETS, 'textures', 'particle', 'fly.png'),
+              [[(20, 18, 16, 255) if 2 <= x <= 5 and 3 <= y <= 4 or x in (2, 5) and y == 2 else (0, 0, 0, 0)
+                for x in range(8)] for y in range(8)])
+
+    def circle_icon(path, ring, inner, spots):
+        img = [[(0, 0, 0, 0)] * 18 for _ in range(18)]
+        for y in range(18):
+            for x in range(18):
+                d = ((x - 8.5) ** 2 + (y - 8.5) ** 2) ** 0.5
+                if d <= 7.5:
+                    img[y][x] = rgba(ring if d > 6.2 else inner)
+        for x, y, c in spots:
+            img[y][x] = rgba(c)
+        write_png(path, img)
+
+    effects = os.path.join(ASSETS, 'textures', 'mob_effect')
+    circle_icon(os.path.join(effects, 'plague.png'), '#2a2f16', '#6b7330',
+                [(6, 6, '#1a1a10'), (7, 6, '#1a1a10'), (6, 7, '#1a1a10'), (11, 9, '#1a1a10'),
+                 (11, 10, '#1a1a10'), (10, 10, '#1a1a10'), (7, 12, '#3a1a14'), (8, 12, '#3a1a14')])
+    cross = [(x, y, '#ffffff') for x in range(7, 11) for y in range(4, 14)] + \
+            [(x, y, '#ffffff') for x in range(4, 14) for y in range(7, 11)]
+    circle_icon(os.path.join(effects, 'plague_immunity.png'), '#2f5a24', '#5f9a4a', cross)
+
+
+if __name__ == '__main__':
+    plague_doctor()
+    plague_mask()
+    plague_rat()
+    afflicted_cow()
+    afflicted_pig()
+    afflicted_sheep()
+    afflicted_chicken()
+    afflicted_horse()
+    afflicted_wolf()
+    animations()
+    icons()

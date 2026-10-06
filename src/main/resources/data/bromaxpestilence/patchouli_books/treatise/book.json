@@ -1,0 +1,9 @@
+{
+  "name": "A Physician's Treatise",
+  "landing_text": "On the $(4)Pestilence$(), its spreading, and its cure.$(br2)Set down by a physician who has walked too many fevered villages, so that others need not learn as he did.",
+  "version": 1,
+  "model": "patchouli:book_brown",
+  "book_texture": "patchouli:textures/gui/book_brown.png",
+  "show_progress": false,
+  "use_resource_pack": true
+}
