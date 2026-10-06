@@ -321,7 +321,39 @@ def round6():
     ]
 
 
-ROUNDS = [round1, round2, round3, round4, round5, round6]
+def round7():
+    """Rat spoils, the shrouded dead, the coat and trousers."""
+    E = '................'
+    return [
+        item('rat_tail', [
+            E, '.........ffff...', '........fFFFFf..', '........fFFFf...', '.........sss....',
+            '........sRs.....', '.......sSs......', '......sRs.......', '.....sSs........', '....sRs.........',
+            '...sSs..........', '..sRs...........', '..sS............', '.sR.............', '.s..............', E],
+            {'f': '#3a302a', 'F': '#5a4a40', 's': '#9c6763', 'S': '#d8a8a0', 'R': '#b88078'}),
+        item('rat_crown', [
+            E, E, '..b....b....b...', '..B...bBb...B...', '.bBb..bBb..bBb..',
+            '.bBBbbBBBbbBBb..', '.oBBBBBBBBBBBo..', '.otTtTtTtTtTto..', '.oBBBBkBkBBBBo..', '.obbbbbbbbbbbo..',
+            '..ooooooooooo...', E, E, E, E, E],
+            {'b': '#a89e88', 'B': '#e0d8c4', 'o': '#5a5040', 't': '#b07a75', 'T': '#d8a8a0', 'k': '#1a1612'}),
+        item('shrouded_corpse', [
+            E, E, E, E, '...oooooooooo...',
+            '..oLLHLLLLLLLo..', '.oHLrLLLrLLLrLo.', '.oLLrLxLrLLLrLLo', '.oLLrLLLrLxLrLLo', '.oLdrLLdrLLdrLo.',
+            '..oddddddddddo..', '...oooooooooo...', E, E, E, E],
+            {'o': '#6e6656', 'L': '#d8cfb4', 'H': '#f0ead8', 'd': '#a89e84', 'r': '#7a5a3a', 'x': '#8a6a5a'}),
+        item('doctors_coat', [
+            E, '..ooo......ooo..', '.oHCCo....oCCCo.', '.oCCCCooooCCCCo.', '.oCCCCKKKKCCCCo.',
+            '..ooCCCbbCCCoo..', '....oHCCCCCo....', '....oCbCCbCo....', '....oHCCCCCo....', '....rrrBBrrr....',
+            '....oHCCCCCo....', '...oHCCCCCCCo...', '...oCCCCCCCCo...', '...oooooooooo...', E, E],
+            {'o': '#0e0c0c', 'C': '#2e2a28', 'H': '#4a4440', 'K': '#1e1a1a', 'b': '#c8a040', 'B': '#e0c050', 'r': '#5a3d22'}),
+        item('doctors_trousers', [
+            E, E, '...oooooooooo...', '...oHTTTTTTTo...', '...oHTTTTTTTo...',
+            '...oHTTooTTTo...', '...oHTo..oTTo...', '...oHTo..oTTo...', '...oHTo..oTTo...', '...oHTo..oTTo...',
+            '...oHTo..oTTo...', '...oHTo..oTTo...', '...oDDo..oDDo...', '...oooo..oooo...', E, E],
+            {'o': '#0e0c0c', 'T': '#2a2522', 'H': '#4a423c', 'D': '#1a1614'}),
+    ]
+
+
+ROUNDS = [round1, round2, round3, round4, round5, round6, round7]
 
 if __name__ == '__main__':
     made = []

@@ -30,3 +30,8 @@ textures/item/quicklime_bomb.png
 textures/item/fumigation_bomb.png
 textures/item/pestilent_ichor.png
 textures/item/surgeons_steel.png
+textures/item/rat_tail.png
+textures/item/rat_crown.png
+textures/item/shrouded_corpse.png
+textures/item/doctors_coat.png
+textures/item/doctors_trousers.png
