@@ -19,10 +19,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, '..', 'src', 'main', 'resources', 'assets', 'bromaxpestilence')
 
 PALETTE = {
-    'hood': '#2b2420', 'lens': '#9fc7c0', 'brass': '#b08d3c', 'beak': '#c9b48a',
-    'hat': '#1c1a1a', 'band': '#4a3526', 'coat': '#2e2a28', 'cape': '#232020',
-    'belt': '#5a3d22', 'glove': '#3b2a1c', 'boot': '#1f1b18', 'cane': '#6b4a2b',
-    'fur': '#4a3f38', 'fur_dark': '#382f2a', 'skin': '#c48b86', 'eye': '#a01818',
+    'hood': '#3e3028', 'lens': '#a8d8cc', 'brass': '#c09a48', 'beak': '#d8c8a0',
+    'hat': '#2c2622', 'band': '#6a4a30', 'coat': '#3d3530', 'cape': '#2e2826',
+    'belt': '#6a4628', 'glove': '#5a3e28', 'boot': '#2a2420', 'cane': '#7a5432',
+    'fur': '#5a4a40', 'fur_dark': '#3e322c', 'skin': '#c48b86', 'eye': '#a01818',
     'sore': '#8c8a3a',
     # Afflicted
     'bubo': '#2a1c22', 'glow': '#d4d94a', 'hoof': '#2e2620', 'horn': '#c9bfa5', 'bone': '#d8cfb8',
@@ -81,9 +81,60 @@ def write_json(path, data):
 FACE_LIGHT = {'up': 1.15, 'down': 0.7, 'north': 1.0, 'south': 0.92, 'east': 0.85, 'west': 0.85}
 
 
-def cube(bone, origin, size, color, decor=None, inflate=0.0, noise=5, rim=True):
+def cube(bone, origin, size, color, decor=None, inflate=0.0, noise=5, rim=True, mat=None):
     return dict(bone=bone, origin=origin, size=size, color=color, decor=decor or {}, inflate=inflate,
-                noise=noise, rim=rim)
+                noise=noise, rim=rim, mat=mat)
+
+
+# ---- materials: how a surface is shaded (remastered models) ----------------------------------
+FACE_T = {'up': 0.22, 'down': -0.45, 'north': 0.0, 'south': -0.12, 'east': -0.18, 'west': -0.18}
+
+
+def tone(c, t):
+    """Pixel-art shading: darker shades drift cool and richer, lighter ones warm and paler."""
+    import colorsys
+    h, l, s_ = colorsys.rgb_to_hls(c[0] / 255, c[1] / 255, c[2] / 255)
+    if t < 0:
+        l *= 1 + t * 0.75
+        h = h + (0.62 - h) * min(0.25, -t * 0.12) if s_ > 0.05 else h
+        s_ = min(1, s_ * (1 - t * 0.25))
+    else:
+        l = l + (1 - l) * t * 0.55
+        h = h + (0.11 - h) * min(0.25, t * 0.12) if s_ > 0.05 else h
+        s_ *= 1 - t * 0.15
+    r, g, b = colorsys.hls_to_rgb(h % 1, max(0, min(1, l)), max(0, min(1, s_)))
+    return (int(r * 255), int(g * 255), int(b * 255), c[3])
+
+
+def material_t(mat, xx, yy, w, h, face, rng, cell):
+    side = face not in ('up', 'down')
+    t = FACE_T[face] + ((0.12 - 0.26 * yy / max(1, h - 1)) if side and h > 2 else 0)
+    if mat == 'cloth':
+        t += (-0.15 if (xx + cell(xx, 0) % 2) % 4 == 0 else 0) + rng.uniform(-0.04, 0.04)
+        if side and yy == h - 1:
+            t -= 0.12
+    elif mat == 'leather':
+        t += (cell(xx // 2, yy // 2) % 5 - 2) * 0.035 + rng.uniform(-0.03, 0.03)
+        if side and xx + yy == 1:
+            t += 0.3
+    elif mat == 'fur':
+        t += (cell(xx, yy // 2) % 5 - 2) * 0.06 + (0.08 if yy == 0 and side else 0)
+    elif mat == 'metal':
+        band = max(1, int(h * 0.3))
+        t += 0.4 if yy == band else (-0.18 if yy > h * 0.65 else 0.05) + rng.uniform(-0.02, 0.02)
+    elif mat == 'wood':
+        t += (-0.14 if xx % 3 == 0 else 0) + (cell(xx, yy // 3) % 3 - 1) * 0.04
+    elif mat == 'bone':
+        t += rng.uniform(-0.05, 0.05) + (-0.45 if cell(xx, yy) % 23 == 0 else 0)
+    elif mat == 'flesh':
+        t += (cell(xx // 2, yy // 2) % 5 - 2) * 0.06 + rng.uniform(-0.04, 0.04)
+    elif mat == 'stone':
+        t += (cell(xx // 2, yy // 2) % 5 - 2) * 0.07
+    elif mat == 'glow':
+        t = 0.1
+    if mat != 'glow' and w >= 3 and h >= 3 and (xx == w - 1 or yy == h - 1):
+        t -= 0.1
+    return t
 
 
 def face_dims(size):
@@ -104,7 +155,8 @@ def pack(rects, width):
     return placed, y + shelf
 
 
-def build(name, bones, cubes, seed, out_geo, out_tex, identifier, bounds=(2, 3, 1.25)):
+def build(name, bones, cubes, seed, out_geo, out_tex, identifier, bounds=(2, 3, 1.25), mats=None):
+    """mats: {colour key: material} for cubes that don't name their own material (remastered models)."""
     rects = []
     for i, c in enumerate(cubes):
         for face, (w, h) in face_dims(c['size']).items():
@@ -123,20 +175,26 @@ def build(name, bones, cubes, seed, out_geo, out_tex, identifier, bounds=(2, 3, 
 
     for i, c in enumerate(cubes):
         base = rgba(c['color'])
+        mat = c.get('mat') or (mats or {}).get(c['color'])
         for face, (w, h) in face_dims(c['size']).items():
             u, v = placed[(i, face)]
             w, h = int(w), int(h)
+            salt = zlib.crc32(f'{name}{i}{face}'.encode())
+            cell = lambda a, b, salt=salt: zlib.crc32(f'{salt},{a},{b}'.encode()) % 997
             for yy in range(h):
                 for xx in range(w):
-                    col = scale(base, FACE_LIGHT[face] * (1 + rng.uniform(-c['noise'], c['noise']) / 100))
-                    if c['rim'] and w >= 3 and h >= 3 and (xx in (0, w - 1) or yy in (0, h - 1)):
-                        col = scale(col, 0.85)
+                    if mat:
+                        col = tone(base, material_t(mat, xx, yy, w, h, face, rng, cell))
+                    else:
+                        col = scale(base, FACE_LIGHT[face] * (1 + rng.uniform(-c['noise'], c['noise']) / 100))
+                        if c['rim'] and w >= 3 and h >= 3 and (xx in (0, w - 1) or yy in (0, h - 1)):
+                            col = scale(col, 0.85)
                     img[v + yy][u + xx] = col
             decor = c['decor'].get(face) or c['decor'].get('all')
             if decor:
-                def put(x, y, color, f=FACE_LIGHT[face], u=u, v=v, w=w, h=h):
+                def put(x, y, color, face=face, u=u, v=v, w=w, h=h, mat=mat):
                     if 0 <= x < w and 0 <= y < h:
-                        img[v + y][u + x] = scale(rgba(color), f)
+                        img[v + y][u + x] = tone(rgba(color), FACE_T[face] * 0.6) if mat else scale(rgba(color), FACE_LIGHT[face])
                 decor(put, w, h)
 
     geo_bones = []
@@ -252,21 +310,45 @@ def rat_back(put, w, h):
 # Plague doctor head (shared by the mob and the mask armour)
 # ---------------------------------------------------------------------------------------------
 
+DOCTOR_MATS = {'bone': 'bone', 'hood': 'leather', 'brass': 'metal', 'beak': 'leather', '#b39f76': 'leather', '#9c8a64': 'leather', 'hat': 'cloth', 'band': 'leather', 'belt': 'leather', 'coat': 'leather', 'cape': 'leather', 'glove': 'leather', 'boot': 'leather', 'cane': 'wood', '#2a2522': 'cloth'}
+RAT_MATS = {'fur': 'fur', 'skin': 'flesh', '#b07a75': 'flesh', '#8a7a70': 'fur'}
+CROW_MATS = {'#2a2c38': 'fur', '#24242c': 'fur', '#1a1a22': 'fur', '#33333a': 'metal', '#3a3a40': 'leather'}
+
+
+def rimmed_lens(put, w, h):
+    """Brass-rimmed glass: rim all round, pale glass inside with a glint."""
+    for y in range(h):
+        for x in range(w):
+            put(x, y, 'brass' if x in (0, w - 1) or y in (0, h - 1) else 'lens')
+    if w > 2 and h > 2:
+        put(1, 1, '#e8fff8')
+
+
+def beak_side(put, w, h):
+    """Breathing holes near the root of the beak."""
+    put(w - 2, h - 2, '#2a1c14'); put(w - 3, h - 2, '#2a1c14')
+
+
+def fingers(put, w, h):
+    for x in range(0, w, 2):
+        put(x, h - 1, '#3a2818')
+
+
 def doctor_head(bone, inflate):
     t = inflate  # cubes in front of / above the head move out with the inflated hood
     return [
         cube(bone, [-4, 24, -4], [8, 8, 8], 'hood', inflate=inflate),
         cube(bone, [-4, 26, -4], [8, 1, 8], 'belt', inflate=inflate + 0.15),   # strap holding the beak
-        cube(bone, [-3, 28.5, -4.6 - t], [2, 2, 1], 'brass', decor={'north': lens_face}),
-        cube(bone, [1, 28.5, -4.6 - t], [2, 2, 1], 'brass', decor={'north': lens_face}),
+        cube(bone, [-3.5, 27.5, -4.6 - t], [3, 3, 1], 'brass', decor={'north': rimmed_lens}),
+        cube(bone, [0.5, 27.5, -4.6 - t], [3, 3, 1], 'brass', decor={'north': rimmed_lens}),
         # The beak curves downward in steps rather than by rotation.
-        cube(bone, [-2, 24, -10 - t], [4, 4, 6], 'beak', decor={'up': beak_top}),
+        cube(bone, [-2, 24, -10 - t], [4, 4, 6], 'beak', decor={'up': beak_top, 'east': beak_side, 'west': beak_side}),
         cube(bone, [-1.5, 23.5, -13 - t], [3, 3, 3], 'beak', decor={'up': beak_top}),
         cube(bone, [-1, 23, -15 - t], [2, 2, 2], '#b39f76'),
         cube(bone, [-0.5, 22.5, -16 - t], [1, 1, 1], '#9c8a64', rim=False),
         cube(bone, [-7, 32 + t, -7], [14, 1, 14], 'hat'),
         cube(bone, [-4.5, 33 + t, -4.5], [9, 1, 9], 'band', inflate=0.1),
-        cube(bone, [-4.5, 34 + t, -4.5], [9, 3, 9], 'hat'),
+        cube(bone, [-4.5, 34 + t, -4.5], [9, 4, 9], 'hat'),
     ]
 
 
@@ -283,22 +365,26 @@ def plague_doctor():
     ]
     cubes = doctor_head('skull', 0) + [
         cube('torso', [-4, 12, -2], [8, 12, 4], 'coat', decor={'north': coat_front}),
-        cube('torso', [-5, 20, -3], [10, 4, 6], 'cape'),                     # shoulder capelet
-        cube('torso', [-4.5, 2, -3], [9, 10, 6], 'coat', decor={'north': skirt_front}),
+        cube('torso', [-4.5, 22, -3], [9, 3, 6], 'cape'),                     # high collar
+        cube('torso', [-6, 19, -3.5], [12, 4, 7], 'cape'),                    # capelet over the shoulders
+        cube('torso', [-4.5, 6, -3], [9, 6, 6], 'coat', decor={'north': skirt_front}),
+        cube('torso', [-5, 2, -3.5], [10, 4, 7], 'coat', decor={'north': skirt_front}),   # skirts flaring at the hem
         cube('torso', [-4.5, 11, -3], [9, 2, 6], 'belt', inflate=0.1, decor={'north': belt_front}),
         cube('right_arm', [-8, 14, -2], [4, 10, 4], 'coat'),
-        cube('right_arm', [-7.5, 11, -1.5], [3, 3, 3], 'glove'),
+        cube('right_arm', [-8.5, 13, -2.5], [5, 2, 5], 'cape'),              # turned-back cuff
+        cube('right_arm', [-7.5, 10, -1.5], [3, 3, 3], 'glove', decor={'all': fingers}),
         cube('left_arm', [4, 14, -2], [4, 10, 4], 'coat'),
-        cube('left_arm', [4.5, 11, -1.5], [3, 3, 3], 'glove'),
-        cube('left_arm', [5.5, 0, -3], [1, 14, 1], 'cane', noise=8),        # cane hangs from the left hand
-        cube('left_arm', [5, 13.5, -3.5], [2, 1, 2], 'brass'),
+        cube('left_arm', [3.5, 13, -2.5], [5, 2, 5], 'cape'),
+        cube('left_arm', [4.5, 10, -1.5], [3, 3, 3], 'glove', decor={'all': fingers}),
+        cube('left_arm', [5.5, 0, -3], [1, 13, 1], 'cane'),                  # cane hangs from the left hand
+        cube('left_arm', [5, 13, -3.5], [2, 2, 2], 'bone', decor={'north': sockets}),     # skull-topped
         cube('right_leg', [-4, 0, -2], [4, 12, 4], 'boot'),
         cube('left_leg', [0, 0, -2], [4, 12, 4], 'boot'),
     ]
     build('plague_doctor', bones, cubes, 202,
           os.path.join(ASSETS, 'geo', 'entity', 'plague_doctor.geo.json'),
           os.path.join(ASSETS, 'textures', 'entity', 'plague_doctor.png'),
-          'geometry.plague_doctor', bounds=(3, 3.5, 1.5))
+          'geometry.plague_doctor', bounds=(3, 3.5, 1.5), mats=DOCTOR_MATS)
 
 
 def plague_mask():
@@ -311,7 +397,7 @@ def plague_mask():
     build('plague_mask', bones, doctor_head('armorHead', 0.6), 202,
           os.path.join(ASSETS, 'geo', 'item', 'armor', 'plague_mask.geo.json'),
           os.path.join(ASSETS, 'textures', 'item', 'armor', 'plague_mask.png'),
-          'geometry.plague_mask', bounds=(2, 2.5, 1.5))
+          'geometry.plague_mask', bounds=(2, 2.5, 1.5), mats=DOCTOR_MATS)
 
 
 def plague_rat():
@@ -327,24 +413,33 @@ def plague_rat():
         {'name': 'leg_back_left', 'parent': 'root', 'pivot': [1.5, 2, 3.5]},
         {'name': 'leg_back_right', 'parent': 'root', 'pivot': [-1.5, 2, 3.5]},
     ]
+    def ear(put, w, h):
+        for y in range(h):
+            for x in range(w):
+                put(x, y, '#c48b86' if (x, y) != (0, 0) else '#e8b0a8')
+        put(w - 1, h - 1, '#8a5a56')
+
     cubes = [
-        cube('body', [-2.5, 2, -4], [5, 4, 9], 'fur', noise=10, decor={'up': rat_back}),
-        cube('body', [-3, 2, 0], [6, 5, 5], 'fur', noise=10, decor={'up': rat_back}),   # haunches
-        cube('skull', [-2, 2.5, -8], [4, 3, 4], 'fur', noise=10, decor={'north': rat_face}),
-        cube('skull', [-1, 2.5, -10], [2, 2, 2], 'skin', decor={'north': snout_face}, rim=False),
-        cube('skull', [-2.5, 5.5, -6], [1, 2, 1], 'skin', rim=False),
-        cube('skull', [1.5, 5.5, -6], [1, 2, 1], 'skin', rim=False),
-        cube('tail', [-0.5, 3, 5], [1, 1, 6], 'skin', rim=False),
+        cube('body', [-2.5, 2, -4], [5, 4, 9], 'fur', decor={'up': rat_back}),
+        cube('body', [-3, 2, 0], [6, 5, 5], 'fur', decor={'up': rat_back}),          # haunches
+        cube('body', [-2, 1.5, -3], [4, 1, 7], '#8a7a70'),                            # paler belly
+        cube('skull', [-2, 2, -7], [4, 4, 3], 'fur', decor={'north': rat_face}),
+        cube('skull', [-1.5, 2, -9], [3, 3, 2], 'fur'),                               # the snout tapers
+        cube('skull', [-1, 2, -10], [2, 2, 1], 'skin', decor={'north': snout_face}, rim=False),
+        cube('skull', [-3, 5.5, -6], [2, 2, 1], 'skin', decor={'north': ear}, rim=False),
+        cube('skull', [1, 5.5, -6], [2, 2, 1], 'skin', decor={'north': ear}, rim=False),
+        cube('tail', [-1, 2.5, 5], [2, 2, 3], 'skin'),                                # thick at the root
+        cube('tail', [-0.5, 3, 8], [1, 1, 3], 'skin', rim=False),
         cube('tail_tip', [-0.5, 3, 11], [1, 1, 6], '#b07a75', rim=False),
         cube('leg_front_left', [1, 0, -3.5], [1, 2, 1], 'skin', rim=False),
         cube('leg_front_right', [-2, 0, -3.5], [1, 2, 1], 'skin', rim=False),
-        cube('leg_back_left', [1, 0, 3], [1, 2, 1], 'skin', rim=False),
-        cube('leg_back_right', [-2, 0, 3], [1, 2, 1], 'skin', rim=False),
+        cube('leg_back_left', [1, 0, 3], [2, 2, 2], 'skin', rim=False),               # big hind feet
+        cube('leg_back_right', [-3, 0, 3], [2, 2, 2], 'skin', rim=False),
     ]
     build('plague_rat', bones, cubes, 66,
           os.path.join(ASSETS, 'geo', 'entity', 'plague_rat.geo.json'),
           os.path.join(ASSETS, 'textures', 'entity', 'plague_rat.png'),
-          'geometry.plague_rat', bounds=(2, 1, 0.25))
+          'geometry.plague_rat', bounds=(2, 1, 0.25), mats=RAT_MATS)
 
 
 
@@ -892,7 +987,10 @@ def doctors_garb():
         cube('armorBody', [-4, 20, -2], [8, 4, 4], 'cape', inflate=1.0),                      # shoulder capelet
         cube('armorBody', [-4, 4, -2], [8, 8, 4], 'coat', inflate=1.0, decor={'north': skirt_front}),   # long skirts
         cube('armorBody', [-4, 11, -2], [8, 2, 4], 'belt', inflate=0.75, decor={'north': belt_front}),
+        cube('armorBody', [-4.5, 22, -2.5], [9, 3, 5], 'cape', inflate=0.6),                     # high collar
         cube('armorRightArm', [-8, 12, -2], [4, 12, 4], 'coat', inflate=0.55),
+        cube('armorRightArm', [-8, 13, -2], [4, 2, 4], 'cape', inflate=0.85),
+        cube('armorLeftArm', [4, 13, -2], [4, 2, 4], 'cape', inflate=0.85),
         cube('armorRightArm', [-8, 12, -2], [4, 3, 4], 'glove', inflate=0.7),
         cube('armorLeftArm', [4, 12, -2], [4, 12, 4], 'coat', inflate=0.55),
         cube('armorLeftArm', [4, 12, -2], [4, 3, 4], 'glove', inflate=0.7),
@@ -904,7 +1002,7 @@ def doctors_garb():
     build('doctors_garb', bones, cubes, 303,
           os.path.join(ASSETS, 'geo', 'item', 'armor', 'doctors_garb.geo.json'),
           os.path.join(ASSETS, 'textures', 'item', 'armor', 'doctors_garb.png'),
-          'geometry.doctors_garb', bounds=(2, 2.5, 1))
+          'geometry.doctors_garb', bounds=(2, 2.5, 1), mats=DOCTOR_MATS)
 
 
 def plague_cross():
@@ -1223,16 +1321,21 @@ def vermin():
              {'name': 'tail', 'parent': 'body', 'pivot': [0, 5, 4]},
              {'name': 'leg_left', 'parent': 'root', 'pivot': [1, 3, 0]},
              {'name': 'leg_right', 'parent': 'root', 'pivot': [-1, 3, 0]}]
-    cubes = [cube('body', [-2, 3, -3], [4, 4, 7], '#1a1a20', noise=8),
-             cube('skull', [-1.5, 6, -6], [3, 3, 3], '#1a1a20', decor={'north': crow_face}),
-             cube('skull', [-0.5, 6.5, -8], [1, 1, 2], '#3a3a40', rim=False),
-             cube('wing_left', [2, 4, -2], [1, 3, 6], '#24242c', noise=8),
-             cube('wing_right', [-3, 4, -2], [1, 3, 6], '#24242c', noise=8),
-             cube('tail', [-1.5, 4, 4], [3, 1, 4], '#1a1a20', noise=8),
+    cubes = [cube('body', [-2, 3, -3], [4, 4, 4], '#2a2c38'),                                  # breast
+             cube('body', [-1.5, 3.5, 1], [3, 3, 3], '#2a2c38'),                                 # back, narrowing
+             cube('skull', [-1.5, 6, -5], [3, 3, 3], '#2a2c38', decor={'north': crow_face}),
+             cube('skull', [-1, 6, -7], [2, 2, 2], '#33333a'),                                   # heavy beak
+             cube('skull', [-0.5, 6, -8], [1, 1, 1], '#44444c', rim=False),
+             cube('wing_left', [2, 4, -2], [1, 3, 5], '#30323e'),
+             cube('wing_left', [2, 4, 3], [1, 2, 3], '#22242e'),                                 # long primaries
+             cube('wing_right', [-3, 4, -2], [1, 3, 5], '#30323e'),
+             cube('wing_right', [-3, 4, 3], [1, 2, 3], '#22242e'),
+             cube('tail', [-1.5, 4, 4], [3, 1, 3], '#22242e'),
+             cube('tail', [-2, 4, 7], [4, 1, 2], '#22242e'),                                     # fanned tail
              cube('leg_left', [0.5, 0, 0], [1, 3, 1], '#3a3a40', rim=False),
              cube('leg_right', [-1.5, 0, 0], [1, 3, 1], '#3a3a40', rim=False)]
     build('carrion_crow', bones, cubes, 71, os.path.join(ASSETS, 'geo', 'entity', 'carrion_crow.geo.json'),
-          os.path.join(ASSETS, 'textures', 'entity', 'carrion_crow.png'), 'geometry.carrion_crow', bounds=(1, 1, 0.25))
+          os.path.join(ASSETS, 'textures', 'entity', 'carrion_crow.png'), 'geometry.carrion_crow', bounds=(1, 1, 0.25), mats=CROW_MATS)
 
 
 def system5_animations():
