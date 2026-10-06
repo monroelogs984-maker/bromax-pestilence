@@ -92,6 +92,9 @@ were swapped for Cold Sweat. Rat-leather and bone tiers were cut as filler.
    items, and design gear around slots.
 5. **Farming feeds the plague**: growing and harvesting crops speeds the Pestilence up (granaries draw
    rats), so farming carries a cost.
+   **DONE**: from phase 1, each mature crop a player harvests adds `farming.pointsHarvest` (0.25); every
+   `ratInterval` a farm of 16+ (farmland, hay/composter x4) near a player draws 1-3 Plague Rats at night
+   (any hour with 4+ stores, a granary), each eating the crop it emerges from. Book: The Harvest.
 6. **Texture pass**: **DONE** (items, effects, blocks and mob models remastered).
 
 Claude's additions:

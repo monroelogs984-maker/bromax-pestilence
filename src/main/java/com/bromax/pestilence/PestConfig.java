@@ -83,6 +83,11 @@ public final class PestConfig {
     // nests and blight
     public static final ModConfigSpec.IntValue NEST_STAGE_TICKS;
     public static final ModConfigSpec.IntValue NEST_SEED_INTERVAL;
+    public static final ModConfigSpec.BooleanValue FARMING;
+    public static final ModConfigSpec.DoubleValue POINTS_HARVEST;
+    public static final ModConfigSpec.IntValue FARM_INTERVAL;
+    public static final ModConfigSpec.IntValue FARM_SIZE;
+    public static final ModConfigSpec.DoubleValue FARM_RAT_CHANCE;
     public static final ModConfigSpec.DoubleValue NEST_SEED_CHANCE_PER_PHASE;
     public static final ModConfigSpec.IntValue NEST_SPACING;
     public static final ModConfigSpec.BooleanValue NEST_SPREADS;
@@ -197,6 +202,19 @@ public final class PestConfig {
                 .defineInRange("pyreRadius", 3, 1, 8);
         CARRY_INFECT_CHANCE = b.comment("Chance every 10 seconds that carrying a shrouded corpse without a mask infects you.")
                 .defineInRange("carryInfectChance", 0.05, 0.0, 1.0);
+        b.pop();
+
+        b.push("farming");
+        FARMING = b.comment("Farming feeds the Pestilence: harvests add Plague Points, and fields and granaries draw rats (from phase 1).")
+                .define("enabled", true);
+        POINTS_HARVEST = b.comment("Plague Points per mature crop harvested by a player.")
+                .defineInRange("pointsHarvest", 0.25, 0.0, 100.0);
+        FARM_INTERVAL = b.comment("Ticks between rolls (per Overworld player) for rats to come to a farm.")
+                .defineInRange("ratInterval", 1200, 100, 1_000_000);
+        FARM_SIZE = b.comment("How big a farm draws rats: farmland blocks within 8, with each hay bale or composter counting as 4.")
+                .defineInRange("farmSize", 16, 1, 1000);
+        FARM_RAT_CHANCE = b.comment("Chance per roll for rats to come, doubled for farms twice the size. Only at night unless 4+ hay bales/composters make a granary.")
+                .defineInRange("ratChance", 0.25, 0.0, 1.0);
         b.pop();
 
         b.push("nests");

@@ -304,6 +304,13 @@ public final class PlagueEvents {
     }
 
     @SubscribeEvent
+    public static void onBlockBreak(net.neoforged.neoforge.event.level.BlockEvent.BreakEvent event) {
+        if (event.getLevel() instanceof ServerLevel level && event.getPlayer() instanceof ServerPlayer player) {
+            com.bromax.pestilence.world.Farming.harvested(level, player, event.getState());
+        }
+    }
+
+    @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity().level() instanceof ServerLevel level) || level.dimension() != Level.OVERWORLD) return;
         Player player = event.getEntity();
@@ -312,6 +319,7 @@ public final class PlagueEvents {
         if (player.tickCount % PestConfig.OUTBREAK_INTERVAL.get() == 0) rollOutbreak(level, player);
         if (player.tickCount % PestConfig.NEST_SEED_INTERVAL.get() == 0 && player instanceof ServerPlayer sp) NestSeeding.roll(level, sp);
         if (player.tickCount % 600 == 0 && player instanceof ServerPlayer sp) rollSweating(level, sp);
+        if (player.tickCount % PestConfig.FARM_INTERVAL.get() == 0 && player instanceof ServerPlayer sp) com.bromax.pestilence.world.Farming.roll(level, sp);
         if (player.tickCount % 100 == 0) {
             VillageOutbreaks villages = VillageOutbreaks.get(level.getServer());
             VillageOutbreaks.centre(level, player.blockPosition(), 64).filter(c -> !villages.known(c)).ifPresent(c -> villages.discover(level, c));

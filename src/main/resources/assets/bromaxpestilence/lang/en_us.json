@@ -47,6 +47,7 @@
   "message.bromaxpestilence.halt_hover": "Stop it from ever climbing past this phase, for a lighter plague. /pestilence resume undoes it.",
   "message.bromaxpestilence.halted": "The Pestilence is stayed: it will climb no higher than phase %s (%s).",
   "message.bromaxpestilence.resumed": "The Pestilence is unchained once more.",
+  "message.bromaxpestilence.farm_rats": "Rats have come for your harvest.",
   "phase.bromaxpestilence.0": "Dormant",
   "phase.bromaxpestilence.0.desc": "The sickness sleeps. Only a few rats carry it.",
   "phase.bromaxpestilence.1": "Whispers",

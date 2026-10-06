@@ -1,0 +1,17 @@
+{
+  "name": "The Harvest",
+  "icon": "minecraft:wheat",
+  "category": "bromaxpestilence:progress",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Where there is grain, there are rats, and where there are rats, there is plague. Once the rats have come in earnest, $(4)every ripe crop you harvest$() feeds the Pestilence a little.$(br2)One harvest is nothing. A great farm reaped every day is not."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Granaries",
+      "text": "A field of sixteen or more tilled blocks draws rats by night; they come up out of the crops and eat them to the root. Hay bales and composters count as stores, and four or more make a $(l)granary$(), which draws them at any hour.$(br2)Keep fields small, keep cats, and keep a torch and a blade near the barn."
+    }
+  ]
+}
