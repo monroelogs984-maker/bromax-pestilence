@@ -240,7 +240,56 @@ def round4():
     ]
 
 
-ROUNDS = [round1, round2, round3, round4]
+def pomander():
+    """A gold filigree lattice ball over dark dried herbs, hung from a red ribbon loop."""
+    img = [[(0, 0, 0, 0)] * 16 for _ in range(16)]
+    for x, y in ((7, 1), (8, 1), (6, 2), (9, 2), (7, 3), (8, 3)):
+        img[y][x] = hexc('#8a2a2a')
+    cx, cy, r = 7.5, 8.5, 4.6
+    for y in range(16):
+        for x in range(16):
+            d = ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5
+            if d > r:
+                continue
+            if d > r - 1:
+                img[y][x] = hexc('#4a3410')
+            elif (x + y) % 3 == 0 or (x - y) % 3 == 0:
+                lit = (x - cx) + (y - cy) < 0
+                img[y][x] = hexc('#f0d070' if lit else '#b08a30')
+            else:
+                img[y][x] = hexc('#4a5a2a' if (x * 7 + y) % 4 else '#6a4a2a')
+    write_png(os.path.join(ITEMS, 'pomander.png'), img)
+    return 'textures/item/pomander.png'
+
+
+def round5():
+    """Charms and the Heart."""
+    return [
+        item('leech_jar', [
+            '................', '......cCCc......', '.....cCCCCc.....', '....gggggggg....', '...gWwwwwwwwg...',
+            '...gWwkwwwwwg...', '...gwwkkwwkwg...', '...gwwwkwkkwg...', '...gwkwwwwkwg...', '...gwkkwwwwwg...',
+            '...gwwkwwkkwg...', '...gwwwwwkwwg...', '...gdddddddDg...', '....gggggggg....', '................', '................'],
+            {'c': '#8a6a43', 'C': '#b08a5a', 'g': '#7ca4c4', 'W': '#e8f4ff', 'w': '#4f6a4a', 'k': '#1a1612', 'd': '#3a3020', 'D': '#2a2418'}),
+        item('censer', [
+            '.......c...s....', '.......c..s.....', '.......c...s....', '......oyo.......', '.....oHYYo......',
+            '....oHYYYYo.....', '...oyyyyyyyo....', '...oYkYkYkYo....', '...oYYYYYYyo....', '...oYkYkYkyo....',
+            '....oyyyyyo.....', '.....ooyoo......', '......ooo.......', '................', '................', '................'],
+            {'c': '#6e6e76', 'o': '#3a2a0c', 'Y': '#c89838', 'H': '#f0d070', 'y': '#8a6420', 'k': '#d8501c', 's': '#c8c8cc'}),
+        pomander(),
+        item('plaguebane_amulet', [
+            '..c..........c..', '...c........c...', '....c......c....', '.....c....c.....', '......cooc......',
+            '.....oGGGGo.....', '....oGeeeeGo....', '...oGeEhEeeGo...', '...oGeEEEEeGo...', '...oGeeEEeeGo...',
+            '....oGeeeeGo....', '.....oGGGGo.....', '......oooo......', '................', '................', '................'],
+            {'c': '#c8a040', 'o': '#6a4a14', 'G': '#e8c050', 'e': '#2a4a14', 'E': '#6aa030', 'h': '#d8ff90'}),
+        item('heart_of_pestilence', [
+            '................', '................', '...ooo...ooo....', '..oHHHo.oHHHo...', '.oHhHHHoHHHHVo..',
+            '.oHHHVHHHHVHHo..', '.oHHHHVHHHVHHo..', '.oHVHHHHHHHHHo..', '..oHHVHHHHVHo...', '...oHHHVHHHo....',
+            '....oHHHHHo.....', '.....oHHHo......', '......oHo.......', '.......d........', '.......d........', '................'],
+            {'o': '#141a08', 'H': '#3a5a14', 'h': '#9ad040', 'V': '#1e2a0a', 'd': '#6a8a20'}),
+    ]
+
+
+ROUNDS = [round1, round2, round3, round4, round5]
 
 if __name__ == '__main__':
     made = []

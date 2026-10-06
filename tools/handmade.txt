@@ -20,3 +20,8 @@ textures/item/plague_poultice.png
 textures/item/mortar_and_pestle.png
 textures/item/physicians_kit.png
 textures/item/lancet.png
+textures/item/leech_jar.png
+textures/item/censer.png
+textures/item/pomander.png
+textures/item/plaguebane_amulet.png
+textures/item/heart_of_pestilence.png
