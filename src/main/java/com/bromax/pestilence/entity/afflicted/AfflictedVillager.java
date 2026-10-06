@@ -39,8 +39,8 @@ public class AfflictedVillager extends AfflictedMob {
         if (tickCount % 100 != 0 || !(level() instanceof ServerLevel level)) return;
         PlagueEffect.cough(level, this);
         for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(3),
-                e -> Plague.canCatch(e) && !Plague.airProtected(e))) {
-            if (random.nextDouble() < 0.15) Plague.infect(e, Disease.PNEUMONIC);
+                Plague::canCatch)) {
+            if (random.nextDouble() < 0.15 * Plague.airExposure(e)) Plague.infect(e, Disease.PNEUMONIC);
         }
     }
 

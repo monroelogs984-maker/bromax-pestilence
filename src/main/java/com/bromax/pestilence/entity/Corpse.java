@@ -174,8 +174,17 @@ public class Corpse extends Entity {
         level().playSound(null, blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 1f, 0.8f);
     }
 
-    /** Burned: gone for good, and the Pestilence loses ground. */
+    /** Quicklime: gone at once, as if burned. */
+    public void dissolve() {
+        consume();
+    }
+
+    /** Burned: gone for good, and the Pestilence loses ground (and whoever is nearest earns a deed). */
     private void consume() {
+        if (level() instanceof ServerLevel lvl) {
+            net.minecraft.world.entity.player.Player near = lvl.getNearestPlayer(this, 16);
+            com.bromax.pestilence.disease.Consecration.deed(near, com.bromax.pestilence.disease.Consecration.BURN);
+        }
         if (level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.LARGE_SMOKE, getX(), getY() + 0.4, getZ(), 15, 0.4, 0.3, 0.4, 0.02);
             level.playSound(null, blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.8f, 1f);
@@ -207,10 +216,10 @@ public class Corpse extends Entity {
     public InteractionResult interact(Player player, InteractionHand hand) {
         if (isBurning()) return InteractionResult.PASS;
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.is(Items.FLINT_AND_STEEL) || stack.is(Items.FIRE_CHARGE)) {
+        if (stack.is(Items.FLINT_AND_STEEL) || stack.is(Items.FIRE_CHARGE) || stack.is(ModRegistry.PYRE_TORCH.get())) {
             if (!level().isClientSide) {
                 ignite();
-                if (stack.is(Items.FLINT_AND_STEEL)) stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+                if (stack.isDamageableItem()) stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
                 else stack.consume(1, player);
             }
             return InteractionResult.sidedSuccess(level().isClientSide);

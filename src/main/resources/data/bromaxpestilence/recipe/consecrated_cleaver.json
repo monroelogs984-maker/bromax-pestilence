@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " S",
+    "IS",
+    "T "
+  ],
+  "key": {
+    "S": {
+      "item": "bromaxpestilence:surgeons_steel"
+    },
+    "I": {
+      "item": "bromaxpestilence:pestilent_ichor"
+    },
+    "T": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "bromaxpestilence:consecrated_cleaver",
+    "count": 1
+  }
+}

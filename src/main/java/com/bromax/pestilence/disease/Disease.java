@@ -23,6 +23,7 @@ import net.minecraft.world.entity.LivingEntity;
  *   SEPTICEMIC Afflicted blows                                  weakness, bleeding (never below 2 hearts)
  *   DYSENTERY  rotten flesh, raw meat, water near nests         hunger and nausea, no cough
  *   ROT        Afflicted/Herald blows from phase 7              weakness, green rot; turns mobs Afflicted; Theriac only
+ *   SWEATING   overheating (Cold Sweat) or hot country           sweat, hunger, weakness; quick; sleep cures it
  */
 public enum Disease implements StringRepresentable {
     BUBONIC(1.0, true, 1.0),
@@ -30,7 +31,9 @@ public enum Disease implements StringRepresentable {
     SEPTICEMIC(0.8, false, 0.0),
     DYSENTERY(0.7, false, 0.0),
     /** Phase 7+: from Afflicted and Herald blows. Mobs and villagers that reach the worst stage turn Afflicted on the spot. */
-    ROT(0.7, false, 0.0);
+    ROT(0.7, false, 0.0),
+    /** From overheating (Cold Sweat) or hot country. Fierce and quick; a full night's sleep cures it. */
+    SWEATING(0.35, false, 0.0);
 
     public static final Codec<Disease> CODEC = StringRepresentable.fromEnum(Disease::values);
 
@@ -98,6 +101,14 @@ public enum Disease implements StringRepresentable {
                     hidden(e, MobEffects.MOVEMENT_SLOWDOWN, 0);
                     if (person) hidden(e, MobEffects.DIG_SLOWDOWN, 1);
                 }
+            }
+            case SWEATING -> {
+                if (stage >= 1) {
+                    if (person) hidden(e, MobEffects.HUNGER, stage);
+                    hidden(e, MobEffects.WEAKNESS, stage - 1);
+                    level.sendParticles(net.minecraft.core.particles.ParticleTypes.FALLING_WATER, e.getX(), e.getY(0.8), e.getZ(), 4, 0.3, 0.3, 0.3, 0);
+                }
+                if (stage >= 2) hidden(e, MobEffects.MOVEMENT_SLOWDOWN, 0);
             }
             case DYSENTERY -> {
                 if (stage >= 1 && person) hidden(e, MobEffects.HUNGER, stage);

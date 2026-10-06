@@ -68,8 +68,8 @@ public class MiasmaCloud extends Entity {
         if (tickCount % 20 == 0) {
             AABB box = new AABB(getX() - r, getY() - 0.5, getZ() - r, getX() + r, getY() + 2, getZ() + r);
             for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, box,
-                    e -> e.distanceToSqr(getX(), e.getY(), getZ()) <= r * r && Plague.canCatch(e) && !Plague.airProtected(e))) {
-                if (random.nextDouble() < PestConfig.MIASMA_CHANCE.get()) Plague.infect(e, Disease.PNEUMONIC);
+                    e -> e.distanceToSqr(getX(), e.getY(), getZ()) <= r * r && Plague.canCatch(e))) {
+                if (random.nextDouble() < PestConfig.MIASMA_CHANCE.get() * Plague.airExposure(e)) Plague.infect(e, Disease.PNEUMONIC);
             }
         }
     }

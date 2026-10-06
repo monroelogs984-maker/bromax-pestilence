@@ -60,6 +60,8 @@ public final class ClientSetup {
         event.registerEntityRenderer(ModRegistry.MIASMA_WRAITH.get(), PlagueRenderers.Wraith::new);
         event.registerEntityRenderer(ModRegistry.BURROWER_RAT.get(), PlagueRenderers.Burrower::new);
         event.registerEntityRenderer(ModRegistry.FLEA_CLOUD.get(), NoopRenderer::new);
+        event.registerEntityRenderer(ModRegistry.FUMIGATION_CLOUD.get(), NoopRenderer::new);
+        event.registerEntityRenderer(ModRegistry.PLAGUE_BOMB.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         event.registerEntityRenderer(ModRegistry.FLY_SWARM.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModRegistry.CORPSE.get(), CorpseRenderer::new);
         event.registerEntityRenderer(ModRegistry.MIASMA_CLOUD.get(), NoopRenderer::new);

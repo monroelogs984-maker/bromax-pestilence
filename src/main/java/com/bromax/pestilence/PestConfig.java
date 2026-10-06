@@ -35,6 +35,8 @@ public final class PestConfig {
     public static final ModConfigSpec.DoubleValue MASK_BITE_REDUCTION;
     public static final ModConfigSpec.DoubleValue MIASMA_CHANCE;
     public static final ModConfigSpec.IntValue OUTBREAK_INTERVAL;
+    public static final ModConfigSpec.DoubleValue NATURAL_SPAWN_RATE;
+    public static final ModConfigSpec.DoubleValue SWEATING_CHANCE;
     public static final ModConfigSpec.DoubleValue OUTBREAK_CHANCE_PER_PHASE;
 
     // phases
@@ -127,6 +129,10 @@ public final class PestConfig {
                 .defineInRange("outbreakInterval", 2400, 200, 1_000_000);
         OUTBREAK_CHANCE_PER_PHASE = b.comment("Chance per roll, multiplied by (phase - 1).")
                 .defineInRange("outbreakChancePerPhase", 0.12, 0.0, 1.0);
+        NATURAL_SPAWN_RATE = b.comment("Fraction of this mod's natural mob spawns that are allowed (lower it to share the night with other mob mods, e.g. Lycanites).")
+                .defineInRange("naturalSpawnRate", 1.0, 0.0, 1.0);
+        SWEATING_CHANCE = b.comment("Chance per half minute that an overheated player (Cold Sweat body temperature over 50, or sprinting through hot country by day) comes down with Sweating Sickness.")
+                .defineInRange("sweatingChance", 0.1, 0.0, 1.0);
         b.pop();
 
         b.push("phases");

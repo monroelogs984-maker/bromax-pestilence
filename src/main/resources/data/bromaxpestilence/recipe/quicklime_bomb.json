@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "bromaxpestilence:quicklime"
+    },
+    {
+      "item": "bromaxpestilence:quicklime"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:string"
+    }
+  ],
+  "result": {
+    "id": "bromaxpestilence:quicklime_bomb",
+    "count": 2
+  }
+}

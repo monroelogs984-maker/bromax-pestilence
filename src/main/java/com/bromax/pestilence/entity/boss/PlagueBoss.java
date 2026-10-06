@@ -64,6 +64,9 @@ public abstract class PlagueBoss extends HeraldMob {
     @Override
     public void die(DamageSource source) {
         super.die(source);
+        if (source.getEntity() instanceof net.minecraft.world.entity.player.Player killer) {
+            com.bromax.pestilence.disease.Consecration.deed(killer, com.bromax.pestilence.disease.Consecration.BOSS);
+        }
         if (level() instanceof ServerLevel level && !isRemoved()) {
             PestilenceData.get(level.getServer()).fall(level.getServer(), phasesBroken());
             Component msg = Component.translatable("message." + Pestilence.MODID + ".boss_slain", getDisplayName()).withStyle(ChatFormatting.GOLD);

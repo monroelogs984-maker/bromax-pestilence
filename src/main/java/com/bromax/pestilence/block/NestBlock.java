@@ -160,6 +160,7 @@ public class NestBlock extends BaseEntityBlock {
     }
 
     private void destroyed(ServerLevel level, BlockPos pos, int stage, Player player) {
+        com.bromax.pestilence.disease.Consecration.deed(player, com.bromax.pestilence.disease.Consecration.NEST);
         Plague.addPoints(player, PestConfig.POINTS_NEST_DESTROYED.get() * stage);
         player.displayClientMessage(Component.translatable("message." + Pestilence.MODID + ".nest_destroyed." + kind.id)
                 .withStyle(ChatFormatting.DARK_GREEN), true);

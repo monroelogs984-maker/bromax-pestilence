@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " W ",
+    "HGH",
+    " H "
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:string"
+    },
+    "H": {
+      "tag": "bromaxpestilence:censer_fuel"
+    },
+    "G": {
+      "item": "minecraft:gold_nugget"
+    }
+  },
+  "result": {
+    "id": "bromaxpestilence:pomander",
+    "count": 1
+  }
+}

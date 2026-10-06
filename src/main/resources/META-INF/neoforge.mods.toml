@@ -39,3 +39,19 @@ A plague that grows. Rats and rotten flesh carry it, the sick cough it onto othe
     versionRange = "*"
     ordering = "NONE"
     side = "BOTH"
+
+# Optional: charms and the mask go in Curios slots when Curios is installed.
+[[dependencies.bromaxpestilence]]
+    modId = "curios"
+    type = "optional"
+    versionRange = "[9,)"
+    ordering = "NONE"
+    side = "BOTH"
+
+# Optional: fevers raise Cold Sweat body temperature, and overheating brings on Sweating Sickness.
+[[dependencies.bromaxpestilence]]
+    modId = "cold_sweat"
+    type = "optional"
+    versionRange = "*"
+    ordering = "NONE"
+    side = "BOTH"

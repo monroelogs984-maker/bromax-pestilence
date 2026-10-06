@@ -1,0 +1,16 @@
+{
+  "name": "The Consecrated Cleaver",
+  "icon": "bromaxpestilence:consecrated_cleaver",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 27,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Forge the Gravewarden's steel into a cleaver and it will grow holier, not with killing but with $(l)good deeds$(): every patient you cure, every corpse burned near you, every nest destroyed, every village saved, every champion of the plague brought down.$(br2)Each of its five levels adds a fifth to its harm against the Pestilence's creatures; from the third it sets them alight; at the fifth each one it fells mends you."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:consecrated_cleaver"
+    }
+  ]
+}

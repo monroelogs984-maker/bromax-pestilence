@@ -1,0 +1,22 @@
+{
+  "name": "Charms",
+  "icon": "bromaxpestilence:pomander",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 28,
+  "pages": [
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:pomander",
+      "text": "A $(l)Pomander$() of dried herbs halves the chance of catching anything from the air. With Curios, wear it at the neck or as a charm; otherwise hold it in your offhand."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:plaguebane_amulet",
+      "text": "Bind the $(l)Heart of the Pestilence$() in gold and nothing it ever was can touch you again: no sickness, no Dread, no Delirium, no Rotting."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "With Curios installed, the beaked mask can also be worn in a head slot, over a helmet."
+    }
+  ]
+}

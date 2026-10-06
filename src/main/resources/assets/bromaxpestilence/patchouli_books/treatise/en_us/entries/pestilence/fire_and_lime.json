@@ -1,0 +1,23 @@
+{
+  "name": "Fire and Lime",
+  "icon": "bromaxpestilence:quicklime_bomb",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 26,
+  "pages": [
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:pyre_torch",
+      "text": "A $(l)Pyre Torch$() sets alight whatever it strikes, burns corpses at a touch, and lights pyres."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:quicklime_bomb",
+      "text": "Thrown, a $(l)Quicklime Bomb$() cleanses the Blight around it, dissolves the dead, kills flea and fly clouds and burns the plague's creatures."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:fumigation_bomb",
+      "text": "A $(l)Fumigation Bomb$() leaves thirty seconds of herb smoke: a brazier you can throw."
+    }
+  ]
+}

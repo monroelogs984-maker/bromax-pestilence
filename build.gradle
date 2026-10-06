@@ -2,7 +2,7 @@ plugins {
     id 'net.neoforged.gradle.userdev' version '7.1.38'
 }
 
-version = '0.7.0-1.21.1'
+version = '0.8.0-1.21.1'
 group = 'com.bromax.pestilence'
 
 base {
@@ -26,6 +26,9 @@ dependencies {
     implementation "net.neoforged:neoforge:21.1.233"
     // Compiled against the exact GeckoLib jar S202 ships (copied into libs/).
     implementation files('libs/geckolib-neoforge-1.21.1-4.9.3.jar')
+    // Optional integrations (S202 ships both); only touched when the mod is loaded.
+    compileOnly files('libs/curios-neoforge-9.5.1+1.21.1.jar')
+    compileOnly files('libs/ColdSweat-2.4.3.1.jar')
 }
 
 jar {

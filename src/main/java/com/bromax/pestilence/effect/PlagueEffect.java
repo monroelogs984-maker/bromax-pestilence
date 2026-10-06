@@ -35,7 +35,11 @@ public class PlagueEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity entity, int stage) {
-        if (entity.level() instanceof ServerLevel level) Plague.disease(entity).symptoms(level, entity, stage, Plague.isPerson(entity));
+        if (entity.level() instanceof ServerLevel level) {
+            Plague.disease(entity).symptoms(level, entity, stage, Plague.isPerson(entity));
+            // A fever you can feel: with Cold Sweat, the sick run hot.
+            if (stage >= 1) com.bromax.pestilence.compat.Compat.fever(entity, 1.5 * stage);
+        }
         return true;
     }
 

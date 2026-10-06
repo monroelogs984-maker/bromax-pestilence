@@ -35,7 +35,7 @@ first-person friendly (no screen effects that hide combat).
 
 ## Systems (build order)
 
-Status: 1 done (0.2.0), 2 done (0.3.0), 3 done (0.4.0), 4 done (0.5.0), 5 done (0.6.0), 6 done (0.7.0). System 6 change: the Lazaretto is the one built structure (tools/lazaretto.py writes its NBT); ossuary dropped, warrens/pits/plague villages are dynamic. System 3 changes: no separate alembic (heated recipes need a fire, campfire or lit brazier within 2 blocks of the table); Sweating Sickness moves to 7 (seasons); The Rot moves to 5. System 4 change: plague villages are real villages converted the first time a player finds them (phase 5+), not a separate worldgen structure.
+Status: 1 done (0.2.0), 2 done (0.3.0), 3 done (0.4.0), 4 done (0.5.0), 5 done (0.6.0), 6 done (0.7.0), 7 done (0.8.0): all systems built, nothing playtested yet. System 6 change: the Lazaretto is the one built structure (tools/lazaretto.py writes its NBT); ossuary dropped, warrens/pits/plague villages are dynamic. System 3 changes: no separate alembic (heated recipes need a fire, campfire or lit brazier within 2 blocks of the table); Sweating Sickness moves to 7 (seasons); The Rot moves to 5. System 4 change: plague villages are real villages converted the first time a player finds them (phase 5+), not a separate worldgen structure.
 
 1. **Phases, corpses and pyres, Afflicted animals**: world Plague Points, announcements, `/pestilence`;
    corpse entity (flies, rises after a delay; burn it, haul it, or keep it near a lit pyre);
@@ -64,3 +64,13 @@ horse, wolf, fox, Pestilent Dead. Only flesh-and-blood mobs can be Afflicted.
 `tools/gen_assets.py` builds every model, animation and texture from cube lists; edit there and
 rerun. `tools/preview.py` renders a contact sheet of a model for review without the game;
 `tools/preview_block.py` does the same for block models, reading vanilla textures from the MC client jar.
+
+## System 7 as built
+
+Gear: Pyre Torch, Quicklime Bomb, Fumigation Bomb (thrown brazier), Consecrated Cleaver (levels from
+deeds: cures 2, corpses burned 1, nests 3, villages saved 5, bosses 10; thresholds 10/30/60/100),
+Pomander (halves airborne exposure), Plaguebane Amulet (from the Heart of the Pestilence: full immunity).
+Integrations: Curios (mask in head slot; charms in necklace/charm), Cold Sweat (fevers raise core
+temperature; overheating brings Sweating Sickness, cured by sleep), Lycanites (no plague hosts among
+its mobs; `naturalSpawnRate` config to thin our spawns). S202 has no Serene Seasons, so seasons
+were swapped for Cold Sweat. Rat-leather and bone tiers were cut as filler.

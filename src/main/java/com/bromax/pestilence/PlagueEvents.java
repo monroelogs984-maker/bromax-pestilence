@@ -139,7 +139,7 @@ public final class PlagueEvents {
         double chance = PestConfig.CONTAGION_CHANCE.get() * disease.contagion;
         for (LivingEntity other : source.level().getEntitiesOfClass(LivingEntity.class,
                 source.getBoundingBox().inflate(radius), o -> o != source && Plague.canCatch(o))) {
-            if (!Plague.airProtected(other) && source.getRandom().nextDouble() < chance) Plague.infect(other, disease);
+            if (source.getRandom().nextDouble() < chance * Plague.airExposure(other)) Plague.infect(other, disease);
         }
     }
 
@@ -150,6 +150,12 @@ public final class PlagueEvents {
         if (!(entity.level() instanceof ServerLevel level)) return;
         if (entity instanceof AfflictedMob && event.getSource().getEntity() instanceof Player) {
             Plague.addPoints(entity, PestConfig.POINTS_AFFLICTED_KILL.get());
+        }
+        // A fully consecrated cleaver mends its bearer with each of the plague's creatures it fells.
+        if (event.getSource().getEntity() instanceof Player killer && isPlagueCreature(entity)
+                && killer.getMainHandItem().is(ModRegistry.CONSECRATED_CLEAVER.get())
+                && com.bromax.pestilence.disease.Consecration.level(killer.getMainHandItem()) >= 5) {
+            killer.heal(2f);
         }
         // From the Heralds on, a dead rat sometimes leaves its fleas behind.
         if (entity instanceof PlagueRat && PestilenceData.phase(level) >= Phase.HERALDS && entity.getRandom().nextFloat() < 0.2f) {
@@ -193,6 +199,11 @@ public final class PlagueEvents {
     public static void onFinalizeSpawn(FinalizeSpawnEvent event) {
         if (event.getSpawnType() != MobSpawnType.NATURAL && event.getSpawnType() != MobSpawnType.CHUNK_GENERATION) return;
         int phase = PestilenceData.phase(event.getEntity().level());
+        if (event.getEntity() instanceof com.bromax.pestilence.entity.PhaseGated
+                && event.getEntity().getRandom().nextDouble() >= PestConfig.NATURAL_SPAWN_RATE.get()) {
+            event.setSpawnCancelled(true);
+            return;
+        }
         if (event.getEntity() instanceof com.bromax.pestilence.entity.PhaseGated gated && phase < gated.minPhase()) {
             event.setSpawnCancelled(true);
         } else if (event.getEntity().getType() == ModRegistry.PLAGUE_RAT.get() && phase < Phase.FULL_RATS && event.getEntity().getRandom().nextBoolean()) {
@@ -300,9 +311,56 @@ public final class PlagueEvents {
         if (player.tickCount % PestConfig.DOCTOR_CHECK_INTERVAL.get() == 0) rollDoctorVisit(level, player);
         if (player.tickCount % PestConfig.OUTBREAK_INTERVAL.get() == 0) rollOutbreak(level, player);
         if (player.tickCount % PestConfig.NEST_SEED_INTERVAL.get() == 0 && player instanceof ServerPlayer sp) NestSeeding.roll(level, sp);
+        if (player.tickCount % 600 == 0 && player instanceof ServerPlayer sp) rollSweating(level, sp);
         if (player.tickCount % 100 == 0) {
             VillageOutbreaks villages = VillageOutbreaks.get(level.getServer());
             VillageOutbreaks.centre(level, player.blockPosition(), 64).filter(c -> !villages.known(c)).ifPresent(c -> villages.discover(level, c));
+        }
+    }
+
+    /**
+     * Sweating Sickness: with Cold Sweat, an overheated body (over 50); without it, sprinting
+     * under the open sky by day in hot country. Comes in any phase: it is the season, not the plague.
+     */
+    private static void rollSweating(ServerLevel level, ServerPlayer player) {
+        double body = com.bromax.pestilence.compat.Compat.bodyTemperature(player);
+        boolean hot = Double.isNaN(body)
+                ? level.isDay() && player.isSprinting() && level.canSeeSky(player.blockPosition()) && level.getBiome(player.blockPosition()).value().getBaseTemperature() > 1.0f
+                : body > 50;
+        if (hot && player.getRandom().nextDouble() < PestConfig.SWEATING_CHANCE.get()) Plague.infect(player, Disease.SWEATING);
+    }
+
+    /** A full night's sleep breaks Sweating Sickness. */
+    @SubscribeEvent
+    public static void onWake(net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent event) {
+        Player player = event.getEntity();
+        if (!player.level().isClientSide && Plague.isSick(player) && Plague.disease(player) == Disease.SWEATING && player.level().isDay()) {
+            Plague.cure(player);
+        }
+    }
+
+    /** The Consecrated Cleaver: a fifth more damage per level against the plague's creatures; fire from level 3. */
+    @SubscribeEvent
+    public static void onIncomingDamage(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent event) {
+        if (!(event.getSource().getEntity() instanceof Player player) || event.getSource().getDirectEntity() != player) return;
+        ItemStack weapon = player.getMainHandItem();
+        if (!weapon.is(ModRegistry.CONSECRATED_CLEAVER.get()) || !isPlagueCreature(event.getEntity())) return;
+        int level = com.bromax.pestilence.disease.Consecration.level(weapon);
+        event.setAmount(event.getAmount() * (1 + 0.2f * level));
+        if (level >= 3) event.getEntity().igniteForSeconds(3);
+    }
+
+    private static boolean isPlagueCreature(LivingEntity e) {
+        return e instanceof AfflictedMob || e instanceof PlagueRat || e instanceof com.bromax.pestilence.entity.vermin.RatSwarm
+                || e instanceof com.bromax.pestilence.entity.vermin.CarrionCrow;
+    }
+
+    /** The Plaguebane Amulet keeps off the Heralds' lesser afflictions too. */
+    @SubscribeEvent
+    public static void onEffectApplicable(net.neoforged.neoforge.event.entity.living.MobEffectEvent.Applicable event) {
+        var effect = event.getEffectInstance().getEffect();
+        if ((effect.is(ModRegistry.DREAD) || effect.is(ModRegistry.DELIRIUM) || effect.is(ModRegistry.ROTTING)) && Plague.plaguebane(event.getEntity())) {
+            event.setResult(net.neoforged.neoforge.event.entity.living.MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
         }
     }
 

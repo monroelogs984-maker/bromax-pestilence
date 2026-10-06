@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "tag": "bromaxpestilence:censer_fuel"
+    },
+    {
+      "tag": "bromaxpestilence:censer_fuel"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:gunpowder"
+    }
+  ],
+  "result": {
+    "id": "bromaxpestilence:fumigation_bomb",
+    "count": 2
+  }
+}

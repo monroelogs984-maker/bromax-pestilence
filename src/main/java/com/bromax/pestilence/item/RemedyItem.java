@@ -93,6 +93,7 @@ public class RemedyItem extends Item {
             if (patient.level() instanceof ServerLevel level) {
                 level.sendParticles(ParticleTypes.HAPPY_VILLAGER, patient.getX(), patient.getEyeY(), patient.getZ(), 8, 0.3, 0.3, 0.3, 0.0);
             }
+            if (physician != null && physician != patient) com.bromax.pestilence.disease.Consecration.deed(physician, com.bromax.pestilence.disease.Consecration.CURE);
             if (physician != null) physician.displayClientMessage(Component.translatable("message." + Pestilence.MODID + ".cured")
                     .withStyle(ChatFormatting.DARK_GREEN), true);
         } else if (physician != null) {

@@ -51,11 +51,11 @@ public class PyreBlock extends Block {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                               InteractionHand hand, BlockHitResult hit) {
         boolean lit = state.getValue(LIT);
-        if (!lit && (stack.is(Items.FLINT_AND_STEEL) || stack.is(Items.FIRE_CHARGE))) {
+        if (!lit && (stack.is(Items.FLINT_AND_STEEL) || stack.is(Items.FIRE_CHARGE) || stack.is(com.bromax.pestilence.ModRegistry.PYRE_TORCH.get()))) {
             level.setBlock(pos, state.setValue(LIT, true), Block.UPDATE_ALL);
             level.playSound(player, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1f, 1f);
             if (!level.isClientSide) {
-                if (stack.is(Items.FLINT_AND_STEEL)) stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+                if (stack.isDamageableItem()) stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
                 else stack.consume(1, player);
             }
             return ItemInteractionResult.sidedSuccess(level.isClientSide);

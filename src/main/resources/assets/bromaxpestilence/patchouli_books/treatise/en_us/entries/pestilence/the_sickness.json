@@ -11,7 +11,7 @@
     {
       "type": "patchouli:text",
       "title": "Telling them apart",
-      "text": "$(l)Bubonic$(): fever, then heavy, swollen limbs. Some coughing.$(br)$(l)Pneumonic$(): coughing without end, short of breath. The fastest.$(br)$(l)Septicemic$(): weakness, then bleeding (never below two hearts). No cough.$(br)$(l)Dysentery$(): ravenous hunger and dizziness. No cough.$(br2)A $(l)Physician's Kit$() removes all doubt."
+      "text": "$(l)Bubonic$(): fever, then heavy, swollen limbs. Some coughing.$(br)$(l)Pneumonic$(): coughing without end, short of breath. The fastest.$(br)$(l)Septicemic$(): weakness, then bleeding (never below two hearts). No cough.$(br)$(l)Dysentery$(): ravenous hunger and dizziness. No cough.$(br)$(l)Sweating$(): drenched, hungry, fast. No cough.$(br2)A $(l)Physician's Kit$() removes all doubt."
     }
   ]
 }

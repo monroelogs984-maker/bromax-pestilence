@@ -1,0 +1,12 @@
+{
+  "name": "Sweating Sickness",
+  "icon": "minecraft:water_bucket",
+  "category": "bromaxpestilence:pestilence",
+  "sortnum": 29,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Not the plague but its cousin, and it comes in any phase: $(l)Sweating Sickness$() takes those who overheat (by Cold Sweat's reckoning, if it is about, or else those who run about hot country in the heat of the day).$(br2)Drenching sweat, hunger, weakness, and fast. But a $(2)full night's sleep$() breaks it, and Herbal Broth or Theriac cure it."
+    }
+  ]
+}

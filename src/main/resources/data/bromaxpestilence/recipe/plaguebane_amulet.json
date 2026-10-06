@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " C ",
+    "GHG",
+    " I "
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:chain"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "H": {
+      "item": "bromaxpestilence:heart_of_pestilence"
+    },
+    "I": {
+      "item": "bromaxpestilence:pestilent_ichor"
+    }
+  },
+  "result": {
+    "id": "bromaxpestilence:plaguebane_amulet",
+    "count": 1
+  }
+}

@@ -48,7 +48,7 @@ public final class Plague {
 
     public static boolean canCatch(LivingEntity entity) {
         if (!entity.isAlive() || entity.level().isClientSide) return false;
-        if (isSick(entity) || entity.hasEffect(ModRegistry.IMMUNITY)) return false;
+        if (isSick(entity) || entity.hasEffect(ModRegistry.IMMUNITY) || plaguebane(entity)) return false;
         if (entity instanceof Player p) return !p.isCreative() && !p.isSpectator();
         if (entity instanceof PlagueDoctor) return false;
         if (entity instanceof AbstractVillager) return true;
@@ -68,17 +68,32 @@ public final class Plague {
     // Protection
     // ---------------------------------------------------------------------------------------------
 
+    /** The mask, worn on the head or (with Curios) in a head slot over a helmet. */
     public static boolean wearsMask(LivingEntity entity) {
-        return entity.getItemBySlot(EquipmentSlot.HEAD).is(ModRegistry.PLAGUE_MASK.get());
+        return entity.getItemBySlot(EquipmentSlot.HEAD).is(ModRegistry.PLAGUE_MASK.get())
+                || com.bromax.pestilence.compat.Compat.curios() && com.bromax.pestilence.compat.Compat.wearing(entity, ModRegistry.PLAGUE_MASK.get(), false);
     }
 
-    /** Safe from coughs and miasma: wearing the mask, or within a lit censer's smoke. */
-    public static boolean airProtected(LivingEntity entity) {
-        if (wearsMask(entity)) return true;
+    /** The Plaguebane Amulet: no sickness, no Dread, Delirium or Rotting. */
+    public static boolean plaguebane(LivingEntity entity) {
+        return com.bromax.pestilence.compat.Compat.wearing(entity, ModRegistry.PLAGUEBANE_AMULET.get(), true);
+    }
+
+    /**
+     * Multiplier on catching something from the air (coughs, miasma): nothing through the mask,
+     * a lit censer's smoke or a fumigation cloud; half as much with a pomander.
+     */
+    public static double airExposure(LivingEntity entity) {
+        if (wearsMask(entity)) return 0;
         for (Player p : entity.level().players()) {
-            if (p.distanceToSqr(entity) <= CenserItem.RADIUS * CenserItem.RADIUS && CenserItem.isSwinging(p)) return true;
+            if (p.distanceToSqr(entity) <= CenserItem.RADIUS * CenserItem.RADIUS && CenserItem.isSwinging(p)) return 0;
         }
-        return false;
+        if (!entity.level().getEntitiesOfClass(com.bromax.pestilence.entity.FumigationCloud.class, entity.getBoundingBox().inflate(com.bromax.pestilence.entity.FumigationCloud.RADIUS)).isEmpty()) return 0;
+        return com.bromax.pestilence.compat.Compat.wearing(entity, ModRegistry.POMANDER.get(), false) ? 0.5 : 1;
+    }
+
+    public static boolean airProtected(LivingEntity entity) {
+        return airExposure(entity) == 0;
     }
 
     /**

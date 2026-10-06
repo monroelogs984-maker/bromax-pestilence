@@ -48,6 +48,12 @@ import com.bromax.pestilence.entity.boss.PaleRider;
 import com.bromax.pestilence.entity.boss.RatKing;
 import com.bromax.pestilence.block.CryptSealBlock;
 import com.bromax.pestilence.item.RatCrownItem;
+import com.bromax.pestilence.item.BombItem;
+import com.bromax.pestilence.item.CharmItem;
+import com.bromax.pestilence.item.ConsecratedCleaverItem;
+import com.bromax.pestilence.item.PyreTorchItem;
+import com.bromax.pestilence.entity.FumigationCloud;
+import com.bromax.pestilence.entity.ThrownBomb;
 import com.bromax.pestilence.block.PlagueCrossBlock;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
@@ -192,6 +198,12 @@ public final class ModRegistry {
             () -> EntityType.Builder.<MiasmaCloud>of(MiasmaCloud::new, MobCategory.MISC).sized(1f, 1f).fireImmune().noSave()
                     .clientTrackingRange(8).updateInterval(20).build(MODID + ":miasma_cloud"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<ThrownBomb>> PLAGUE_BOMB = ENTITIES.register("plague_bomb",
+            () -> EntityType.Builder.<ThrownBomb>of(ThrownBomb::new, MobCategory.MISC).sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).build(MODID + ":plague_bomb"));
+    public static final DeferredHolder<EntityType<?>, EntityType<FumigationCloud>> FUMIGATION_CLOUD = ENTITIES.register("fumigation_cloud",
+            () -> EntityType.Builder.<FumigationCloud>of(FumigationCloud::new, MobCategory.MISC).sized(1f, 1f).fireImmune().noSave()
+                    .clientTrackingRange(8).updateInterval(20).build(MODID + ":fumigation_cloud"));
+
     // Armour
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> PLAGUE_MASK_MATERIAL = ARMOR_MATERIALS.register("plague_mask", () -> {
         EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
@@ -292,7 +304,7 @@ public final class ModRegistry {
     public static final DeferredItem<Item> FOUR_THIEVES_VINEGAR = remedy("four_thieves_vinegar", UseAnim.DRINK, Items.GLASS_BOTTLE, Disease.PNEUMONIC);
     public static final DeferredItem<Item> PLAGUE_POULTICE = remedy("plague_poultice", UseAnim.BRUSH, null, Disease.BUBONIC);
     public static final DeferredItem<Item> WORMWOOD_TINCTURE = remedy("wormwood_tincture", UseAnim.DRINK, Items.GLASS_BOTTLE, Disease.SEPTICEMIC);
-    public static final DeferredItem<Item> HERBAL_BROTH = remedy("herbal_broth", UseAnim.EAT, Items.BOWL, Disease.DYSENTERY);
+    public static final DeferredItem<Item> HERBAL_BROTH = remedy("herbal_broth", UseAnim.EAT, Items.BOWL, Disease.DYSENTERY, Disease.SWEATING);
     public static final DeferredItem<Item> THERIAC = remedy("theriac", UseAnim.DRINK, Items.GLASS_BOTTLE);
     public static final DeferredItem<Item> MORTAR_AND_PESTLE = ITEMS.register("mortar_and_pestle", () -> new Item(new Item.Properties().durability(128)));
     public static final DeferredItem<Item> PHYSICIANS_KIT = ITEMS.register("physicians_kit", () -> new PhysiciansKitItem(new Item.Properties().durability(64)));
@@ -315,6 +327,14 @@ public final class ModRegistry {
     public static final DeferredItem<Item> RAT_CROWN = ITEMS.register("rat_crown", () -> new RatCrownItem(PLAGUE_MASK_MATERIAL,
             new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(25)).rarity(net.minecraft.world.item.Rarity.RARE)));
     public static final DeferredItem<?> CRYPT_SEAL_ITEM = ITEMS.registerSimpleBlockItem(CRYPT_SEAL);
+    public static final DeferredItem<Item> PYRE_TORCH = ITEMS.register("pyre_torch", () -> new PyreTorchItem(new Item.Properties().durability(96)));
+    public static final DeferredItem<Item> QUICKLIME_BOMB = ITEMS.register("quicklime_bomb", () -> new BombItem(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> FUMIGATION_BOMB = ITEMS.register("fumigation_bomb", () -> new BombItem(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> CONSECRATED_CLEAVER = ITEMS.register("consecrated_cleaver",
+            () -> new ConsecratedCleaverItem(new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final DeferredItem<Item> POMANDER = ITEMS.register("pomander", () -> new CharmItem(new Item.Properties().stacksTo(1), false));
+    public static final DeferredItem<Item> PLAGUEBANE_AMULET = ITEMS.register("plaguebane_amulet", () -> new CharmItem(new Item.Properties().stacksTo(1)
+            .rarity(net.minecraft.world.item.Rarity.EPIC).fireResistant(), true));
     public static final DeferredItem<Item> RAT_KING_SPAWN_EGG = egg("rat_king", RAT_KING, 0x3a302a, 0xd8cfb8);
     public static final DeferredItem<Item> GRAVEWARDEN_SPAWN_EGG = egg("gravewarden", GRAVEWARDEN, 0x2a2420, 0x8f9ba3);
     public static final DeferredItem<Item> PALE_RIDER_SPAWN_EGG = egg("pale_rider", PALE_RIDER, 0xd8d4c8, 0x6b7330);
