@@ -332,6 +332,11 @@ public final class ModRegistry {
     public static final DeferredItem<Item> FUMIGATION_BOMB = ITEMS.register("fumigation_bomb", () -> new BombItem(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<Item> CONSECRATED_CLEAVER = ITEMS.register("consecrated_cleaver",
             () -> new ConsecratedCleaverItem(new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE)));
+    public static final DeferredItem<Item> BONE_SAW = ITEMS.register("bone_saw", () -> new com.bromax.pestilence.item.BoneSawItem(new Item.Properties()));
+    public static final DeferredItem<Item> CENSER_FLAIL = ITEMS.register("censer_flail", () -> new com.bromax.pestilence.item.CenserFlailItem(new Item.Properties()
+            .rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
+    public static final DeferredItem<Item> GRAVEDIGGERS_SPADE = ITEMS.register("gravediggers_spade", () -> new com.bromax.pestilence.item.GravediggersSpadeItem(new Item.Properties()
+            .rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
     public static final DeferredItem<Item> POMANDER = ITEMS.register("pomander", () -> new CharmItem(new Item.Properties().stacksTo(1), false));
     public static final DeferredItem<Item> PLAGUEBANE_AMULET = ITEMS.register("plaguebane_amulet", () -> new CharmItem(new Item.Properties().stacksTo(1)
             .rarity(net.minecraft.world.item.Rarity.EPIC).fireResistant(), true));

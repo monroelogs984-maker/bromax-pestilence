@@ -62,7 +62,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:iron_shovel"
+          "name": "bromaxpestilence:gravediggers_spade"
         }
       ],
       "conditions": [

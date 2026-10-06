@@ -2,7 +2,7 @@
   "name": "The Plague's Spoils",
   "icon": "bromaxpestilence:pestilent_ichor",
   "category": "bromaxpestilence:arms",
-  "sortnum": 3,
+  "sortnum": 4,
   "pages": [
     {
       "type": "patchouli:spotlight",

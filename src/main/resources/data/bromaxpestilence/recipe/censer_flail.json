@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " NC",
+    " SN",
+    "S  "
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:chain"
+    },
+    "C": {
+      "item": "bromaxpestilence:censer"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "bromaxpestilence:censer_flail",
+    "count": 1
+  }
+}

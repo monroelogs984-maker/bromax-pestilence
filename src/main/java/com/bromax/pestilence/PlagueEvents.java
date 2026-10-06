@@ -352,6 +352,10 @@ public final class PlagueEvents {
     public static void onIncomingDamage(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof Player player) || event.getSource().getDirectEntity() != player) return;
         ItemStack weapon = player.getMainHandItem();
+        if (weapon.is(ModRegistry.CENSER_FLAIL.get()) && event.getEntity() instanceof com.bromax.pestilence.entity.herald.MiasmaWraith) {
+            event.setAmount(event.getAmount() * 2);
+            return;
+        }
         if (!weapon.is(ModRegistry.CONSECRATED_CLEAVER.get()) || !isPlagueCreature(event.getEntity())) return;
         int level = com.bromax.pestilence.disease.Consecration.level(weapon);
         event.setAmount(event.getAmount() * (1 + 0.2f * level));

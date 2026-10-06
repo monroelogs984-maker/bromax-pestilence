@@ -231,6 +231,35 @@ public class Corpse extends Entity {
             }
             return InteractionResult.sidedSuccess(level().isClientSide);
         }
+        if (stack.is(ModRegistry.BONE_SAW.get())) {
+            if (level() instanceof ServerLevel level) {
+                // Older bodies have had longer to fester: more ichor, but also more to catch.
+                spawnAtLocation(new ItemStack(Items.BONE, 2 + random.nextInt(3)));
+                if (random.nextFloat() < 0.25f + 0.5f * Math.min(1f, age / (float) PestConfig.CORPSE_RISE_TICKS.get())) {
+                    spawnAtLocation(new ItemStack(ModRegistry.PESTILENT_ICHOR.get()));
+                }
+                Plague.tryContactInfect(player, com.bromax.pestilence.item.BoneSawItem.RISK, com.bromax.pestilence.disease.Disease.BUBONIC);
+                stack.hurtAndBreak(2, player, LivingEntity.getSlotForHand(hand));
+                level.sendParticles(new net.minecraft.core.particles.ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.ROTTEN_FLESH)),
+                        getX(), getY() + 0.3, getZ(), 12, 0.3, 0.1, 0.3, 0.05);
+                level.playSound(null, blockPosition(), SoundEvents.SLIME_SQUISH, SoundSource.PLAYERS, 1f, 0.6f);
+                discard();
+            }
+            return InteractionResult.sidedSuccess(level().isClientSide);
+        }
+        if (stack.is(ModRegistry.GRAVEDIGGERS_SPADE.get())) {
+            if (level() instanceof ServerLevel level) {
+                // Buried is nearly as good as burned: it will not rise, but the earth is not fire.
+                com.bromax.pestilence.disease.Consecration.deed(player, com.bromax.pestilence.disease.Consecration.BURN);
+                Plague.addPoints(this, PestConfig.POINTS_CORPSE_BURN.get() * 0.5);
+                stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
+                level.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, net.minecraft.world.level.block.Blocks.DIRT.defaultBlockState()),
+                        getX(), getY() + 0.2, getZ(), 30, 0.5, 0.2, 0.5, 0.1);
+                level.playSound(null, blockPosition(), SoundEvents.ROOTED_DIRT_PLACE, SoundSource.PLAYERS, 1f, 0.8f);
+                discard();
+            }
+            return InteractionResult.sidedSuccess(level().isClientSide);
+        }
         if (stack.isEmpty() && getSource() != null) {
             if (!level().isClientSide) {
                 player.setItemInHand(hand, ShroudedCorpseItem.of(getSource(), age));

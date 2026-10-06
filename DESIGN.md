@@ -88,6 +88,11 @@ were swapped for Cold Sweat. Rat-leather and bone tiers were cut as filler.
    and a "next phase" warning on every rise, persisted `halt` in the phase data. Book: Staying the Tide.
 3. **More weapons**: 3 more, spread through the progression, each with its own attack speed
    (candidates: fast Bone Saw, slow smoke-clearing Censer Flail, long-reach Gravedigger's Spade).
+   **DONE**: Bone Saw (iron, 4 dmg / 2.6 speed; saws corpses into 2-4 bones + ichor, 25% contact
+   risk scaled by garb), Censer Flail (10 dmg / 0.7 speed; hits clear miasma + vermin clouds within 3,
+   x2 vs Miasma Wraiths), Gravedigger's Spade (shovel, 7.5 dmg / 1.0 speed, +1.5 entity / +1 block
+   reach; buries corpses for half a burn's points and a deed; replaces the Gravedigger's iron shovel
+   drop). Icons: remaster round 12 (also the bracelet and monocle charms). Book: Tools of the Trade.
 4. **Curios first**: render the mask and charms on the player (ICurioRenderer), add more charm-slot
    items, and design gear around slots.
 5. **Farming feeds the plague**: growing and harvesting crops speeds the Pestilence up (granaries draw

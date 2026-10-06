@@ -1,0 +1,27 @@
+{
+  "name": "Three Tools of the Trade",
+  "icon": "bromaxpestilence:censer_flail",
+  "category": "bromaxpestilence:arms",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Those who work among the dead carry their own arms. Each strikes at its own pace: the $(l)Bone Saw$() quick and light, the $(l)Gravedigger's Spade$() steady and long, the $(l)Censer Flail$() slow and crushing."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:bone_saw",
+      "text": "Use it on a corpse to take it apart: bones, and often $(4)Pestilent Ichor$(), more from older bodies. The body is gone, but the sawing is filthy work; wear the garb."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:gravediggers_spade",
+      "text": "Reaches a block and a half further than a blade. Use it on a corpse to bury it where it lies: it will never rise. Gravediggers sometimes drop their own."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "bromaxpestilence:censer_flail",
+      "text": "Every blow is a burst of holy smoke that clears $(2)miasma$() and $(2)vermin clouds$() around its target, and it strikes Miasma Wraiths twice as hard."
+    }
+  ]
+}

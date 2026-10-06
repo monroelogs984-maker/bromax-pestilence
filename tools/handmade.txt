@@ -63,3 +63,8 @@ textures/block/wormwood_stage0.png
 textures/block/wormwood_stage1.png
 textures/block/wormwood_stage2.png
 textures/block/wormwood_stage3.png
+textures/item/bone_saw.png
+textures/item/censer_flail.png
+textures/item/gravediggers_spade.png
+textures/item/rat_tail_bracelet.png
+textures/item/physicians_monocle.png

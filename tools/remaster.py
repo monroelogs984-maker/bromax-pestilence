@@ -549,7 +549,150 @@ def round11():
     return crop('wormwood')
 
 
-ROUNDS = [round1, round2, round3, round4, round5, round6, round7, round8, round9, round10, round11]
+def canvas():
+    return [[(0, 0, 0, 0)] * 16 for _ in range(16)]
+
+
+def put(img, x, y, c):
+    if 0 <= x < 16 and 0 <= y < 16:
+        img[y][x] = hexc(c) if isinstance(c, str) else c
+
+
+def diag(img, t0, t1, offsets, colour):
+    """Paint along the handheld diagonal (bottom-left to top-right): t = x - y runs along it,
+    o = x + y - 15 across it (negative is the upper-left side, where the light falls)."""
+    for y in range(16):
+        for x in range(16):
+            t, o = x - y, x + y - 15
+            if t0 <= t <= t1 and o in offsets:
+                c = colour(t, o)
+                if c:
+                    put(img, x, y, c)
+
+
+def outline(img, colour, only_empty=True):
+    """A one-pixel tinted outline around everything painted so far (vanilla items have one)."""
+    filled = {(x, y) for y in range(16) for x in range(16) if img[y][x][3]}
+    for x, y in [(x, y) for y in range(16) for x in range(16)]:
+        if (x, y) in filled:
+            continue
+        if any((x + dx, y + dy) in filled for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+            put(img, x, y, colour)
+
+
+def bone_saw():
+    img = canvas()
+    # a broad, square-ended steel blade, spine lit; every other tooth stands proud of the edge
+    def blade(t, o):
+        if o == -3: return '#e4eaee'
+        if o == -2: return '#c4ccd2'
+        if o in (-1, 0): return '#9aa4ac'
+        if o == 1: return '#7a848c'
+        if o == 2: return '#b4bec6' if t % 4 == 1 else None   # o = 2 only holds odd t
+    diag(img, -3, 12, range(-3, 3), blade)
+    # a brass collar, then a bone grip with two dark rivets
+    diag(img, -5, -4, range(-2, 2), lambda t, o: '#c89838' if o < 0 else '#8a6420')
+    def grip(t, o):
+        if t in (-8, -11) and o == 0: return '#3a2e24'
+        return '#f0e8d4' if o < 0 else '#d4c8a8' if o == 0 else '#b0a284'
+    diag(img, -13, -6, range(-1, 2), grip)
+    outline(img, '#2a2622')
+    return img
+
+
+def censer_flail():
+    img = canvas()
+    # dark wooden haft
+    diag(img, -14, -5, (0, 1), lambda t, o: '#8a6040' if o == 0 else '#5a3d22')
+    diag(img, -15, -15, (0, 1), lambda t, o: '#3a2a1a')
+    # chain links, alternating lit and shadowed
+    diag(img, -4, 1, (0,), lambda t, o: '#c8c8cc' if t % 2 == 0 else '#6e6e76')
+    # the censer itself, as the Censer's own sprite: domed lid, pierced band, brass body
+    head = ['..oyo..', '.oHYYo.', 'oyyyyyo', 'oHkkkyo', 'oYYYYyo', '.oyyyo.', '..ooo..']
+    key = {'o': '#3a2a0c', 'Y': '#c89838', 'H': '#f0d070', 'y': '#8a6420', 'k': '#d8501c'}
+    for dy, row in enumerate(head):
+        for dx, c in enumerate(row):
+            if c != '.':
+                put(img, 9 + dx, 2 + dy, key[c])
+    outline(img, '#2a1e0a')
+    for x, y in ((12, 0), (13, 1), (10, 0)):
+        put(img, x, y, '#c8c8cc')
+    return img
+
+
+def gravediggers_spade():
+    img = canvas()
+    # a D-grip at the butt
+    for x, y in ((0, 13), (0, 14), (1, 15), (2, 15), (1, 12), (2, 13)):
+        put(img, x, y, '#5a3d22')
+    # long ash shaft
+    diag(img, -11, 2, (0, 1), lambda t, o: '#a07850' if o == 0 else '#6a4a2a')
+    # iron socket
+    diag(img, 3, 4, range(-1, 3), lambda t, o: '#6e7880' if o < 1 else '#4a525a')
+    # a broad iron blade, tapering to a flat edge, a crust of earth along it
+    def head(t, o):
+        width = 4 if t <= 11 else 3
+        if not -width + 1 <= o <= width: return None
+        if t >= 13: return '#6a4a32' if (o % 2) else '#8a6a48'
+        if o == -width + 1: return '#d4dce2'
+        if o == width: return '#4a525a'
+        return '#a4aeb6' if o < 1 else '#7a848c'
+    diag(img, 5, 14, range(-4, 5), head)
+    outline(img, '#24282c')
+    return img
+
+
+def rat_tail_bracelet():
+    img = canvas()
+    cx, cy, rx, ry = 7.5, 7.5, 6.0, 4.0
+    for y in range(16):
+        for x in range(16):
+            e = ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2
+            if 0.58 <= e <= 1.0:
+                # ringed like a rat's tail: every third scale darker; the far side of the loop shadowed
+                ring = (x + y) % 3 == 0
+                far = y < cy
+                c = ('#9a6a66' if ring else '#c89088') if far else ('#c88a84' if ring else '#f0b8b0')
+                put(img, x, y, c)
+    # the two tail ends, knotted at the bottom and trailing off to thin tips
+    for x, y, c in ((6, 12, '#f0b8b0'), (5, 13, '#c88a84'), (4, 14, '#c89088'), (9, 12, '#f0b8b0'), (10, 13, '#c88a84'), (11, 14, '#c89088')):
+        put(img, x, y, c)
+    outline(img, '#4a2a28')
+    # a bone bead on the knot and a rat's yellow incisor hanging from it
+    for x, y, c in ((7, 12, '#f0e8d4'), (8, 12, '#d4c8a8'), (7, 13, '#f4e070'), (7, 14, '#c8a030')):
+        put(img, x, y, c)
+    return img
+
+
+def physicians_monocle():
+    img = canvas()
+    cx, cy = 6.5, 6.5
+    for y in range(16):
+        for x in range(16):
+            d = ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5
+            if d <= 3.6:
+                put(img, x, y, '#e8f4ff' if (x - cx) + (y - cy) < -3 else '#b8d4e4' if (x - cx) + (y - cy) < 1 else '#8aaec4')
+            elif d <= 5.0:
+                put(img, x, y, '#f0d070' if (x - cx) + (y - cy) < -1 else '#c89838' if (x - cx) + (y - cy) < 3 else '#8a6420')
+    put(img, 4, 4, '#ffffff')
+    outline(img, '#3a2a0c')
+    # a fine chain looping down to the waistcoat
+    for i, (x, y) in enumerate(((10, 11), (11, 12), (12, 12), (13, 13), (13, 14), (14, 15))):
+        put(img, x, y, '#e8c050' if i % 2 == 0 else '#8a6420')
+    return img
+
+
+def round12():
+    """The new arms and charms: Bone Saw, Censer Flail, Gravedigger's Spade, Rat-tail Bracelet, Physician's Monocle."""
+    made = []
+    for name, paint in (('bone_saw', bone_saw), ('censer_flail', censer_flail), ('gravediggers_spade', gravediggers_spade),
+                        ('rat_tail_bracelet', rat_tail_bracelet), ('physicians_monocle', physicians_monocle)):
+        write_png(os.path.join(ITEMS, f'{name}.png'), paint())
+        made.append(f'textures/item/{name}.png')
+    return made
+
+
+ROUNDS = [round1, round2, round3, round4, round5, round6, round7, round8, round9, round10, round11, round12]
 
 if __name__ == '__main__':
     made = []
