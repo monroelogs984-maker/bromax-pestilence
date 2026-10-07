@@ -89,6 +89,7 @@ public final class PestilenceCommand {
 
     private static int halt(CommandContext<CommandSourceStack> ctx, int phase) {
         PestilenceData.get(ctx.getSource().getServer()).halt(ctx.getSource().getServer(), phase);
+        ModAdvancements.grant(ctx.getSource().getPlayer(), ModAdvancements.STAYED);
         ctx.getSource().getServer().getPlayerList().broadcastSystemMessage(Component.translatable("message." + Pestilence.MODID + ".halted", phase, Phase.name(phase))
                 .withStyle(net.minecraft.ChatFormatting.DARK_GREEN), false);
         return phase;

@@ -66,6 +66,7 @@ public class HeartOfPestilenceItem extends Item {
         player.getPersistentData().remove(CONFIRM);
         context.getItemInHand().shrink(1);
         unleash(level, context.getClickedPos());
+        com.bromax.pestilence.ModAdvancements.grant(player, com.bromax.pestilence.ModAdvancements.BLACKBLIGHT);
         return InteractionResult.CONSUME;
     }
 

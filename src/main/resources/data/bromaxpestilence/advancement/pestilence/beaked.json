@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "id": "bromaxpestilence:plague_mask"
+    },
+    "title": {
+      "translate": "advancement.bromaxpestilence.beaked"
+    },
+    "description": {
+      "translate": "advancement.bromaxpestilence.beaked.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "plague_mask": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "bromaxpestilence:plague_mask"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "bromaxpestilence:pestilence/remedy"
+}

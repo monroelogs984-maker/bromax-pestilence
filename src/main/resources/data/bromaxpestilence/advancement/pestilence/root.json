@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "bromaxpestilence:rat_tail"
+    },
+    "title": {
+      "translate": "advancement.bromaxpestilence.root"
+    },
+    "description": {
+      "translate": "advancement.bromaxpestilence.root.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "bromaxpestilence:textures/block/blighted_soil.png"
+  },
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}

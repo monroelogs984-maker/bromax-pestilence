@@ -1,0 +1,74 @@
+{
+  "display": {
+    "icon": {
+      "id": "bromaxpestilence:doctors_coat"
+    },
+    "title": {
+      "translate": "advancement.bromaxpestilence.full_garb"
+    },
+    "description": {
+      "translate": "advancement.bromaxpestilence.full_garb.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "plague_mask": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "bromaxpestilence:plague_mask"
+          }
+        ]
+      }
+    },
+    "doctors_coat": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "bromaxpestilence:doctors_coat"
+          }
+        ]
+      }
+    },
+    "doctors_trousers": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "bromaxpestilence:doctors_trousers"
+          }
+        ]
+      }
+    },
+    "doctors_boots": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "bromaxpestilence:doctors_boots"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "bromaxpestilence:pestilence/beaked",
+  "requirements": [
+    [
+      "plague_mask"
+    ],
+    [
+      "doctors_coat"
+    ],
+    [
+      "doctors_trousers"
+    ],
+    [
+      "doctors_boots"
+    ]
+  ]
+}

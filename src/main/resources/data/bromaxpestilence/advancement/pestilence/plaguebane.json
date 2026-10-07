@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "id": "bromaxpestilence:plaguebane_amulet"
+    },
+    "title": {
+      "translate": "advancement.bromaxpestilence.plaguebane"
+    },
+    "description": {
+      "translate": "advancement.bromaxpestilence.plaguebane.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "plaguebane_amulet": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "bromaxpestilence:plaguebane_amulet"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "bromaxpestilence:pestilence/full_garb"
+}

@@ -184,6 +184,7 @@ public class Corpse extends Entity {
         if (level() instanceof ServerLevel lvl) {
             net.minecraft.world.entity.player.Player near = lvl.getNearestPlayer(this, 16);
             com.bromax.pestilence.disease.Consecration.deed(near, com.bromax.pestilence.disease.Consecration.BURN);
+            com.bromax.pestilence.ModAdvancements.grant(near, com.bromax.pestilence.ModAdvancements.ASHES);
         }
         if (level() instanceof ServerLevel level) {
             level.sendParticles(ParticleTypes.LARGE_SMOKE, getX(), getY() + 0.4, getZ(), 15, 0.4, 0.3, 0.4, 0.02);
@@ -251,6 +252,7 @@ public class Corpse extends Entity {
             if (level() instanceof ServerLevel level) {
                 // Buried is nearly as good as burned: it will not rise, but the earth is not fire.
                 com.bromax.pestilence.disease.Consecration.deed(player, com.bromax.pestilence.disease.Consecration.BURN);
+                com.bromax.pestilence.ModAdvancements.grant(player, com.bromax.pestilence.ModAdvancements.ASHES);
                 Plague.addPoints(this, PestConfig.POINTS_CORPSE_BURN.get() * 0.5);
                 stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
                 level.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, net.minecraft.world.level.block.Blocks.DIRT.defaultBlockState()),

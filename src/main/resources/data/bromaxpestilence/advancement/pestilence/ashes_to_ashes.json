@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "bromaxpestilence:pyre_torch"
+    },
+    "title": {
+      "translate": "advancement.bromaxpestilence.ashes_to_ashes"
+    },
+    "description": {
+      "translate": "advancement.bromaxpestilence.ashes_to_ashes.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "bromaxpestilence:pestilence/remedy"
+}

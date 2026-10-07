@@ -51,6 +51,7 @@ public final class Consecration {
                 player.displayClientMessage(Component.translatable("message." + Pestilence.MODID + ".consecrated", level(stack))
                         .withStyle(ChatFormatting.GOLD), true);
                 player.level().playSound(null, player.blockPosition(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 0.8f, 1.4f);
+                if (next(stack) < 0) com.bromax.pestilence.ModAdvancements.grant(player, com.bromax.pestilence.ModAdvancements.CONSECRATED);
             }
         }
     }

@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "id": "bromaxpestilence:surgeons_steel"
+    },
+    "title": {
+      "translate": "advancement.bromaxpestilence.gravewarden"
+    },
+    "description": {
+      "translate": "advancement.bromaxpestilence.gravewarden.desc"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "kill": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "bromaxpestilence:gravewarden"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "parent": "bromaxpestilence:pestilence/rat_king"
+}

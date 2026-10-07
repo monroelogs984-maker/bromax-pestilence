@@ -144,6 +144,7 @@ public class VillageOutbreaks extends SavedData {
             ServerPlayer player = level.getServer().getPlayerList().getPlayer(h.getKey());
             if (player != null) {
                 com.bromax.pestilence.disease.Consecration.deed(player, com.bromax.pestilence.disease.Consecration.VILLAGE);
+                com.bromax.pestilence.ModAdvancements.grant(player, com.bromax.pestilence.ModAdvancements.SAVED_VILLAGE);
                 player.addEffect(new MobEffectInstance(MobEffects.HERO_OF_THE_VILLAGE, 48000, Math.min(h.getValue(), 5) - 1));
                 player.sendSystemMessage(Component.translatable("message." + Pestilence.MODID + ".village_thanks", h.getValue())
                         .withStyle(ChatFormatting.GOLD));

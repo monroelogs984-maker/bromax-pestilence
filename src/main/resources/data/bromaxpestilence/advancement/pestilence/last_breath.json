@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "bromaxpestilence:theriac"
+    },
+    "title": {
+      "translate": "advancement.bromaxpestilence.last_breath"
+    },
+    "description": {
+      "translate": "advancement.bromaxpestilence.last_breath.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "bromaxpestilence:pestilence/blackblight"
+}

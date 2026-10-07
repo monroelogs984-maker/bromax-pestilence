@@ -77,6 +77,7 @@ public final class Blackblight {
 
     /** Theriac: back two stages. */
     public static void ease(LivingEntity entity) {
+        if (stage(entity) == DEATH_STAGE - 1) com.bromax.pestilence.ModAdvancements.grant(entity, com.bromax.pestilence.ModAdvancements.LAST_BREATH);
         setStage(entity, stage(entity) - 2);
     }
 

@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "bromaxpestilence:consecrated_cleaver"
+    },
+    "title": {
+      "translate": "advancement.bromaxpestilence.consecrated"
+    },
+    "description": {
+      "translate": "advancement.bromaxpestilence.consecrated.desc"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "parent": "bromaxpestilence:pestilence/ashes_to_ashes"
+}

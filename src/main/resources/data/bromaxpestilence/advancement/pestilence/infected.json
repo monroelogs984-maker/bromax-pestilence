@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "id": "bromaxpestilence:plague_poultice"
+    },
+    "title": {
+      "translate": "advancement.bromaxpestilence.infected"
+    },
+    "description": {
+      "translate": "advancement.bromaxpestilence.infected.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "sick": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "bromaxpestilence:plague": {}
+        }
+      }
+    }
+  },
+  "parent": "bromaxpestilence:pestilence/root"
+}

@@ -1,0 +1,61 @@
+{
+  "display": {
+    "icon": {
+      "id": "bromaxpestilence:bone_saw"
+    },
+    "title": {
+      "translate": "advancement.bromaxpestilence.tools_of_the_trade"
+    },
+    "description": {
+      "translate": "advancement.bromaxpestilence.tools_of_the_trade.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "bone_saw": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "bromaxpestilence:bone_saw"
+          }
+        ]
+      }
+    },
+    "censer_flail": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "bromaxpestilence:censer_flail"
+          }
+        ]
+      }
+    },
+    "gravediggers_spade": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "bromaxpestilence:gravediggers_spade"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "bromaxpestilence:pestilence/beaked",
+  "requirements": [
+    [
+      "bone_saw"
+    ],
+    [
+      "censer_flail"
+    ],
+    [
+      "gravediggers_spade"
+    ]
+  ]
+}

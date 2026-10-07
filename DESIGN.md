@@ -120,5 +120,8 @@ were swapped for Cold Sweat. Rat-leather and bone tiers were cut as filler.
 Claude's additions:
 - A playtest before any of the above.
 - Custom sounds (cough, squeak, bell, Rider).
-- Advancements and S202 questbook hooks.
+- Advancements and S202 questbook hooks. **Advancements DONE** (0.9.0): 18 in a `pestilence/` tree,
+  vanilla triggers where possible; burn/lime/bury, full consecration, saved village, halt, Blackblight
+  unleashed and Last Breath are `minecraft:impossible` granted via ModAdvancements. Quest hooks: Glenn,
+  in-game.
 - BMM/BHB weapon-profile integration for the new weapons.
