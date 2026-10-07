@@ -18,7 +18,13 @@ runs {
         systemProperty 'neoforge.logging.console.level', 'info'
         modSource project.sourceSets.main
     }
-    client {}
+    client {
+        // ./gradlew runClient -PpestPreview: opens the "preview" world and screenshots the worn curios (client/DevPreview)
+        if (project.hasProperty('pestPreview')) {
+            systemProperty 'pestilence.preview', 'true'
+            programArguments.addAll '--quickPlaySingleplayer', 'preview'
+        }
+    }
     server {}
 }
 

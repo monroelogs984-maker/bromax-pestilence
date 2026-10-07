@@ -77,6 +77,7 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void clientSetup(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
         if (com.bromax.pestilence.compat.Compat.curios()) event.enqueueWork(CurioRenderers::register);
+        DevPreview.enableIfRequested();
     }
 
     @SubscribeEvent
