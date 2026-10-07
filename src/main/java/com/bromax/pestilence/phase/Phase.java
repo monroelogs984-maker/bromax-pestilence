@@ -19,6 +19,8 @@ public final class Phase {
     public static final int HERALDS = 5;        // plague pits
     public static final int BLACK_DEATH = 6;    // miasma wells
     public static final int DANSE_MACABRE = 7;  // the Rot
+    /** The secret ninth: never reached by points, only by burning the Heart of the Pestilence (see HeartOfPestilenceItem). */
+    public static final int BLACKBLIGHT = 9;
 
     private Phase() {}
 
@@ -45,7 +47,7 @@ public final class Phase {
             player.sendSystemMessage(title);
             player.sendSystemMessage(detail);
             if (rising && next != null) player.sendSystemMessage(next);
-            if (rising && canDecide(server, player)) player.sendSystemMessage(halt);
+            if (rising && to <= MAX && canDecide(server, player)) player.sendSystemMessage(halt);
             player.playNotifySound(rising ? SoundEvents.BELL_BLOCK : SoundEvents.BELL_RESONATE, SoundSource.AMBIENT, 1f, rising ? 0.6f : 1.2f);
         }
     }

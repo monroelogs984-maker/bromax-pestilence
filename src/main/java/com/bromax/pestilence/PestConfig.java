@@ -30,6 +30,8 @@ public final class PestConfig {
     public static final ModConfigSpec.EnumValue<Preset> PRESET;
     public static final ModConfigSpec.IntValue MAX_PHASE;
     public static final ModConfigSpec.BooleanValue ALLOW_BLACKBLIGHT;
+    public static final ModConfigSpec.IntValue BLACKBLIGHT_STAGE_TICKS;
+    public static final ModConfigSpec.DoubleValue BLACKBLIGHT_SPREAD;
 
     // stages
     public static final ModConfigSpec.IntValue INCUBATION_TICKS;
@@ -117,6 +119,10 @@ public final class PestConfig {
                 .defineInRange("maxPhase", 8, 0, 8);
         ALLOW_BLACKBLIGHT = b.comment("Whether the secret Blackblight can be unleashed at all (never on VANILLA_PLUS).")
                 .define("allowBlackblight", true);
+        BLACKBLIGHT_STAGE_TICKS = b.comment("Ticks each Blackblight stage lasts; ten stages and the tenth kills (default 1.5 minutes each).")
+                .defineInRange("blackblightStageTicks", 1800, 100, 1_000_000);
+        BLACKBLIGHT_SPREAD = b.comment("Chance per second for each person within 3 blocks of someone at Blackblight stage 4+ to catch it.")
+                .defineInRange("blackblightSpread", 0.03, 0.0, 1.0);
         b.pop();
 
         b.push("stages");

@@ -1,0 +1,27 @@
+{
+  "name": "The Blackblight",
+  "icon": "bromaxpestilence:heart_of_pestilence",
+  "category": "bromaxpestilence:progress",
+  "sortnum": 7,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(4)Read this and do not do it.$()$(br2)There is a ninth phase. It is not reached by neglect: someone must choose it. Burn the $(l)Heart of the Pestilence$() on a lit pyre, at night, while the Pale Rider rides, and do it twice; the first time the Heart only warns you."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "The Black Bloom",
+      "text": "Where the Heart burns, the $(l)Black Bloom$() takes root. It never moves. Every few seconds it pulses, and those near it catch the Blackblight; it raises pustules and blackens the earth wider the longer it lives.$(br2)Fire hurts it twice over. Bring fire."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "The sickness",
+      "text": "The Blackblight has $(4)ten stages, and the tenth is death$(). Each stage takes half a heart; darkness, weakness, slowness and withering come in turn. The far gone pass it to those beside them; a mask only halves the risk, and the Plaguebane Amulet does nothing.$(br2)$(l)Theriac$() sets it back two stages (curing it in the first two)."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "The end of it",
+      "text": "Kill the Black Bloom and the Blackblight lifts from everyone at once, and the Pestilence itself is broken: every phase, back to nothing.$(br2)Some worlds forbid it: the Vanilla+ preset, or $(l)allowBlackblight$() in the config."
+    }
+  ]
+}

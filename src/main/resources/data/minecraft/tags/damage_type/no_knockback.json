@@ -1,1 +1,6 @@
-{ "values": [ "bromaxpestilence:plague" ] }
+{
+  "values": [
+    "bromaxpestilence:plague",
+    "bromaxpestilence:blackblight"
+  ]
+}

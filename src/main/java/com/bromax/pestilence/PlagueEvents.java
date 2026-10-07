@@ -76,6 +76,14 @@ public final class PlagueEvents {
     @SubscribeEvent
     public static void onEntityTick(EntityTickEvent.Pre event) {
         if (!(event.getEntity() instanceof LivingEntity entity) || entity.level().isClientSide) return;
+        MobEffectInstance blight = entity.getEffect(ModRegistry.BLACKBLIGHT);
+        if (blight != null) {
+            if (blight.getDuration() <= 1) {
+                com.bromax.pestilence.disease.Blackblight.advance(entity);
+                return;
+            }
+            if (entity.tickCount % 20 == 0 && entity.level() instanceof ServerLevel level) com.bromax.pestilence.disease.Blackblight.spread(level, entity);
+        }
         MobEffectInstance plague = entity.getEffect(ModRegistry.PLAGUE);
         if (plague == null) return;
 

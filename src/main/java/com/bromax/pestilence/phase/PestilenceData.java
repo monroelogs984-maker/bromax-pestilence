@@ -21,6 +21,7 @@ public class PestilenceData extends SavedData {
     private int phase;
     private long lastDay = -1;
     private int halt = -1;
+    private boolean blackblight;
     private java.util.UUID rider;
     private long riderSince;
 
@@ -31,7 +32,7 @@ public class PestilenceData extends SavedData {
     /** Current phase, or 0 on the client / without a server. */
     public static int phase(Level level) {
         MinecraftServer server = level.getServer();
-        return server == null ? 0 : get(server).phase;
+        return server == null ? 0 : get(server).phase();
     }
 
     private static PestilenceData load(CompoundTag tag, HolderLookup.Provider registries) {
@@ -42,6 +43,7 @@ public class PestilenceData extends SavedData {
         if (tag.hasUUID("rider")) data.rider = tag.getUUID("rider");
         data.riderSince = tag.getLong("riderSince");
         data.halt = tag.contains("halt") ? tag.getInt("halt") : -1;
+        data.blackblight = tag.getBoolean("blackblight");
         return data;
     }
 
@@ -53,6 +55,7 @@ public class PestilenceData extends SavedData {
         if (rider != null) tag.putUUID("rider", rider);
         tag.putLong("riderSince", riderSince);
         tag.putInt("halt", halt);
+        tag.putBoolean("blackblight", blackblight);
         return tag;
     }
 
@@ -61,7 +64,31 @@ public class PestilenceData extends SavedData {
     }
 
     public int phase() {
-        return phase;
+        return blackblight ? Phase.BLACKBLIGHT : phase;
+    }
+
+    public boolean blackblight() {
+        return blackblight;
+    }
+
+    /** The Heart is burned: the secret ninth phase. Points stop mattering until the Black Bloom dies. */
+    public void unleash(MinecraftServer server) {
+        if (blackblight) return;
+        int from = phase();
+        blackblight = true;
+        setDirty();
+        Phase.announce(server, from, Phase.BLACKBLIGHT);
+    }
+
+    /** The Black Bloom is dead: the Pestilence is wiped back to nothing. */
+    public void cleanse(MinecraftServer server) {
+        int from = phase();
+        blackblight = false;
+        points = 0;
+        phase = 0;
+        rider = null;
+        setDirty();
+        if (from != 0) Phase.announce(server, from, 0);
     }
 
     public void add(MinecraftServer server, double amount) {
@@ -90,6 +117,10 @@ public class PestilenceData extends SavedData {
     public void set(MinecraftServer server, double value) {
         points = Math.max(0, Math.min(value, threshold(Phase.MAX) * 1.25));
         if (cap() < Phase.MAX) points = Math.min(points, threshold(cap() + 1) - 0.01);
+        if (blackblight) {
+            setDirty();
+            return;
+        }
         int newPhase = phaseFor(points);
         if (newPhase != phase) {
             int old = phase;

@@ -44,6 +44,22 @@ public final class PestilenceCommand {
                 .then(Commands.literal("phase").requires(s -> s.hasPermission(2))
                         .then(Commands.argument("phase", IntegerArgumentType.integer(0, Phase.MAX))
                                 .executes(c -> setPoints(c, PestilenceData.threshold(IntegerArgumentType.getInteger(c, "phase")), false))))
+                .then(Commands.literal("blackblight").requires(s -> s.hasPermission(2))
+                        .then(Commands.literal("unleash").executes(c -> {
+                            var level = c.getSource().getLevel();
+                            com.bromax.pestilence.item.HeartOfPestilenceItem.unleash(level, net.minecraft.core.BlockPos.containing(c.getSource().getPosition()));
+                            return 1;
+                        }))
+                        .then(Commands.literal("end").executes(c -> {
+                            var server = c.getSource().getServer();
+                            PestilenceData.get(server).cleanse(server);
+                            com.bromax.pestilence.disease.Blackblight.cureAll(server);
+                            return 1;
+                        }))
+                        .then(Commands.literal("infect").then(Commands.argument("targets", EntityArgument.entities())
+                                .executes(c -> blight(c, 1))
+                                .then(Commands.argument("stage", IntegerArgumentType.integer(1, 10))
+                                        .executes(c -> blight(c, IntegerArgumentType.getInteger(c, "stage")))))))
                 .then(Commands.literal("infect").requires(s -> s.hasPermission(2))
                         .then(Commands.argument("targets", EntityArgument.entities())
                                 .executes(c -> infect(c, 0, Disease.BUBONIC))
@@ -54,6 +70,17 @@ public final class PestilenceCommand {
                                                         java.util.Arrays.stream(Disease.values()).map(Disease::getSerializedName), b))
                                                 .executes(c -> infect(c, IntegerArgumentType.getInteger(c, "stage"),
                                                         Disease.valueOf(StringArgumentType.getString(c, "disease").toUpperCase()))))))));
+    }
+
+    private static int blight(CommandContext<CommandSourceStack> ctx, int stage) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        int n = 0;
+        for (var e : EntityArgument.getEntities(ctx, "targets")) {
+            if (e instanceof net.minecraft.world.entity.LivingEntity living) {
+                com.bromax.pestilence.disease.Blackblight.setStage(living, stage);
+                n++;
+            }
+        }
+        return n;
     }
 
     private static boolean canDecide(CommandSourceStack source) {

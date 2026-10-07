@@ -72,7 +72,8 @@ public class RemedyItem extends Item {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand) {
-        if (target instanceof AfflictedMob || !Plague.isSick(target)) return InteractionResult.PASS;
+        boolean blighted = this == com.bromax.pestilence.ModRegistry.THERIAC.get() && com.bromax.pestilence.disease.Blackblight.has(target);
+        if (target instanceof AfflictedMob || !Plague.isSick(target) && !blighted) return InteractionResult.PASS;
         if (player.level() instanceof ServerLevel level) {
             apply(target, player);
             level.playSound(null, target.blockPosition(), SoundEvents.GENERIC_DRINK, SoundSource.NEUTRAL, 1f, 1f);
@@ -85,6 +86,11 @@ public class RemedyItem extends Item {
     }
 
     private void apply(LivingEntity patient, @Nullable Player physician) {
+        // Theriac alone holds the Blackblight back (two stages); it also still cures any plague
+        if (this == com.bromax.pestilence.ModRegistry.THERIAC.get() && com.bromax.pestilence.disease.Blackblight.has(patient)) {
+            com.bromax.pestilence.disease.Blackblight.ease(patient);
+            if (!Plague.isSick(patient)) return;
+        }
         boolean wasSick = Plague.isSick(patient);
         if (Plague.treat(patient, cures)) {
             if (patient instanceof net.minecraft.world.entity.npc.Villager villager && patient.level() instanceof ServerLevel level) {

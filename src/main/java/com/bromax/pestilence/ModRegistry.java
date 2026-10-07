@@ -153,6 +153,7 @@ public final class ModRegistry {
     public static final DeferredHolder<MobEffect, MobEffect> IMMUNITY = EFFECTS.register("plague_immunity", ImmunityEffect::new);
     public static final DeferredHolder<MobEffect, MobEffect> DREAD = EFFECTS.register("dread", () -> new AfflictionEffect(AfflictionEffect.Kind.DREAD, 0x2a2430));
     public static final DeferredHolder<MobEffect, MobEffect> DELIRIUM = EFFECTS.register("delirium", () -> new AfflictionEffect(AfflictionEffect.Kind.DELIRIUM, 0x7a8a3a));
+    public static final DeferredHolder<MobEffect, MobEffect> BLACKBLIGHT = EFFECTS.register("blackblight", com.bromax.pestilence.effect.BlackblightEffect::new);
     public static final DeferredHolder<MobEffect, MobEffect> ROTTING = EFFECTS.register("rotting", () -> new AfflictionEffect(AfflictionEffect.Kind.ROTTING, 0x5a4a2a));
 
     // Particles
@@ -191,6 +192,8 @@ public final class ModRegistry {
     public static final DeferredHolder<EntityType<?>, EntityType<RatKing>> RAT_KING = mob("rat_king", RatKing::new, MobCategory.MONSTER, 1.8f, 1.0f);
     public static final DeferredHolder<EntityType<?>, EntityType<Gravewarden>> GRAVEWARDEN = mob("gravewarden", Gravewarden::new, MobCategory.MONSTER, 0.9f, 3.0f);
     public static final DeferredHolder<EntityType<?>, EntityType<PaleRider>> PALE_RIDER = mob("pale_rider", PaleRider::new, MobCategory.MONSTER, 1.4f, 3.2f);
+    public static final DeferredHolder<EntityType<?>, EntityType<com.bromax.pestilence.entity.boss.BlackBloom>> BLACK_BLOOM = mob("black_bloom",
+            com.bromax.pestilence.entity.boss.BlackBloom::new, MobCategory.MONSTER, 2.4f, 3.4f);
     public static final DeferredHolder<EntityType<?>, EntityType<AfflictedWolf>> AFFLICTED_WOLF = mob("afflicted_wolf", AfflictedWolf::new, MobCategory.MONSTER, 0.6f, 0.85f);
     public static final DeferredHolder<EntityType<?>, EntityType<Corpse>> CORPSE = ENTITIES.register("corpse",
             () -> EntityType.Builder.<Corpse>of(Corpse::new, MobCategory.MISC).sized(0.9f, 0.5f).clientTrackingRange(8).updateInterval(10).build(MODID + ":corpse"));
@@ -322,7 +325,7 @@ public final class ModRegistry {
     public static final DeferredItem<?> PLAGUE_CROSS_ITEM = ITEMS.registerSimpleBlockItem(PLAGUE_CROSS);
     public static final DeferredItem<Item> PESTILENT_ICHOR = ITEMS.registerSimpleItem("pestilent_ichor");
     public static final DeferredItem<Item> SURGEONS_STEEL = ITEMS.register("surgeons_steel", () -> new Item(new Item.Properties().rarity(net.minecraft.world.item.Rarity.UNCOMMON)));
-    public static final DeferredItem<Item> HEART_OF_PESTILENCE = ITEMS.register("heart_of_pestilence", () -> new Item(new Item.Properties()
+    public static final DeferredItem<Item> HEART_OF_PESTILENCE = ITEMS.register("heart_of_pestilence", () -> new com.bromax.pestilence.item.HeartOfPestilenceItem(new Item.Properties()
             .rarity(net.minecraft.world.item.Rarity.EPIC).stacksTo(1).fireResistant()));
     public static final DeferredItem<Item> RAT_CROWN = ITEMS.register("rat_crown", () -> new RatCrownItem(PLAGUE_MASK_MATERIAL,
             new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(25)).rarity(net.minecraft.world.item.Rarity.RARE)));
@@ -346,6 +349,7 @@ public final class ModRegistry {
     public static final DeferredItem<Item> RAT_KING_SPAWN_EGG = egg("rat_king", RAT_KING, 0x3a302a, 0xd8cfb8);
     public static final DeferredItem<Item> GRAVEWARDEN_SPAWN_EGG = egg("gravewarden", GRAVEWARDEN, 0x2a2420, 0x8f9ba3);
     public static final DeferredItem<Item> PALE_RIDER_SPAWN_EGG = egg("pale_rider", PALE_RIDER, 0xd8d4c8, 0x6b7330);
+    public static final DeferredItem<Item> BLACK_BLOOM_SPAWN_EGG = egg("black_bloom", BLACK_BLOOM, 0x14100f, 0x9ad040);
     public static final DeferredItem<Item> PLAGUE_BEARER_SPAWN_EGG = egg("plague_bearer", PLAGUE_BEARER, 0x4a3c2c, 0x7a6a4a);
     public static final DeferredItem<Item> GRAVEDIGGER_SPAWN_EGG = egg("gravedigger", GRAVEDIGGER, 0x3a3028, 0x6b6b6b);
     public static final DeferredItem<Item> FLAGELLANT_SPAWN_EGG = egg("flagellant", FLAGELLANT, 0xb08870, 0x7a1c14);
@@ -457,6 +461,7 @@ public final class ModRegistry {
         event.put(RAT_KING.get(), RatKing.createAttributes().build());
         event.put(GRAVEWARDEN.get(), Gravewarden.createAttributes().build());
         event.put(PALE_RIDER.get(), PaleRider.createAttributes().build());
+        event.put(BLACK_BLOOM.get(), com.bromax.pestilence.entity.boss.BlackBloom.createAttributes().build());
     }
 
     private static void onSpawnPlacements(RegisterSpawnPlacementsEvent event) {

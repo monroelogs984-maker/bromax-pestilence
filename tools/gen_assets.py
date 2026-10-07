@@ -1636,6 +1636,67 @@ def system7_icons():
         sprite(os.path.join(items, f'{name}.png'), rows, key)
 
 
+def black_bloom():
+    """The Black Bloom (Blackblight boss): a blackened bulb on a thorned stalk, four petals round a
+    sickly glowing core, its roots splayed over the ground. Petals open by animation."""
+    def veins(put, w, h):
+        rng = random.Random(w * 31 + h)
+        x, y = rng.randrange(w), 0
+        for _ in range(h * 2):
+            put(x % w, y % h, '#6aa030'); y += 1; x += rng.choice((-1, 0, 0, 1))
+    def core(put, w, h):
+        for y in range(h):
+            for x in range(w):
+                put(x, y, '#d8ff90' if (x + y) % 3 == 0 else '#9ad040')
+    bones = [{'name': 'root', 'pivot': [0, 0, 0]},
+             {'name': 'stem', 'parent': 'root', 'pivot': [0, 3, 0]},
+             {'name': 'bulb', 'parent': 'stem', 'pivot': [0, 12, 0]},
+             {'name': 'petal_n', 'parent': 'bulb', 'pivot': [0, 17, -5]},
+             {'name': 'petal_s', 'parent': 'bulb', 'pivot': [0, 17, 5]},
+             {'name': 'petal_e', 'parent': 'bulb', 'pivot': [5, 17, 0]},
+             {'name': 'petal_w', 'parent': 'bulb', 'pivot': [-5, 17, 0]}]
+    cubes = [
+        # the root mound and roots splayed over the ground
+        cube('root', [-7, 0, -7], [14, 3, 14], '#1c161a', decor={'up': veins}),
+        cube('root', [-15, 0, -1], [8, 1, 3], '#241c20'), cube('root', [7, 0, -2], [9, 1, 3], '#241c20'),
+        cube('root', [-2, 0, -15], [3, 1, 8], '#241c20'), cube('root', [-1, 0, 7], [3, 1, 9], '#241c20'),
+        cube('root', [-11, 0, -11], [5, 1, 2], '#241c20'), cube('root', [7, 0, 8], [5, 1, 2], '#241c20'),
+        # thorned stalk
+        cube('stem', [-3, 3, -3], [6, 9, 6], '#2a2228', decor={'all': veins}),
+        cube('stem', [3, 6, -1], [2, 1, 1], '#3a3036'), cube('stem', [-5, 8, 0], [2, 1, 1], '#3a3036'),
+        cube('stem', [0, 5, 3], [1, 1, 2], '#3a3036'), cube('stem', [-1, 9, -5], [1, 1, 2], '#3a3036'),
+        # the bulb and its glowing heart
+        cube('bulb', [-5, 12, -5], [10, 6, 10], '#241a22', decor={'all': veins}),
+        cube('bulb', [-3, 17, -3], [6, 3, 6], '#9ad040', decor={'all': core}, mat='glow'),
+        # petals, standing closed round the core at rest
+        cube('petal_n', [-4, 17, -6], [8, 11, 1], '#1e1418', decor={'south': veins}),
+        cube('petal_s', [-4, 17, 5], [8, 11, 1], '#1e1418', decor={'north': veins}),
+        cube('petal_e', [5, 17, -4], [1, 11, 8], '#1e1418', decor={'west': veins}),
+        cube('petal_w', [-6, 17, -4], [1, 11, 8], '#1e1418', decor={'east': veins}),
+    ]
+    build('black_bloom', bones, cubes, 909, os.path.join(ASSETS, 'geo', 'entity', 'black_bloom.geo.json'),
+          os.path.join(ASSETS, 'textures', 'entity', 'black_bloom.png'), 'geometry.black_bloom', bounds=(2.5, 2.2, 1.0),
+          mats={'#1c161a': 'flesh', '#241c20': 'wood', '#2a2228': 'flesh', '#3a3036': 'bone', '#241a22': 'flesh', '#1e1418': 'flesh'})
+    # petals spread open and breathe; the pulse flares them and swells the bulb
+    def petals(base, amount, speed):
+        return {'petal_n': {'rotation': [f'{base} + {swing(amount, speed)}', 0, 0]},
+                'petal_s': {'rotation': [f'-{base} - {swing(amount, speed)}', 0, 0]},
+                'petal_e': {'rotation': [0, 0, f'-{base} - {swing(amount, speed)}']},
+                'petal_w': {'rotation': [0, 0, f'{base} + {swing(amount, speed)}']}}
+    idle = petals(35, 6, 90)
+    idle['bulb'] = {'scale': [f'1 + {swing(0.03, 90)}', f'1 + {swing(0.05, 90)}', f'1 + {swing(0.03, 90)}']}
+    flare = {'petal_n': {'rotation': {'0.0': [35, 0, 0], '0.25': [70, 0, 0], '1.0': [35, 0, 0]}},
+             'petal_s': {'rotation': {'0.0': [-35, 0, 0], '0.25': [-70, 0, 0], '1.0': [-35, 0, 0]}},
+             'petal_e': {'rotation': {'0.0': [0, 0, -35], '0.25': [0, 0, -70], '1.0': [0, 0, -35]}},
+             'petal_w': {'rotation': {'0.0': [0, 0, 35], '0.25': [0, 0, 70], '1.0': [0, 0, 35]}},
+             'bulb': {'scale': {'0.0': [1, 1, 1], '0.25': [1.2, 1.25, 1.2], '1.0': [1, 1, 1]}}}
+    write_json(os.path.join(ASSETS, 'animations', 'entity', 'black_bloom.animation.json'),
+               {'format_version': '1.8.0', 'geckolib_format_version': 2, 'animations': {
+                   'misc.idle': {'loop': True, 'animation_length': 4.0, 'bones': idle},
+                   'move.walk': {'loop': True, 'animation_length': 4.0, 'bones': idle},
+                   'attack.bite': {'loop': False, 'animation_length': 1.0, 'bones': flare}}})
+
+
 if __name__ == '__main__':
     plague_doctor()
     plague_mask()
@@ -1663,3 +1724,4 @@ if __name__ == '__main__':
     vanilla_afflicted.build_all()
     system5_animations()
     system6_animations()
+    black_bloom()

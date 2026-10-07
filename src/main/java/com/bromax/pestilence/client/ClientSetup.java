@@ -57,6 +57,7 @@ public final class ClientSetup {
         geo(event, ModRegistry.RAT_KING.get(), "rat_king", 1f);
         geo(event, ModRegistry.GRAVEWARDEN.get(), "gravewarden", 1.3f);
         geo(event, ModRegistry.PALE_RIDER.get(), "pale_rider", 1.1f);
+        geo(event, ModRegistry.BLACK_BLOOM.get(), "black_bloom", 1.8f);
         event.registerEntityRenderer(ModRegistry.MIASMA_WRAITH.get(), PlagueRenderers.Wraith::new);
         event.registerEntityRenderer(ModRegistry.BURROWER_RAT.get(), PlagueRenderers.Burrower::new);
         event.registerEntityRenderer(ModRegistry.FLEA_CLOUD.get(), NoopRenderer::new);

@@ -108,7 +108,13 @@ public abstract class AfflictedMob extends Monster implements GeoEntity, com.bro
     @Override
     public boolean doHurtTarget(Entity target) {
         boolean hit = super.doHurtTarget(target);
-        if (hit && target instanceof LivingEntity living) Plague.tryContactInfect(living, PestConfig.AFFLICTED_BITE_CHANCE.get(), contactDisease());
+        if (hit && target instanceof LivingEntity living) {
+            Plague.tryContactInfect(living, PestConfig.AFFLICTED_BITE_CHANCE.get(), contactDisease());
+            // In the Blackblight every bite may carry it
+            if (com.bromax.pestilence.phase.PestilenceData.phase(level()) >= com.bromax.pestilence.phase.Phase.BLACKBLIGHT && random.nextFloat() < 0.08f) {
+                com.bromax.pestilence.disease.Blackblight.infect(living);
+            }
+        }
         return hit;
     }
 

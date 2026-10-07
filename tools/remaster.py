@@ -692,7 +692,14 @@ def round12():
     return made
 
 
-ROUNDS = [round1, round2, round3, round4, round5, round6, round7, round8, round9, round10, round11, round12]
+def round13():
+    """The Blackblight's effect icon: a black bloom, petals open round a sickly green heart."""
+    return [effect('blackblight', [
+        '..................', '..................', '.......oooo.......', '......oPPPPo......', '...oo.oPppPo.oo...', '..oPPooPppPooPPo..', '..oPppoPppPoppPo..', '...oPpppGGpppPo...', '....opGGHHGGpo....', '..ooopGHhhHGpooo..', '.oPPPpGHhhHGpPPPo.', '.oPpppGGHHGGpppPo.', '..oPpppoGGopppPo..', '...oPppPooPppPo...', '....oPpo..oPpo....', '.....oo....oo.....', '..................', '..................'],
+        {'o': '#0a0809', 'P': '#3a2c36', 'p': '#1e1418', 'G': '#4a7a20', 'g': '#7ab030', 'H': '#b8e860', 'h': '#f0ffb0'})]
+
+
+ROUNDS = [round1, round2, round3, round4, round5, round6, round7, round8, round9, round10, round11, round12, round13]
 
 if __name__ == '__main__':
     made = []

@@ -79,6 +79,16 @@ were swapped for Cold Sweat. Rat-leather and bone tiers were cut as filler.
 
 1. **Blackblight**: a secret phase 9 with its own boss and the deadliest infection: a Blackblight effect
    with 10 stages that kills outright at stage 10. Keep it opt-in and heavily telegraphed.
+   **DONE**: phase 9 (`Phase.BLACKBLIGHT`, a flag in PestilenceData; points stop mattering). Trigger:
+   use the Heart on a lit pyre at night at phase 8, twice within 10s (first use only warns); refused
+   under VANILLA_PLUS or `allowBlackblight=false`. The Black Bloom (500 HP, armour 6, stationary,
+   fire x2) replaces the pyre: every 5s pulses (35% Blackblight to players within 16), raises up to 4
+   pustules, blackens soil/leaves out to radius 24 over time. Blackblight effect: stages 1-9 of
+   `blackblightStageTicks` (1800) each, -0.5 heart per stage, darkness 3+, weakness 5+, slowness and
+   wither 7+; stage 10 kills (bromaxpestilence:blackblight damage, bypasses armour/protection).
+   Spreads from stage 4+ (3 blocks, mask/censer halve it), 8% per Afflicted bite in phase 9.
+   Theriac: back 2 stages (cures at 1-2). Amulet useless. Bloom's death cures all and resets to 0.
+   `/pestilence blackblight unleash|end|infect <targets> [stage]`. Book: The Blackblight.
 2. **Warnings and opt-outs**: at every phase change, offer a clickable prompt to stop the Pestilence
    advancing (caps the phase). Supports a lighter, "vanilla+-ish" plague. Host/op only in multiplayer.
    Pair with config presets: Vanilla+, Standard, Grim.

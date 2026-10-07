@@ -68,3 +68,4 @@ textures/item/censer_flail.png
 textures/item/gravediggers_spade.png
 textures/item/rat_tail_bracelet.png
 textures/item/physicians_monocle.png
+textures/mob_effect/blackblight.png
