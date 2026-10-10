@@ -26,6 +26,10 @@ runs {
         }
     }
     server {}
+    // ./gradlew runGameTestServer: runs gametest/PestilenceTests headless and exits (non-zero on failure)
+    gameTestServer {
+        systemProperty 'neoforge.enabledGameTestNamespaces', 'bromaxpestilence'
+    }
 }
 
 dependencies {
@@ -38,6 +42,9 @@ dependencies {
 }
 
 jar {
+    // The GameTests and their arena are dev-only
+    exclude 'com/bromax/pestilence/gametest/**'
+    exclude 'data/bromaxpestilence/structure/gametest/**'
     manifest {
         attributes([
             'Specification-Title'   : 'bromaxpestilence',

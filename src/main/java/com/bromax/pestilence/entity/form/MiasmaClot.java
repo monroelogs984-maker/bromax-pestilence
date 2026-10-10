@@ -176,12 +176,12 @@ public class MiasmaClot extends Monster implements GeoEntity {
         List<MiasmaClot> clots = level.getEntitiesOfClass(MiasmaClot.class, getBoundingBox().inflate(16),
                 c -> c != this && c.isAlive() && !c.isChurning());
         for (MiasmaClot other : clots) {
-            if (other.distanceTo(this) < (getBbWidth() + other.getBbWidth()) * 0.5 + 0.5 && mass() >= other.mass()) {
+            if (other.distanceTo(this) < (getBbWidth() + other.getBbWidth()) * 0.5 + 1.0 && mass() >= other.mass()) {
                 absorb(level, other, other.mass());
                 break;
             }
         }
-        for (AfflictedMob mob : level.getEntitiesOfClass(AfflictedMob.class, getBoundingBox().inflate(0.8), Coalescence::canJoin)) {
+        for (AfflictedMob mob : level.getEntitiesOfClass(AfflictedMob.class, getBoundingBox().inflate(1.2), Coalescence::canJoin)) {
             absorb(level, mob, 1);
         }
         if (mass() >= PestConfig.CLOT_MASS_FOR_FORM.get()) {
@@ -194,7 +194,15 @@ public class MiasmaClot extends Monster implements GeoEntity {
             goal = level.getNearestEntity(AfflictedMob.class, net.minecraft.world.entity.ai.targeting.TargetingConditions.forNonCombat().selector(Coalescence::canJoin),
                     this, getX(), getY(), getZ(), getBoundingBox().inflate(16));
         }
-        if (goal != null) getNavigation().moveTo(goal, 1.0);
+        if (goal == null) return;
+        // Pathfinding counts "next to it" as arrived and collision keeps them apart, so close in
+        // directly over the last few blocks.
+        if (distanceToSqr(goal) < 4 * 4) {
+            getNavigation().stop();
+            getMoveControl().setWantedPosition(goal.getX(), goal.getY(), goal.getZ(), 1.0);
+        } else {
+            getNavigation().moveTo(goal, 1.0);
+        }
     }
 
     /** The clot becomes a Lesser Form. The nearest nest decides which; the Rot takes some from the Danse Macabre. */

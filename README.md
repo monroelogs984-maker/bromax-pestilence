@@ -34,6 +34,11 @@ grows it passes through phases, each announced by a tolling bell:
   can quarantine with Plague Crosses, and the Physician villager trades remedies and treats the sick.
 - **Creatures**: Afflicted cows, pigs, sheep, chickens, horses, wolves and villagers (vanilla models
   made sick). Also 9 Heralds, plague rats and vermin (swarms, crows, flea and fly clouds).
+- **The Forms**: from the Outbreak, Afflicted that have killed (or corpses left lying together)
+  coalesce into Miasma Clots. Clots take each other in and condense into Forms: the Gnawing Mass,
+  Choking Shade, Blackened and Mouldhusk. Forms grow Lesser, Greater, then Pestilent by killing,
+  harden against whatever keeps hurting them (fire and smoke strip that), and call on nearby nests.
+  Every step is telegraphed and announced.
 - **Bosses**: the Rat King, the Gravewarden (beneath the Lazaretto structure) and the Pale Rider.
 - **Arms**:
   - Pyre Torch, quicklime and fumigation bombs.
@@ -68,6 +73,9 @@ grows it passes through phases, each announced by a tolling bell:
 The GeckoLib, Curios, Cold Sweat and Patchouli jars are compiled against from `libs/`, which is not
 in the repository. Download those versions (see `build.gradle`) into `libs/`, then run
 `./gradlew build`.
+
+`./gradlew runGameTestServer` runs the GameTest suite (38 headless checks of every system; dev-only,
+not in the jar).
 
 `DESIGN.md` has the full design and the notes on how each system was built. `tools/` holds the
 Python scripts that generate the models, textures and the Lazaretto structure.
