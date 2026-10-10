@@ -6,6 +6,8 @@ license = "MIT"
     modId = "bromaxpestilence"
     version = "${file.jarVersion}"
     displayName = "BROMAX's Pestilence"
+    logoFile = "pestilence_logo.png"
+    logoBlur = false
     authors = "BROMAX"
     description = '''
 A plague that grows. Rats and rotten flesh carry it, the sick cough it onto others, and every death feeds it: the Pestilence climbs through nine phases, corpses rise as the Afflicted, and the land itself sickens. Fight it back down with masks, cures, pyres and fire.
