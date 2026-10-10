@@ -1,0 +1,140 @@
+{
+  "format_version": "1.8.0",
+  "geckolib_format_version": 2,
+  "animations": {
+    "misc.idle": {
+      "loop": true,
+      "animation_length": 3.0,
+      "bones": {
+        "skull": {
+          "rotation": [
+            "math.sin(query.anim_time * 120 + 0) * 4",
+            "math.sin(query.anim_time * 60 + 0) * 10",
+            0
+          ]
+        },
+        "body": {
+          "rotation": [
+            10,
+            0,
+            "math.sin(query.anim_time * 90 + 0) * 2"
+          ]
+        },
+        "left_arm": {
+          "rotation": [
+            "math.sin(query.anim_time * 90 + 0) * 5",
+            0,
+            0
+          ]
+        },
+        "right_arm": {
+          "rotation": [
+            "math.sin(query.anim_time * 90 + 180) * 5",
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "move.walk": {
+      "loop": true,
+      "animation_length": 0.9,
+      "bones": {
+        "left_leg": {
+          "rotation": [
+            "math.sin(query.anim_time * 400 + 0) * 30",
+            0,
+            0
+          ]
+        },
+        "right_leg": {
+          "rotation": [
+            "math.sin(query.anim_time * 400 + 180) * 30",
+            0,
+            0
+          ]
+        },
+        "left_arm": {
+          "rotation": [
+            "math.sin(query.anim_time * 400 + 180) * 25",
+            0,
+            0
+          ]
+        },
+        "right_arm": {
+          "rotation": [
+            "math.sin(query.anim_time * 400 + 0) * 25",
+            0,
+            0
+          ]
+        },
+        "body": {
+          "rotation": [
+            18,
+            0,
+            0
+          ],
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 400 + 0) * 0.6)",
+            0
+          ]
+        }
+      }
+    },
+    "attack.bite": {
+      "loop": false,
+      "animation_length": 0.4,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.15": [
+              -130,
+              0,
+              20
+            ],
+            "0.3": [
+              20,
+              0,
+              0
+            ],
+            "0.4": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.2": [
+              -110,
+              0,
+              -20
+            ],
+            "0.35": [
+              20,
+              0,
+              0
+            ],
+            "0.4": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  }
+}

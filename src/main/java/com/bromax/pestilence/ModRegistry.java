@@ -178,6 +178,17 @@ public final class ModRegistry {
     public static final DeferredHolder<EntityType<?>, EntityType<BoneCollector>> BONE_COLLECTOR = mob("bone_collector", BoneCollector::new, MobCategory.MONSTER, 0.6f, 1.95f);
     public static final DeferredHolder<EntityType<?>, EntityType<MiasmaWraith>> MIASMA_WRAITH = mob("miasma_wraith", MiasmaWraith::new, MobCategory.MONSTER, 0.7f, 1.9f);
     public static final DeferredHolder<EntityType<?>, EntityType<Pustule>> PUSTULE = mob("pustule", Pustule::new, MobCategory.MONSTER, 0.9f, 0.9f);
+    // Forms: the plague concentrated (see world/Coalescence)
+    public static final DeferredHolder<EntityType<?>, EntityType<com.bromax.pestilence.entity.form.MiasmaClot>> MIASMA_CLOT = mob("miasma_clot",
+            com.bromax.pestilence.entity.form.MiasmaClot::new, MobCategory.MONSTER, 1.0f, 0.9f);
+    public static final DeferredHolder<EntityType<?>, EntityType<com.bromax.pestilence.entity.form.GnawingMass>> GNAWING_MASS = mob("gnawing_mass",
+            com.bromax.pestilence.entity.form.GnawingMass::new, MobCategory.MONSTER, 1.4f, 1.5f);
+    public static final DeferredHolder<EntityType<?>, EntityType<com.bromax.pestilence.entity.form.ChokingShade>> CHOKING_SHADE = mob("choking_shade",
+            com.bromax.pestilence.entity.form.ChokingShade::new, MobCategory.MONSTER, 0.9f, 2.6f);
+    public static final DeferredHolder<EntityType<?>, EntityType<com.bromax.pestilence.entity.form.Blackened>> BLACKENED = mob("blackened",
+            com.bromax.pestilence.entity.form.Blackened::new, MobCategory.MONSTER, 0.7f, 2.3f);
+    public static final DeferredHolder<EntityType<?>, EntityType<com.bromax.pestilence.entity.form.Mouldhusk>> MOULDHUSK = mob("mouldhusk",
+            com.bromax.pestilence.entity.form.Mouldhusk::new, MobCategory.MONSTER, 1.5f, 2.0f);
     // Vermin
     public static final DeferredHolder<EntityType<?>, EntityType<SewerRat>> SEWER_RAT = mob("sewer_rat", SewerRat::new, MobCategory.MONSTER, 0.8f, 0.6f);
     public static final DeferredHolder<EntityType<?>, EntityType<BloatedRat>> BLOATED_RAT = mob("bloated_rat", BloatedRat::new, MobCategory.MONSTER, 0.7f, 0.6f);
@@ -358,6 +369,11 @@ public final class ModRegistry {
     public static final DeferredItem<Item> MOURNER_SPAWN_EGG = egg("mourner", MOURNER, 0x151214, 0x4a4048);
     public static final DeferredItem<Item> BONE_COLLECTOR_SPAWN_EGG = egg("bone_collector", BONE_COLLECTOR, 0x5a5248, 0xd8cfb8);
     public static final DeferredItem<Item> MIASMA_WRAITH_SPAWN_EGG = egg("miasma_wraith", MIASMA_WRAITH, 0x6b7330, 0xc8d0a0);
+    public static final DeferredItem<Item> MIASMA_CLOT_SPAWN_EGG = egg("miasma_clot", MIASMA_CLOT, 0x5a6038, 0x9aa070);
+    public static final DeferredItem<Item> GNAWING_MASS_SPAWN_EGG = egg("gnawing_mass", GNAWING_MASS, 0x3a302a, 0x8a6a4a);
+    public static final DeferredItem<Item> CHOKING_SHADE_SPAWN_EGG = egg("choking_shade", CHOKING_SHADE, 0x3a4030, 0xa8b070);
+    public static final DeferredItem<Item> BLACKENED_SPAWN_EGG = egg("blackened", BLACKENED, 0x161214, 0x7a2a1a);
+    public static final DeferredItem<Item> MOULDHUSK_SPAWN_EGG = egg("mouldhusk", MOULDHUSK, 0x4a3c2a, 0x8aa050);
     public static final DeferredItem<Item> PUSTULE_SPAWN_EGG = egg("pustule", PUSTULE, 0xa89a5a, 0x7a2a24);
     public static final DeferredItem<Item> SEWER_RAT_SPAWN_EGG = egg("sewer_rat", SEWER_RAT, 0x2f2b26, 0x8a6a64);
     public static final DeferredItem<Item> BLOATED_RAT_SPAWN_EGG = egg("bloated_rat", BLOATED_RAT, 0x8a7a70, 0x6b7330);
@@ -451,6 +467,11 @@ public final class ModRegistry {
         event.put(BONE_COLLECTOR.get(), BoneCollector.createAttributes().build());
         event.put(MIASMA_WRAITH.get(), MiasmaWraith.createAttributes().build());
         event.put(PUSTULE.get(), Pustule.createAttributes().build());
+        event.put(MIASMA_CLOT.get(), com.bromax.pestilence.entity.form.MiasmaClot.createAttributes().build());
+        event.put(GNAWING_MASS.get(), com.bromax.pestilence.entity.form.GnawingMass.createAttributes().build());
+        event.put(CHOKING_SHADE.get(), com.bromax.pestilence.entity.form.ChokingShade.createAttributes().build());
+        event.put(BLACKENED.get(), com.bromax.pestilence.entity.form.Blackened.createAttributes().build());
+        event.put(MOULDHUSK.get(), com.bromax.pestilence.entity.form.Mouldhusk.createAttributes().build());
         event.put(SEWER_RAT.get(), SewerRat.createAttributes().build());
         event.put(BLOATED_RAT.get(), BloatedRat.createAttributes().build());
         event.put(BURROWER_RAT.get(), PlagueRat.createAttributes().build());

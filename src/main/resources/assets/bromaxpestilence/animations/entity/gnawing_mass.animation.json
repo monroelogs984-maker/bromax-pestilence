@@ -1,0 +1,150 @@
+{
+  "format_version": "1.8.0",
+  "geckolib_format_version": 2,
+  "animations": {
+    "misc.idle": {
+      "loop": true,
+      "animation_length": 2.0,
+      "bones": {
+        "body": {
+          "scale": [
+            "1 + math.sin(query.anim_time * 300 + 0) * 0.02",
+            "1 + math.sin(query.anim_time * 360 + 0) * 0.03",
+            "1 + math.sin(query.anim_time * 330 + 0) * 0.02"
+          ]
+        },
+        "tails": {
+          "rotation": [
+            "math.sin(query.anim_time * 200 + 0) * 8",
+            "math.sin(query.anim_time * 160 + 0) * 12",
+            0
+          ]
+        },
+        "skull": {
+          "rotation": [
+            "math.sin(query.anim_time * 180 + 0) * 4",
+            "math.sin(query.anim_time * 90 + 0) * 8",
+            0
+          ]
+        }
+      }
+    },
+    "move.walk": {
+      "loop": true,
+      "animation_length": 1.2,
+      "bones": {
+        "body": {
+          "position": [
+            0,
+            "math.abs(math.sin(query.anim_time * 300 + 0) * 0.6)",
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            "math.sin(query.anim_time * 150 + 0) * 3"
+          ]
+        },
+        "tails": {
+          "rotation": [
+            "math.sin(query.anim_time * 200 + 0) * 8",
+            "math.sin(query.anim_time * 160 + 0) * 12",
+            0
+          ]
+        },
+        "left_arm": {
+          "rotation": [
+            "math.sin(query.anim_time * 300 + 0) * 20",
+            0,
+            0
+          ]
+        },
+        "right_arm": {
+          "rotation": [
+            "math.sin(query.anim_time * 300 + 180) * 20",
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "attack.bite": {
+      "loop": false,
+      "animation_length": 0.6,
+      "bones": {
+        "left_arm": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.25": [
+              -120,
+              0,
+              -10
+            ],
+            "0.4": [
+              10,
+              0,
+              0
+            ],
+            "0.6": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "right_arm": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.25": [
+              -120,
+              0,
+              10
+            ],
+            "0.4": [
+              10,
+              0,
+              0
+            ],
+            "0.6": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "skull": {
+          "rotation": {
+            "0.0": [
+              0,
+              0,
+              0
+            ],
+            "0.25": [
+              -15,
+              0,
+              0
+            ],
+            "0.4": [
+              20,
+              0,
+              0
+            ],
+            "0.6": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  }
+}

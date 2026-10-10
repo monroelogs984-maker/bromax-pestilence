@@ -41,6 +41,9 @@ import java.util.Map;
 public abstract class AfflictedMob extends Monster implements GeoEntity, com.bromax.pestilence.entity.PhaseGated {
     private static Map<EntityType<?>, EntityType<? extends AfflictedMob>> forms;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private int kills;
+    private int coalesceTicks;
+    @Nullable private java.util.UUID coalesceLeader;
 
     protected AfflictedMob(EntityType<? extends AfflictedMob> type, Level level) {
         super(type, level);
@@ -107,6 +110,7 @@ public abstract class AfflictedMob extends Monster implements GeoEntity, com.bro
 
     @Override
     public boolean doHurtTarget(Entity target) {
+        if (isCoalescing()) return false;
         boolean hit = super.doHurtTarget(target);
         if (hit && target instanceof LivingEntity living) {
             Plague.tryContactInfect(living, PestConfig.AFFLICTED_BITE_CHANCE.get(), contactDisease());
@@ -116,6 +120,71 @@ public abstract class AfflictedMob extends Monster implements GeoEntity, com.bro
             }
         }
         return hit;
+    }
+
+    // ---- coalescence (see world/Coalescence) ------------------------------------------------
+
+    public int kills() {
+        return kills;
+    }
+
+    public void noteKill() {
+        kills++;
+    }
+
+    public boolean isCoalescing() {
+        return coalesceTicks > 0;
+    }
+
+    @Nullable
+    public java.util.UUID coalesceLeader() {
+        return coalesceLeader;
+    }
+
+    public void startCoalescing(java.util.UUID leader) {
+        coalesceLeader = leader;
+        coalesceTicks = com.bromax.pestilence.world.Coalescence.TELEGRAPH;
+    }
+
+    public void stopCoalescing() {
+        coalesceTicks = 0;
+        coalesceLeader = null;
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        super.customServerAiStep();
+        if (!(level() instanceof net.minecraft.server.level.ServerLevel level)) return;
+        if (coalesceTicks > 0) {
+            // The telegraph: it stops, shudders and smokes. Fire breaks it up (see hurt).
+            getNavigation().stop();
+            setTarget(null);
+            if (coalesceTicks % 6 == 0) {
+                level.sendParticles(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE, getX(), getY() + getBbHeight() * 0.6, getZ(),
+                        3, getBbWidth() * 0.4, getBbHeight() * 0.3, getBbWidth() * 0.4, 0.01);
+            }
+            if (--coalesceTicks == 0 && getUUID().equals(coalesceLeader)) com.bromax.pestilence.world.Coalescence.finish(level, this);
+        } else if (tickCount % 40 == 0) {
+            com.bromax.pestilence.world.Coalescence.tick(level, this);
+        }
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (isCoalescing() && source.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) stopCoalescing();
+        return super.hurt(source, amount);
+    }
+
+    @Override
+    public void addAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("PlagueKills", kills);
+    }
+
+    @Override
+    public void readAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        kills = tag.getInt("PlagueKills");
     }
 
     @Override

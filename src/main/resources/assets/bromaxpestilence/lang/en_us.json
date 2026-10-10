@@ -290,5 +290,21 @@
   "advancement.bromaxpestilence.black_bloom": "Uprooted",
   "advancement.bromaxpestilence.black_bloom.desc": "Kill the Black Bloom and break the Pestilence",
   "advancement.bromaxpestilence.stayed_the_tide": "Stayed the Tide",
-  "advancement.bromaxpestilence.stayed_the_tide.desc": "Halt the Pestilence where it stands"
+  "advancement.bromaxpestilence.stayed_the_tide.desc": "Halt the Pestilence where it stands",
+  "entity.bromaxpestilence.miasma_clot": "Miasma Clot",
+  "item.bromaxpestilence.miasma_clot_spawn_egg": "Miasma Clot Spawn Egg",
+  "entity.bromaxpestilence.gnawing_mass": "Gnawing Mass",
+  "item.bromaxpestilence.gnawing_mass_spawn_egg": "Gnawing Mass Spawn Egg",
+  "entity.bromaxpestilence.choking_shade": "Choking Shade",
+  "item.bromaxpestilence.choking_shade_spawn_egg": "Choking Shade Spawn Egg",
+  "entity.bromaxpestilence.blackened": "Blackened",
+  "item.bromaxpestilence.blackened_spawn_egg": "Blackened Spawn Egg",
+  "entity.bromaxpestilence.mouldhusk": "Mouldhusk",
+  "item.bromaxpestilence.mouldhusk_spawn_egg": "Mouldhusk Spawn Egg",
+  "entity.bromaxpestilence.form_tier.1": "Lesser %s",
+  "entity.bromaxpestilence.form_tier.2": "Greater %s",
+  "entity.bromaxpestilence.form_tier.3": "Pestilent %s",
+  "message.bromaxpestilence.clot_condensing": "A Miasma Clot churns and darkens. Something is taking shape in it.",
+  "message.bromaxpestilence.form_born": "The clot condenses into a %s.",
+  "message.bromaxpestilence.form_grows": "The %s has fed enough: it grows into a %s."
 }

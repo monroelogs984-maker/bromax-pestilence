@@ -125,3 +125,27 @@ Claude's additions:
   unleashed and Last Breath are `minecraft:impossible` granted via ModAdvancements. Quest hooks: Glenn,
   in-game.
 - BMM/BHB weapon-profile integration for the new weapons.
+
+## Forms (0.10.0, 2026-10-10)
+
+Glenn: take SRP's "concentrated, evolved clumps of disease" idea without SRP's body horror. Forms read as
+rats, rags, soot, fog and mould: no exposed flesh, wounds or extra eyes. Everything is telegraphed.
+
+| SRP | Pestilence |
+|---|---|
+| Merge: infected melt into Moving Flesh, which fuses and grows into a Primitive | **Coalescence**: Afflicted (not Heralds) with `coalesceKills` kills (half beside a nest), `coalesceGroup` of them within 4 blocks, stop and smoke for 3 s, then become a **Miasma Clot**. Fire breaks the telegraph. Unburned corpses lying 3+ together may coalesce instead of rising (`corpseCoalesceChance`). From `coalescePhase` (4). |
+| Moving Flesh | **Miasma Clot**: slow, weak, foul to breathe near; drifts to other clots and ready Afflicted and absorbs them (mass). At `clotMassForForm` it churns for 5 s (announced) and condenses into a Lesser Form. Fire x2, brazier/censer smoke hurts it. |
+| Primitive -> Adapted -> Pure by kills | **Lesser -> Greater -> Pestilent** by kills (`greaterKills` 5 from phase 6, `pestilentKills` 12 from phase 7); 3 s churn and an announcement first. x1/1.6/2.4 health, x1/1.3/1.7 damage, x1/1.2/1.4 size; Pestilent gets a boss bar. |
+| Damage adaptation (fire/lightning reset) | **Hardening**: per kind of harm (melee, projectile, magic, explosion) every 2 hits add a stack, `adaptPerStack` (12%) each, up to `adaptMaxStacks` (5). Clank + grey dust on each new stack. Fire, lightning, the Consecrated Cleaver and brazier/censer smoke strip it all; fire also does x1.5. |
+| Reinforcements (Beckons) | A Form hurt below half, and again on death, makes the nearest nest within 32 send 1+tier of its breed. No nest, no help. |
+| Carriers / things inside victims | The Gnawing Mass sheds rats at each quarter of health lost. |
+| Call of the Hive | The Mouldhusk's spore burst spreads the Rot. |
+
+Lines (the nearest nest picks; the Rot takes 40% from phase 7):
+- **Gnawing Mass** (bubonic, warren): heap of rats in one shape; sheds 1+tier rats per quarter health.
+- **Choking Shade** (pneumonic, well): hooded column of fog; 1 s loud inhale, then a line of 2+tier miasma clouds.
+- **Blackened** (septicemic, pit): quick soot figure; Weakness (Slowness when Pestilent) on hit; blights the ground it walks.
+- **Mouldhusk** (the Rot, phase 7+): slow fungal husk; 1.5 s swell, then a spore burst (Rot chance, Rotting on players).
+
+Points: coalesce +5, Form born +15, grows +20, killed by a player -10 x tier. Art: `tools/forms_assets.py`
+(separate from gen_assets so nothing else is rebuilt). Book: The Forms (Enemies).

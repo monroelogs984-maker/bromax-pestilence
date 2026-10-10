@@ -156,6 +156,10 @@ public final class PlagueEvents {
     public static void onDeath(LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
         if (!(entity.level() instanceof ServerLevel level)) return;
+        // Plague creatures learn from killing: Afflicted ready themselves to coalesce, Forms grow.
+        if (event.getSource().getEntity() instanceof AfflictedMob killer && !(entity instanceof AfflictedMob)) killer.noteKill();
+        if (event.getSource().getEntity() instanceof com.bromax.pestilence.entity.form.FormMob form
+                && !(entity instanceof com.bromax.pestilence.entity.form.FormMob)) form.noteKill();
         if (entity instanceof AfflictedMob && event.getSource().getEntity() instanceof Player) {
             Plague.addPoints(entity, PestConfig.POINTS_AFFLICTED_KILL.get());
         }
@@ -387,7 +391,8 @@ public final class PlagueEvents {
     }
 
     private static boolean isPlagueCreature(LivingEntity e) {
-        return e instanceof AfflictedMob || e instanceof PlagueRat || e instanceof com.bromax.pestilence.entity.vermin.RatSwarm
+        return e instanceof AfflictedMob || e instanceof com.bromax.pestilence.entity.form.FormMob
+                || e instanceof com.bromax.pestilence.entity.form.MiasmaClot || e instanceof PlagueRat || e instanceof com.bromax.pestilence.entity.vermin.RatSwarm
                 || e instanceof com.bromax.pestilence.entity.vermin.CarrionCrow;
     }
 

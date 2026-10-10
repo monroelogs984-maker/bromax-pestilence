@@ -104,6 +104,22 @@ public final class PestConfig {
     public static final ModConfigSpec.IntValue BRAZIER_FUEL_TICKS;
 
     // doctor
+    // forms
+    public static final ModConfigSpec.BooleanValue FORMS_ENABLED;
+    public static final ModConfigSpec.IntValue COALESCE_PHASE;
+    public static final ModConfigSpec.IntValue COALESCE_KILLS;
+    public static final ModConfigSpec.IntValue COALESCE_GROUP;
+    public static final ModConfigSpec.DoubleValue CORPSE_COALESCE_CHANCE;
+    public static final ModConfigSpec.IntValue CLOT_MASS_FOR_FORM;
+    public static final ModConfigSpec.IntValue GREATER_KILLS;
+    public static final ModConfigSpec.IntValue PESTILENT_KILLS;
+    public static final ModConfigSpec.DoubleValue ADAPT_PER_STACK;
+    public static final ModConfigSpec.IntValue ADAPT_MAX_STACKS;
+    public static final ModConfigSpec.DoubleValue POINTS_COALESCE;
+    public static final ModConfigSpec.DoubleValue POINTS_FORM_BORN;
+    public static final ModConfigSpec.DoubleValue POINTS_FORM_GROWS;
+    public static final ModConfigSpec.DoubleValue POINTS_FORM_KILLED;
+
     public static final ModConfigSpec.IntValue DOCTOR_CHECK_INTERVAL;
     public static final ModConfigSpec.DoubleValue DOCTOR_CHANCE;
     public static final ModConfigSpec.DoubleValue DOCTOR_CHANCE_INFECTED;
@@ -255,6 +271,34 @@ public final class PestConfig {
                 .defineInRange("brazierRadius", 10, 2, 48);
         BRAZIER_FUEL_TICKS = b.comment("Ticks of burn time per herb added to a brazier (max 4 herbs' worth).")
                 .defineInRange("brazierFuelTicks", 6000, 20, 1_000_000);
+        b.pop();
+
+        b.push("forms");
+        FORMS_ENABLED = b.comment("Whether the Afflicted and unburned corpses can coalesce into Miasma Clots, which condense into Forms.")
+                .define("enabled", true);
+        COALESCE_PHASE = b.comment("Pestilence phase from which coalescence starts (Greater Forms need phase 6, Pestilent Forms phase 7).")
+                .defineInRange("coalescePhase", 4, 0, 9);
+        COALESCE_KILLS = b.comment("Kills an Afflicted needs before it can coalesce (halved, rounded down, beside a nest).")
+                .defineInRange("coalesceKills", 2, 0, 100);
+        COALESCE_GROUP = b.comment("How many such Afflicted must stand together (within 4 blocks) to coalesce into a clot.")
+                .defineInRange("coalesceGroup", 3, 2, 8);
+        CORPSE_COALESCE_CHANCE = b.comment("Chance that a corpse about to rise beside two or more others melts into a clot with them instead.")
+                .defineInRange("corpseCoalesceChance", 0.35, 0.0, 1.0);
+        CLOT_MASS_FOR_FORM = b.comment("Mass a Miasma Clot needs (one per Afflicted or corpse taken in) before it condenses into a Lesser Form.")
+                .defineInRange("clotMassForForm", 8, 2, 64);
+        GREATER_KILLS = b.comment("Kills a Lesser Form needs to grow Greater (from phase 6).")
+                .defineInRange("greaterKills", 5, 1, 1000);
+        PESTILENT_KILLS = b.comment("Kills a Greater Form needs to grow Pestilent (from phase 7).")
+                .defineInRange("pestilentKills", 12, 1, 1000);
+        ADAPT_PER_STACK = b.comment("Damage a Form shrugs off per hardening stack against one kind of harm (melee, arrows, magic, blasts). Fire, lightning, consecrated steel and censer or brazier smoke strip it.")
+                .defineInRange("adaptPerStack", 0.12, 0.0, 0.25);
+        ADAPT_MAX_STACKS = b.comment("Most hardening stacks a Form can build against one kind of harm (two same-kind hits per stack).")
+                .defineInRange("adaptMaxStacks", 5, 0, 8);
+        POINTS_COALESCE = b.defineInRange("pointsCoalesce", 5.0, -1000.0, 1000.0);
+        POINTS_FORM_BORN = b.defineInRange("pointsFormBorn", 15.0, -1000.0, 1000.0);
+        POINTS_FORM_GROWS = b.defineInRange("pointsFormGrows", 20.0, -1000.0, 1000.0);
+        POINTS_FORM_KILLED = b.comment("Plague Points when a player kills a Form, multiplied by its tier.")
+                .defineInRange("pointsFormKilled", -10.0, -1000.0, 1000.0);
         b.pop();
 
         b.push("doctor");

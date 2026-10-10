@@ -196,6 +196,7 @@ public class Corpse extends Entity {
     }
 
     private void rise() {
+        if (level() instanceof ServerLevel lvl && com.bromax.pestilence.world.Coalescence.corpsesCoalesce(lvl, this)) return;
         EntityType<? extends AfflictedMob> form = AfflictedMob.formOf(getSource());
         if (form != null && level() instanceof ServerLevel level) {
             AfflictedMob mob = form.create(level);

@@ -1,0 +1,55 @@
+{
+  "name": "The Forms",
+  "icon": "bromaxpestilence:gnawing_mass_spawn_egg",
+  "category": "bromaxpestilence:enemies",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "From the $(l)Outbreak$() phase, the plague can gather into something worse. Afflicted that have killed, standing together, stop and smoke for three seconds, then $(l)coalesce$() into a $(l)Miasma Clot$(). Unburned corpses lying together may do the same instead of rising.$(br2)Fire breaks a coalescence up. Burn the dead, and keep the Afflicted apart."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:miasma_clot",
+      "name": "Miasma Clot",
+      "text": "Slow, weak and foul to breathe near. It drifts toward other clots and Afflicted and takes them in. Grown big enough, it churns loudly and $(l)condenses into a Form$(). Fire hurts it double; smoke tears it apart."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Growing",
+      "text": "A Form is born $(l)Lesser$(). Each kill feeds it: enough, and from the $(l)Black Death$() it grows $(l)Greater$(); from the $(l)Danse Macabre$(), $(l)Pestilent$(). It stops and churns before it grows, and you will hear it.$(br2)Which Form a clot becomes depends on the nearest nest: warrens make Gnawing Masses, wells Choking Shades, pits the Blackened."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Hardening",
+      "text": "A Form learns. Hit it the same way again and again (blade, arrow, spell or blast) and it hardens against that: a dull clank and a puff of grey dust each time. Switch weapons, or $(l)strip$() it: fire, lightning, a consecrated cleaver, or brazier and censer smoke undo all of it.$(br2)Hurt a Form badly, or kill it, near a nest and the nest sends help."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:gnawing_mass",
+      "name": "Gnawing Mass",
+      "text": "Bubonic. Rats holding one shape; every quarter of its health it loses, some break away as loose rats."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:choking_shade",
+      "name": "Choking Shade",
+      "text": "Pneumonic. Draws a long, loud breath, then breathes a line of miasma at you. Step aside when it inhales.",
+      "scale": 0.6
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:blackened",
+      "name": "The Blackened",
+      "text": "Septicemic. Quick; its blows sap your strength, and the ground it crosses blights.",
+      "scale": 0.7
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "bromaxpestilence:mouldhusk",
+      "name": "Mouldhusk",
+      "text": "The Rot. Slow and tough; it swells, then bursts spores that can give the Rot to anything nearby. Only from the Danse Macabre.",
+      "scale": 0.7
+    }
+  ]
+}

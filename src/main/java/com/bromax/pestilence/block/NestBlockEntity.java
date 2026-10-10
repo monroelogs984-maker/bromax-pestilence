@@ -145,6 +145,21 @@ public class NestBlockEntity extends BlockEntity {
         }
     }
 
+    /** A Form calls for help: the nest sends what it breeds, readable at the nest itself (smoke and a groan). */
+    public static void reinforce(ServerLevel level, BlockPos pos, int count) {
+        if (!(level.getBlockState(pos).getBlock() instanceof NestBlock block)) return;
+        int stage = level.getBlockState(pos).getValue(NestBlock.STAGE);
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 25, 0.5, 0.5, 0.5, 0.03);
+        level.playSound(null, pos, SoundEvents.ZOMBIE_VILLAGER_AMBIENT, SoundSource.HOSTILE, 2f, 0.4f);
+        for (int i = 0; i < count; i++) {
+            switch (block.kind()) {
+                case WARREN -> summon(level, pos, ratFor(level, stage));
+                case PIT -> summon(level, pos, level.random.nextBoolean() ? ModRegistry.AFFLICTED_PIG.get() : ModRegistry.AFFLICTED_COW.get());
+                case WELL -> summon(level, pos, stage >= 2 && i == 0 ? ModRegistry.MIASMA_WRAITH.get() : ModRegistry.AFFLICTED_SHEEP.get());
+            }
+        }
+    }
+
     private static void summon(ServerLevel level, BlockPos pos, EntityType<? extends net.minecraft.world.entity.Mob> type) {
         net.minecraft.world.entity.Mob mob = type.create(level);
         if (mob == null) return;

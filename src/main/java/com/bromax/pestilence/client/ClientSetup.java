@@ -59,6 +59,11 @@ public final class ClientSetup {
         geo(event, ModRegistry.PALE_RIDER.get(), "pale_rider", 1.1f);
         geo(event, ModRegistry.BLACK_BLOOM.get(), "black_bloom", 1.8f);
         event.registerEntityRenderer(ModRegistry.MIASMA_WRAITH.get(), PlagueRenderers.Wraith::new);
+        event.registerEntityRenderer(ModRegistry.MIASMA_CLOT.get(), PlagueRenderers.Clot::new);
+        event.registerEntityRenderer(ModRegistry.GNAWING_MASS.get(), ctx -> new PlagueRenderers.Form<>(ctx, "gnawing_mass", 1f));
+        event.registerEntityRenderer(ModRegistry.CHOKING_SHADE.get(), ctx -> new PlagueRenderers.Form<>(ctx, "choking_shade", 1f));
+        event.registerEntityRenderer(ModRegistry.BLACKENED.get(), ctx -> new PlagueRenderers.Form<>(ctx, "blackened", 1f));
+        event.registerEntityRenderer(ModRegistry.MOULDHUSK.get(), ctx -> new PlagueRenderers.Form<>(ctx, "mouldhusk", 1f));
         event.registerEntityRenderer(ModRegistry.BURROWER_RAT.get(), PlagueRenderers.Burrower::new);
         event.registerEntityRenderer(ModRegistry.FLEA_CLOUD.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModRegistry.FUMIGATION_CLOUD.get(), NoopRenderer::new);

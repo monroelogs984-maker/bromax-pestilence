@@ -1,0 +1,94 @@
+{
+  "format_version": "1.8.0",
+  "geckolib_format_version": 2,
+  "animations": {
+    "misc.idle": {
+      "loop": true,
+      "animation_length": 6.0,
+      "bones": {
+        "body": {
+          "position": [
+            0,
+            "math.sin(query.anim_time * 120 + 0) * 0.6 + 0.6",
+            0
+          ],
+          "rotation": [
+            0,
+            "query.anim_time * 20",
+            0
+          ],
+          "scale": [
+            "1 + math.sin(query.anim_time * 150 + 0) * 0.05",
+            "1 + math.sin(query.anim_time * 150 + 0) * 0.08",
+            "1 + math.sin(query.anim_time * 150 + 0) * 0.05"
+          ]
+        },
+        "puff_a": {
+          "position": [
+            "math.sin(query.anim_time * 100 + 0) * 0.8",
+            "math.sin(query.anim_time * 140 + 0) * 0.6",
+            0
+          ]
+        },
+        "puff_b": {
+          "position": [
+            "math.sin(query.anim_time * 110 + 90) * 0.8",
+            "math.sin(query.anim_time * 130 + 45) * 0.6",
+            0
+          ]
+        },
+        "puff_c": {
+          "position": [
+            0,
+            "math.sin(query.anim_time * 120 + 30) * 0.8",
+            "math.sin(query.anim_time * 90 + 0) * 0.6"
+          ]
+        }
+      }
+    },
+    "move.walk": {
+      "loop": true,
+      "animation_length": 6.0,
+      "bones": {
+        "body": {
+          "position": [
+            0,
+            "math.sin(query.anim_time * 120 + 0) * 0.6 + 0.6",
+            0
+          ],
+          "rotation": [
+            0,
+            "query.anim_time * 20",
+            0
+          ],
+          "scale": [
+            "1 + math.sin(query.anim_time * 150 + 0) * 0.05",
+            "1 + math.sin(query.anim_time * 150 + 0) * 0.08",
+            "1 + math.sin(query.anim_time * 150 + 0) * 0.05"
+          ]
+        },
+        "puff_a": {
+          "position": [
+            "math.sin(query.anim_time * 100 + 0) * 0.8",
+            "math.sin(query.anim_time * 140 + 0) * 0.6",
+            0
+          ]
+        },
+        "puff_b": {
+          "position": [
+            "math.sin(query.anim_time * 110 + 90) * 0.8",
+            "math.sin(query.anim_time * 130 + 45) * 0.6",
+            0
+          ]
+        },
+        "puff_c": {
+          "position": [
+            0,
+            "math.sin(query.anim_time * 120 + 30) * 0.8",
+            "math.sin(query.anim_time * 90 + 0) * 0.6"
+          ]
+        }
+      }
+    }
+  }
+}

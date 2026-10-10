@@ -39,4 +39,48 @@ public final class PlagueRenderers {
             if (!rat.isBurrowed()) super.render(rat, yaw, partialTick, pose, buffers, light);
         }
     }
+
+    /** A Form: drawn bigger as it grows. The Choking Shade is part fog, so it is drawn see-through. */
+    public static class Form<T extends com.bromax.pestilence.entity.form.FormMob> extends GeoEntityRenderer<T> {
+        private final float base;
+        private final boolean fog;
+
+        public Form(EntityRendererProvider.Context ctx, String model, float base) {
+            super(ctx, new DefaultedEntityGeoModel<>(Pestilence.id(model), true));
+            this.base = base;
+            this.fog = model.equals("choking_shade");
+        }
+
+        @Override
+        public void render(T form, float yaw, float partialTick, PoseStack pose, MultiBufferSource buffers, int light) {
+            float s = base * form.tierScale();
+            withScale(s);
+            shadowRadius = 0.6f * s;
+            super.render(form, yaw, partialTick, pose, buffers, light);
+        }
+
+        @Override
+        public RenderType getRenderType(T animatable, ResourceLocation texture, @Nullable MultiBufferSource buffers, float partialTick) {
+            return fog ? RenderType.entityTranslucent(texture) : super.getRenderType(animatable, texture, buffers, partialTick);
+        }
+    }
+
+    /** A Miasma Clot: see-through fog, drawn bigger with each thing it has taken in. */
+    public static class Clot extends GeoEntityRenderer<com.bromax.pestilence.entity.form.MiasmaClot> {
+        public Clot(EntityRendererProvider.Context ctx) {
+            super(ctx, new DefaultedEntityGeoModel<>(Pestilence.id("miasma_clot"), false));
+        }
+
+        @Override
+        public void render(com.bromax.pestilence.entity.form.MiasmaClot clot, float yaw, float partialTick, PoseStack pose, MultiBufferSource buffers, int light) {
+            withScale(clot.sizeScale());
+            shadowRadius = 0.4f * clot.sizeScale();
+            super.render(clot, yaw, partialTick, pose, buffers, light);
+        }
+
+        @Override
+        public RenderType getRenderType(com.bromax.pestilence.entity.form.MiasmaClot animatable, ResourceLocation texture, @Nullable MultiBufferSource buffers, float partialTick) {
+            return RenderType.entityTranslucent(texture);
+        }
+    }
 }
